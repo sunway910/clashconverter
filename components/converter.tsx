@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -64,17 +65,10 @@ export function Converter() {
   };
 
   const handleSwapMode = () => {
-    // Capture the current result before changing mode
     const currentResult = result;
-
-    setMode(prevMode => {
-      const newMode = prevMode === 'proxies-to-yaml' ? 'yaml-to-proxies' : 'proxies-to-yaml';
-      // Set input to the captured result (from previous mode)
-      if (currentResult) {
-        setInput(currentResult);
-      }
-      return newMode;
-    });
+    const newMode = mode === 'proxies-to-yaml' ? 'yaml-to-proxies' : 'proxies-to-yaml';
+    setMode(newMode);
+    setInput(currentResult);
   };
 
   const itemCount = mode === 'proxies-to-yaml'
@@ -85,9 +79,7 @@ export function Converter() {
     <div className="w-full max-w-6xl mx-auto px-3 py-4 md:p-8 space-y-4 md:space-y-6">
       {/* Header with title */}
       <div className="text-center space-y-1 md:space-y-2">
-        <h1 className="text-2xl md:text-4xl font-bold tracking-tight">
-          {t.title}
-        </h1>
+        <Image src="/clash_converter.svg" alt={t.title} width={240} height={80} className="mx-auto" />
         <p className="text-sm md:text-base text-muted-foreground">
           {t.subtitle[mode]}
         </p>
@@ -161,7 +153,7 @@ export function Converter() {
               placeholder={t.inputPlaceholder[mode]}
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              className="min-h-[300px] md:min-h-[400px] font-mono text-xs md:text-sm"
+              className="!h-[300px] md:!h-[400px] resize-none font-mono text-xs md:text-sm overflow-auto whitespace-pre"
             />
             <div className="mt-3 md:mt-4 flex items-center justify-between text-xs md:text-sm text-muted-foreground">
               <span>{t.itemsFound.replace('{count}', String(itemCount))}</span>
@@ -205,7 +197,7 @@ export function Converter() {
           </CardHeader>
           <CardContent>
             <div className="relative">
-              <pre className="min-h-[300px] md:min-h-[400px] w-full rounded-md border border-stone-200 bg-stone-50 p-3 md:p-4 text-[10px] md:text-xs font-mono overflow-auto dark:border-stone-800 dark:bg-stone-950">
+              <pre className="h-[300px] md:h-[400px] w-full rounded-md border border-stone-200 bg-stone-50 p-3 md:p-4 text-[10px] md:text-xs font-mono overflow-auto dark:border-stone-800 dark:bg-stone-950">
                 {result || t.outputPlaceholder[mode]}
               </pre>
             </div>
