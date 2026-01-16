@@ -1,4 +1,5 @@
 import { ProxyNode } from './types';
+import { CLASH_RULES } from './rules-content';
 
 export interface ClashYamlConfig {
   proxies: any[];
@@ -10,37 +11,40 @@ export function generateClashYaml(proxies: ProxyNode[], groupName: string = 'Pro
     return '# No proxies found\n';
   }
 
-  // Generate proxy list
-  const proxyConfigs = proxies.map(proxy => generateProxyConfig(proxy));
+  const lines: string[] = [];
+
+  // Header
+  lines.push('mixed-port: 7890');
+  lines.push('allow-lan: true');
+  lines.push('mode: rule');
+  lines.push('log-level: info');
+  lines.push('external-controller: 127.0.0.1:9090');
+  lines.push('');
+
+  // Proxies in single-line JSON format
+  lines.push('proxies:');
+  for (const proxy of proxies) {
+    lines.push('  - ' + formatProxyJson(proxy));
+  }
 
   // Generate proxy group
   const proxyNames = proxies.map(p => p.name);
-  const proxyGroup = {
-    name: groupName,
-    type: 'select',
-    proxies: proxyNames,
-  };
-
-  // Build YAML
-  let yaml = 'mixed-port: 7890\n';
-  yaml += 'allow-lan: true\n';
-  yaml += 'mode: rule\n';
-  yaml += 'log-level: info\n';
-  yaml += 'external-controller: 127.0.0.1:9090\n\n';
-
-  yaml += 'proxies:\n';
-  for (const config of proxyConfigs) {
-    yaml += `  ${formatYamlObject(config, 2)}\n`;
+  lines.push('');
+  lines.push('proxy-groups:');
+  lines.push('  - name: ' + groupName);
+  lines.push('    type: select');
+  lines.push('    proxies:');
+  for (const name of proxyNames) {
+    lines.push('      - ' + name);
   }
 
-  yaml += '\nproxy-groups:\n';
-  yaml += `  ${formatYamlObject(proxyGroup, 2)}\n`;
+  // Rules
+  lines.push('');
+  lines.push('rules:');
+  lines.push('  - GEOIP,CN,DIRECT');
+  lines.push('  - MATCH,' + groupName);
 
-  yaml += '\nrules:\n';
-  yaml += '  - GEOIP,CN,DIRECT\n';
-  yaml += '  - MATCH,Proxy\n';
-
-  return yaml;
+  return lines.join('\n');
 }
 
 function generateProxyConfig(proxy: ProxyNode): any {
@@ -218,7 +222,7 @@ export function generateSimpleYaml(proxies: ProxyNode[]): string {
 
   // Proxies in single-line JSON format
   for (const proxy of proxies) {
-    lines.push('  ' + formatProxyJson(proxy));
+    lines.push('  - ' + formatProxyJson(proxy));
   }
 
   // Generate unique names to avoid duplicates
@@ -311,6 +315,10 @@ export function generateSimpleYaml(proxies: ProxyNode[]): string {
   for (const name of uniqueNames) {
     lines.push(`      - ${name}`);
   }
+
+  // Add complete rules from target.yaml
+  lines.push('');
+  lines.push(CLASH_RULES);
 
   return lines.join('\n');
 }
