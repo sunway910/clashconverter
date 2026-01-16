@@ -20,7 +20,12 @@
       "Bash(node:*)",
       "Bash(ls:*)",
       "Bash(npx kill-port:*)",
-      "Bash(git restore:*)"
+      "Bash(git restore:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run lint)",
+      "Bash(npx tsc:*)",
+      "Bash(pnpm dev:*)",
+      "Bash(taskkill:*)"
     ]
   }
 }
