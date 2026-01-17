@@ -14,26 +14,7 @@ async function detectCountry(request: NextRequest): Promise<string | null> {
   const vercelCountry = request.headers.get('x-vercel-ip-country');
   if (vercelCountry) return vercelCountry;
 
-  // Fallback: IP geolocation API (only for first-time visitors)
-  try {
-    const ip = request.headers.get('x-forwarded-for')?.split(',')[0].trim() ||
-               request.headers.get('x-real-ip') ||
-               '8.8.8.8';
-
-    const response = await fetch(`http://ip-api.com/json/${ip}?fields=countryCode,status`, {
-      signal: AbortSignal.timeout(1000) // 1 second timeout
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      if (data.status === 'success') {
-        return data.countryCode;
-      }
-    }
-  } catch {
-    // Silently fail on error, fall back to default
-  }
-
+  // Fallback: Use default for development
   return null;
 }
 
@@ -52,11 +33,11 @@ async function getPreferredLocale(request: NextRequest): Promise<string> {
   return country && CHINESE_REGIONS.includes(country) ? 'zh' : 'en';
 }
 
-// Create next-intl middleware
+// Create next-intl middleware with default locale prefix always shown
 const intlMiddleware = createMiddleware({
   locales: ['en', 'zh'],
   defaultLocale: 'en',
-  localePrefix: 'as-needed'
+  localePrefix: 'always' // Always show locale prefix to avoid conflicts
 });
 
 // Main proxy function for Next.js 16
@@ -71,29 +52,28 @@ export async function proxy(request: NextRequest) {
     return intlMiddleware(request);
   }
 
-  // Skip if already on a locale-specific path
-  if (pathname.startsWith('/en') || pathname.startsWith('/zh')) {
-    return intlMiddleware(request);
+  // For root path, detect preferred locale and redirect
+  if (pathname === '/') {
+    const preferredLocale = await getPreferredLocale(request);
+
+    const response = NextResponse.redirect(
+      new URL(`/${preferredLocale}/`, request.url),
+      { status: 307 }
+    );
+
+    // Set locale preference cookie (1 year expiry)
+    response.cookies.set('NEXT_LOCALE', preferredLocale, {
+      maxAge: 60 * 60 * 24 * 365,
+      httpOnly: false,
+      sameSite: 'lax',
+      path: '/'
+    });
+
+    return response;
   }
 
-  // Determine preferred locale for root path
-  const preferredLocale = await getPreferredLocale(request);
-
-  // Create response with locale cookie
-  const response = NextResponse.redirect(
-    new URL(`/${preferredLocale}${pathname}`, request.url),
-    { status: 307 }
-  );
-
-  // Set locale preference cookie (1 year expiry)
-  response.cookies.set('NEXT_LOCALE', preferredLocale, {
-    maxAge: 60 * 60 * 24 * 365,
-    httpOnly: false,
-    sameSite: 'lax',
-    path: '/'
-  });
-
-  return response;
+  // For all other paths, use intlMiddleware
+  return intlMiddleware(request);
 }
 
 // Matcher configuration for Next.js 16 proxy
