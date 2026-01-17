@@ -13,7 +13,7 @@
     "yaml-to-proxies": "代理链接"
   },
   "inputPlaceholder": {
-    "proxies-to-yaml": "在此粘贴代理链接，每行一个\n\n示例：\nss://[base64]#SS-HongKongNode1\n\n💡 提示：链接末尾的 #SS-HongKongNode1 会成为 YAML 文件中的代理名称",
+    "proxies-to-yaml": "在此粘贴代理链接，每行一个\n\n支持的协议：\n\nhysteria://server:port?protocol=udp&auth=xxx&peer=xxx#Hysteria-节点\nhysteria2://password@server:port/?sni=xxx#Hysteria2-节点\nss://[base64]#SS-节点\nssr://[base64]#SSR-节点\nvmess://[base64]#Vmess-节点\nvless://uuid@server:port?encryption=none&security=tls&type=tcp#Vless-节点\ntrojan://password@server:port#Trojan-节点\nsocks5://server:port#Socks5-节点\nhttp://user:pass@server:port#Http-节点\n\n💡 提示：链接末尾的 #名称 会成为 YAML 文件中的代理名称",
     "yaml-to-proxies": "proxies:\n  - name: SS-HongKong\n    type: ss\n    server: hk.example.com\n    port: 443\n  - name: VMESS-US\n    type: vmess\n    server: us.example.com\n    port: 443\n\nproxy-groups:\n  - name: 🚀 节点选择\n    type: select\n    proxies: ..."
   },
   "itemsFound": "找到 {count} 个项目",

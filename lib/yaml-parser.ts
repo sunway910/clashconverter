@@ -196,8 +196,8 @@ function proxyToLink(proxy: ProxyNode): string | null {
       return trojanToLink(proxy);
     case 'vless':
       return vlessToLink(proxy);
-    case 'hysteria2':
-      return hysteria2ToLink(proxy);
+    case 'hysteria':
+      return hysteriaToLink(proxy);
     case 'socks5':
       return socks5ToLink(proxy);
     case 'http':
@@ -263,14 +263,34 @@ function vlessToLink(proxy: ProxyNode): string {
   return link;
 }
 
-function hysteria2ToLink(proxy: ProxyNode): string {
-  let link = `hysteria2://${proxy.password}@${proxy.server}:${proxy.port}`;
-  const params: string[] = [];
-  if (proxy.sni) params.push(`sni=${encodeURIComponent(proxy.sni)}`);
-  if (proxy['skip-cert-verify']) params.push('insecure=1');
-  if (params.length) link += `/?${params.join('&')}`;
-  link += `#${encodeURIComponent(proxy.name)}`;
-  return link;
+function hysteriaToLink(proxy: ProxyNode): string {
+  // Hysteria v2 has 'password' property, v1 has 'auth' property
+  const isHysteria2 = proxy.password !== undefined;
+
+  if (isHysteria2) {
+    // Hysteria2 format: hysteria2://password@server:port/?params#name
+    let link = `hysteria2://${proxy.password}@${proxy.server}:${proxy.port}`;
+    const params: string[] = [];
+    if (proxy.sni) params.push(`sni=${encodeURIComponent(proxy.sni)}`);
+    if (proxy['skip-cert-verify']) params.push('insecure=1');
+    if (params.length) link += `/?${params.join('&')}`;
+    link += `#${encodeURIComponent(proxy.name)}`;
+    return link;
+  } else {
+    // Hysteria v1 format: hysteria://server:port?params#name
+    let link = `hysteria://${proxy.server}:${proxy.port}`;
+    const params: string[] = [];
+    if (proxy.protocol) params.push(`protocol=${proxy.protocol}`);
+    if (proxy.auth) params.push(`auth=${encodeURIComponent(proxy.auth)}`);
+    if (proxy.sni) params.push(`peer=${encodeURIComponent(proxy.sni)}`);
+    if (proxy['skip-cert-verify']) params.push('insecure=1');
+    if (proxy.up) params.push(`upmbps=${proxy.up}`);
+    if (proxy.down) params.push(`downmbps=${proxy.down}`);
+    if (proxy.alpn) params.push(`alpn=${encodeURIComponent(proxy.alpn)}`);
+    if (params.length) link += `?${params.join('&')}`;
+    link += `#${encodeURIComponent(proxy.name)}`;
+    return link;
+  }
 }
 
 function socks5ToLink(proxy: ProxyNode): string {

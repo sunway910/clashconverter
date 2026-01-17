@@ -13,7 +13,7 @@
     "yaml-to-proxies": "Proxy Links"
   },
   "inputPlaceholder": {
-    "proxies-to-yaml": "Paste your proxy links here - one per line\n\nExamples:\nss://[base64]#SS-HongKongNode1\n\n💡 Tip: #SS-HongKongNode1 at the end becomes the proxy name in your YAML file",
+    "proxies-to-yaml": "Paste your proxy links here - one per line\n\nSupported protocols:\n\nhysteria://server:port?protocol=udp&auth=xxx&peer=xxx#Hysteria-Node\nhysteria2://password@server:port/?sni=xxx#Hysteria2-Node\nss://[base64]#SS-Node\nssr://[base64]#SSR-Node\nvmess://[base64]#Vmess-Node\nvless://uuid@server:port?encryption=none&security=tls&type=tcp#Vless-Node\ntrojan://password@server:port#Trojan-Node\nsocks5://server:port#Socks5-Node\nhttp://user:pass@server:port#Http-Node\n\n💡 Tip: The #name suffix becomes the proxy name in your YAML file",
     "yaml-to-proxies": "proxies:\n  - name: SS-HongKong\n    type: ss\n    server: hk.example.com\n    port: 443\n  - name: VMESS-US\n    type: vmess\n    server: us.example.com\n    port: 443\n\nproxy-groups:\n  - name: PROXY\n    type: select\n    proxies: ..."
   },
   "itemsFound": "{count} item(s) found",

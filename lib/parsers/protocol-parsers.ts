@@ -192,7 +192,7 @@ export function parseHysteria2(link: string): ParsedProxy | null {
       name,
       config: {
         name,
-        type: 'hysteria2',
+        type: 'hysteria',
         server: url.hostname,
         port: parseInt(url.port, 10),
         password: decodeURIComponent(url.username),
