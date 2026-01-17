@@ -11,10 +11,6 @@ dns:
   enabled: true
   listen: 0.0.0.0:1053
   ipv6: true
-  default-nameserver:
-    - 223.5.5.5
-    - 223.6.6.6
-    - 114.114.114.114
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
   fake-ip-filter:
@@ -74,14 +70,27 @@ dns:
     - stun.*.*
     - stun.*.*.*
     - '*.mcdn.bilivideo.cn'
+  default-nameserver:
+    - 223.5.5.5
+    - 223.6.6.6
+    - 119.29.29.29
   nameserver:
     - https://dns.alidns.com/dns-query
     - https://doh.pub/dns-query
+  fallback:
+    - https://1.1.1.1/dns-query
+    - https://dns.google/dns-query
   fallback-filter:
-    geoip: false
+    geoip: true
+    geoip-code: CN
     ipcidr:
       - 240.0.0.0/4
-      - 0.0.0.0/32
+  nameserver-policy:
+    'geosite:cn':
+      - https://dns.alidns.com/dns-query
+    'geosite:geolocation-!cn':
+      - https://1.1.1.1/dns-query
+      - https://dns.google/dns-query
 proxies:
   - {"name":"clashconverter_test_1","type":"ss","server":"198.57.27.218","port":5004,"password":"g5MeD6Ft3CWlJId","cipher":"aes-256-gcm"}
   - {"name":"clashconverter_test_2","type":"vmess","server":"154.23.190.162","port":443,"cipher":"auto","uuid":"b9984674-f771-4e67-a198-c7e60720ba2c","alterId":0,"tls":false,"skip-cert-verify":true,"network":"ws"}
