@@ -27,7 +27,8 @@
       "Bash(pnpm dev:*)",
       "Bash(taskkill:*)",
       "Bash(netstat:*)",
-      "Bash(xargs -I {} taskkill //F //PID:*)"
+      "Bash(xargs -I {} taskkill //F //PID:*)",
+      "Bash(git mv:*)"
     ]
   }
 }
