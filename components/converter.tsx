@@ -74,7 +74,7 @@ export function Converter() {
           // Only show toast if the count has changed since last render
           if (previousFilteredCountRef.current[protocol] !== count) {
             toast.warning(
-              t('protocolFiltered', { count, protocol: t(`unsupportedProtocols.${protocol}` as any) })
+                t('protocolFiltered', { count, protocol: t(`unsupportedProtocols.${protocol}` as any) })
             );
           }
         });
@@ -147,195 +147,197 @@ export function Converter() {
   };
 
   const itemCount = mode === 'proxies-to-yaml'
-    ? parseMultipleProxies(input).length
-    : parseYamlToProxies(input).length;
+      ? parseMultipleProxies(input).length
+      : parseYamlToProxies(input).length;
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-12 space-y-8">
-      {/* Header Section */}
-      <div className="text-center space-y-3">
-        <Image src="/clash_converter.svg" alt={t('title')} width={200} height={66} className="mx-auto opacity-90" />
-        <p className="text-sm md:text-base text-stone-500 dark:text-stone-400 font-light">
-          {t(`subtitle.${mode}`)}
-        </p>
-      </div>
+      <div className="w-full max-w-6xl mx-auto px-3 py-4 md:p-8 space-y-4 md:space-y-6">
+        {/* Header with title */}
+        <div className="text-center space-y-1 md:space-y-2">
+          <Image src="/clash_converter.svg" alt={t('title')} width={240} height={80} className="mx-auto" />
+          <p className="text-sm md:text-base text-muted-foreground">
+            {t(`subtitle.${mode}`)}
+          </p>
+        </div>
 
-      {/* Main Content */}
-      <div className="grid gap-6 lg:gap-8 lg:grid-cols-[1fr_auto_1fr] items-start">
-        {/* Input Section */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-stone-100 dark:bg-stone-800/50 flex items-center justify-center">
-                <FileText className="w-4 h-4 text-stone-500 dark:text-stone-400" />
-              </div>
-              <h2 className="text-base font-medium text-stone-700 dark:text-stone-300">
-                {t(`inputLabel.${mode}`)}
-              </h2>
-            </div>
+        <div className="grid gap-4 md:gap-8 md:grid-cols-2 relative">
+          {/* Input Section */}
+          <Card>
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-              <DialogTrigger asChild>
-                <Button variant="ghost" size="sm" className="h-7 w-7 p-0 rounded-lg">
-                  <Info className="w-3.5 h-3.5 text-stone-400" />
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-md w-[95vw] border-stone-200 dark:border-stone-800">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2 cursor-pointer hover:text-stone-600 dark:hover:text-stone-400 transition-colors" onClick={() => setDialogOpen(true)}>
+                    <FileText className="w-5 h-5" />
+                    {t(`inputLabel.${mode}`)}
+                  </CardTitle>
+                  <DialogTrigger asChild>
+                    <Button variant="ghost" size="sm" className="h-6 w-6">
+                      <Info className="w-4 h-4" />
+                    </Button>
+                  </DialogTrigger>
+                </div>
+              </CardHeader>
+              <DialogContent className="max-w-md">
                 <DialogHeader>
-                  <DialogTitle className="text-stone-800 dark:text-stone-200">{t('supportedProtocols')}</DialogTitle>
-                  <DialogDescription className="text-stone-500 dark:text-stone-400">
+                  <DialogTitle>{t('supportedProtocols')}</DialogTitle>
+                  <DialogDescription>
                     All proxy protocols are supported for conversion
                   </DialogDescription>
                 </DialogHeader>
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  {['Shadowsocks', 'ShadowsocksR', 'Vmess', 'VLESS', 'Trojan', 'Hysteria', 'HTTP', 'SOCKS5'].map((protocol) => (
-                    <div key={protocol} className="flex items-center gap-2 p-2.5 rounded-lg bg-stone-50 dark:bg-stone-900/50 border border-stone-100 dark:border-stone-800">
-                      <span className="font-mono text-xs text-stone-600 dark:text-stone-400">{protocol}</span>
-                    </div>
-                  ))}
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div className="flex items-center gap-2 p-2 rounded-lg bg-stone-100 dark:bg-stone-800">
+                    <span className="font-mono text-xs bg-stone-200 dark:bg-stone-700 px-2 py-1 rounded">Shadowsocks</span>
+                  </div>
+                  <div className="flex items-center gap-2 p-2 rounded-lg bg-stone-100 dark:bg-stone-800">
+                    <span className="font-mono text-xs bg-stone-200 dark:bg-stone-700 px-2 py-1 rounded">ShadowsocksR</span>
+                  </div>
+                  <div className="flex items-center gap-2 p-2 rounded-lg bg-stone-100 dark:bg-stone-800">
+                    <span className="font-mono text-xs bg-stone-200 dark:bg-stone-700 px-2 py-1 rounded">Vmess</span>
+                  </div>
+                  <div className="flex items-center gap-2 p-2 rounded-lg bg-stone-100 dark:bg-stone-800">
+                    <span className="font-mono text-xs bg-stone-200 dark:bg-stone-700 px-2 py-1 rounded">VLESS</span>
+                  </div>
+                  <div className="flex items-center gap-2 p-2 rounded-lg bg-stone-100 dark:bg-stone-800">
+                    <span className="font-mono text-xs bg-stone-200 dark:bg-stone-700 px-2 py-1 rounded">Trojan</span>
+                  </div>
+                  <div className="flex items-center gap-2 p-2 rounded-lg bg-stone-100 dark:bg-stone-800">
+                    <span className="font-mono text-xs bg-stone-200 dark:bg-stone-700 px-2 py-1 rounded">Hysteria</span>
+                  </div>
+                  <div className="flex items-center gap-2 p-2 rounded-lg bg-stone-100 dark:bg-stone-800">
+                    <span className="font-mono text-xs bg-stone-200 dark:bg-stone-700 px-2 py-1 rounded">HTTP</span>
+                  </div>
+                  <div className="flex items-center gap-2 p-2 rounded-lg bg-stone-100 dark:bg-stone-800">
+                    <span className="font-mono text-xs bg-stone-200 dark:bg-stone-700 px-2 py-1 rounded">SOCKS5</span>
+                  </div>
                 </div>
               </DialogContent>
             </Dialog>
-          </div>
-
-          <div className="relative group">
-            <Textarea
-              ref={textareaRef}
-              placeholder={t(`inputPlaceholder.${mode}`)}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              className="!h-[300px] md:!h-[400px] resize-none font-mono text-xs md:text-sm border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-950/50 focus-visible:ring-stone-300 dark:focus-visible:ring-stone-700 transition-all overflow-auto whitespace-pre"
-            />
-            <div className="mt-3 flex items-center justify-between">
-              <span className="text-xs text-stone-400 dark:text-stone-500">
-                {t('itemsFound', { count: itemCount })}
-              </span>
-              {input && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setInput('')}
-                  className="h-7 text-xs text-stone-400 hover:text-stone-600 dark:text-stone-500 dark:hover:text-stone-300"
-                >
-                  {t('clear')}
-                </Button>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Swap Button */}
-        <div className="hidden lg:flex items-center justify-center">
-          <Button
-            size="sm"
-            variant="outline"
-            className="rounded-full h-12 w-12 p-0 border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 shadow-sm hover:shadow-md hover:border-stone-300 dark:hover:border-stone-700 transition-all"
-            onClick={handleSwapMode}
-            title={t('swapDirection')}
-          >
-            <ArrowRightLeft className="w-5 h-5 text-stone-400" />
-          </Button>
-        </div>
-
-        {/* Output Section */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-stone-100 dark:bg-stone-800/50 flex items-center justify-center">
-                <Download className="w-4 h-4 text-stone-500 dark:text-stone-400" />
-              </div>
-              <h2 className="text-base font-medium text-stone-700 dark:text-stone-300">
-                {t(`outputLabel.${mode}`)}
-              </h2>
-            </div>
-            {mode === 'proxies-to-yaml' && (
-              <div className="flex items-center gap-1.5 md:gap-2">
-                <Cpu className="w-3.5 h-3.5 text-stone-400 hidden md:block" />
-                <Select value={kernelType} onValueChange={(value) => setKernelType(value as KernelType)}>
-                  <SelectTrigger className="w-[140px] md:w-[160px] h-7 text-xs border-stone-200 dark:border-stone-800">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="clash-meta">{t('kernelTypes.clash-meta')}</SelectItem>
-                    <SelectItem value="clash-premium">{t('kernelTypes.clash-premium')}</SelectItem>
-                  </SelectContent>
-                </Select>
-                <HoverCard openDelay={200}>
-                  <HoverCardTrigger asChild>
-                    <Button variant="ghost" size="sm" className="h-7 w-7 p-0 rounded-lg">
-                      <Info className="w-3.5 h-3.5 text-stone-400" />
+            <CardContent>
+              <Textarea
+                  ref={textareaRef}
+                  placeholder={t(`inputPlaceholder.${mode}`)}
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  className="!h-[300px] md:!h-[400px] resize-none font-mono text-xs md:text-sm overflow-auto whitespace-pre"
+              />
+              <div className="mt-3 md:mt-4 flex items-center justify-between text-xs md:text-sm text-muted-foreground">
+                <span>{t('itemsFound', { count: itemCount })}</span>
+                {input && (
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setInput('')}
+                        className="text-xs"
+                    >
+                      {t('clear')}
                     </Button>
-                  </HoverCardTrigger>
-                  <HoverCardContent className="w-80 max-w-[90vw] border-stone-200 dark:border-stone-800">
-                    <div className="space-y-3">
-                      <div>
-                        <h4 className="text-sm font-semibold text-stone-800 dark:text-stone-200">{t.raw(`kernelDescriptions.${kernelType}.title` as any)}</h4>
-                        <p className="text-sm text-stone-500 dark:text-stone-400 mt-1">{t.raw(`kernelDescriptions.${kernelType}.description` as any)}</p>
-                      </div>
-                      <ul className="space-y-1.5 text-sm text-stone-600 dark:text-stone-400">
-                        {(t.raw(`kernelDescriptions.${kernelType}.features` as any) as string[]).map((feature, index) => (
-                          <li key={index} className="flex items-start gap-2">
-                            <span className="text-stone-400 mt-0.5">•</span>
-                            <span>{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </HoverCardContent>
-                </HoverCard>
+                )}
               </div>
-            )}
+            </CardContent>
+          </Card>
+
+          {/* Swap Button (centered) */}
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:block z-10">
+            <Button
+                size="sm"
+                variant="outline"
+                className="rounded-full shadow-lg bg-background"
+                onClick={handleSwapMode}
+                title="Swap conversion direction"
+            >
+              <ArrowRightLeft className="w-4 h-4" />
+            </Button>
           </div>
 
-          <div className="relative group">
-            <div className="rounded-lg border border-stone-200 dark:border-stone-800 bg-stone-50/50 dark:bg-stone-900/30 overflow-hidden">
-              <pre className="h-[300px] md:h-[400px] w-full p-4 text-[10px] md:text-xs font-mono overflow-auto text-stone-600 dark:text-stone-400 whitespace-pre">
-                {result || <span className="text-stone-300 dark:text-stone-700">{t(`outputPlaceholder.${mode}`)}</span>}
-              </pre>
-            </div>
-            <div className="mt-3 flex gap-2">
-              <Button
-                onClick={handleDownload}
-                disabled={itemCount === 0}
-                className="flex-1 h-9 text-xs font-medium bg-stone-800 dark:bg-stone-200 hover:bg-stone-700 dark:hover:bg-stone-300 text-white dark:text-stone-900 border-0"
-                size="sm"
-              >
-                <Download className="w-3.5 h-3.5 md:mr-1.5" />
-                <span>{t('download')}</span>
-              </Button>
-              <Button
-                variant="outline"
-                onClick={handleCopy}
-                disabled={itemCount === 0}
-                className="h-9 px-3 border-stone-200 dark:border-stone-800 hover:bg-stone-50 dark:hover:bg-stone-900"
-                size="sm"
-              >
-                <Copy className="w-3.5 h-3.5" />
-              </Button>
-            </div>
-          </div>
+          {/* Output Section */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2">
+                  <Download className="w-5 h-5" />
+                  {t(`outputLabel.${mode}`)}
+                </CardTitle>
+                {mode === 'proxies-to-yaml' && (
+                    <div className="flex items-center gap-2">
+                      <Cpu className="w-4 h-4 text-muted-foreground" />
+                      <Select value={kernelType} onValueChange={(value) => setKernelType(value as KernelType)}>
+                        <SelectTrigger className="w-[180px] h-8 text-xs">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="clash-meta">{t('kernelTypes.clash-meta')}</SelectItem>
+                          <SelectItem value="clash-premium">{t('kernelTypes.clash-premium')}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <HoverCard openDelay={200}>
+                        <HoverCardTrigger asChild>
+                          <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                            <Info className="w-4 h-4 text-muted-foreground" />
+                          </Button>
+                        </HoverCardTrigger>
+                        <HoverCardContent className="w-80">
+                          <div className="space-y-3">
+                            <div>
+                              <h4 className="text-sm font-semibold">{t.raw(`kernelDescriptions.${kernelType}.title` as any)}</h4>
+                              <p className="text-sm text-muted-foreground mt-1">{t.raw(`kernelDescriptions.${kernelType}.description` as any)}</p>
+                            </div>
+                            <ul className="space-y-1 text-sm">
+                              {(t.raw(`kernelDescriptions.${kernelType}.features` as any) as string[]).map((feature, index) => (
+                                  <li key={index} className="flex items-start gap-2">
+                                    <span className="text-muted-foreground mt-0.5">•</span>
+                                    <span>{feature}</span>
+                                  </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </HoverCardContent>
+                      </HoverCard>
+                    </div>
+                )}
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="relative">
+                <pre className="h-[300px] md:h-[400px] w-full rounded-md border border-stone-200 bg-stone-50 p-3 md:p-4 text-[10px] md:text-xs font-mono overflow-auto whitespace-pre dark:border-stone-800 dark:bg-stone-950">
+                  {result || t(`outputPlaceholder.${mode}`)}
+                </pre>
+              </div>
+              <div className="mt-3 md:mt-4 flex gap-2">
+                <Button
+                    onClick={handleDownload}
+                    disabled={itemCount === 0}
+                    className="flex-1 text-sm"
+                    size="sm"
+                >
+                  <Download className="w-4 h-4 mr-1 md:mr-2" />
+                  <span className="hidden md:inline">{t('download')}</span>
+                </Button>
+                <Button
+                    variant="outline"
+                    onClick={handleCopy}
+                    disabled={itemCount === 0}
+                    size="sm"
+                >
+                  <Copy className="w-4 h-4" />
+                  <span className="hidden md:inline ml-1 md:ml-2">{t('copy')}</span>
+                </Button>
+              </div>
+              {/* Mobile swap button */}
+              <div className="mt-3 md:mt-4 md:hidden">
+                <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={handleSwapMode}
+                    disabled={!input || !result}
+                    size="sm"
+                >
+                  <ArrowRightLeft className="w-4 h-4 mr-2" />
+                  {t('swapDirection')}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
-
-      {/* Mobile swap button */}
-      <div className="lg:hidden">
-        <Button
-          variant="outline"
-          className="w-full h-10 border-stone-200 dark:border-stone-800 hover:bg-stone-50 dark:hover:bg-stone-900"
-          onClick={handleSwapMode}
-          disabled={!input || !result}
-          size="sm"
-        >
-          <ArrowRightLeft className="w-4 h-4 mr-2" />
-          <span className="text-xs font-medium">{t('swapDirection')}</span>
-        </Button>
-      </div>
-
-      {/* Footer */}
-      <div className="text-center pt-4">
-        <p className="text-xs text-stone-400 dark:text-stone-600">
-          Pure client-side conversion • Your data never leaves your browser
-        </p>
-      </div>
-    </div>
   );
 }

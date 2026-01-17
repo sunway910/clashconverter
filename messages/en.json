@@ -6,19 +6,11 @@
   },
   "inputLabel": {
     "proxies-to-yaml": "Proxy Links",
-    "yaml-to-proxies": "YAML Config"
+    "yaml-to-proxies": "Clash Config"
   },
   "outputLabel": {
-    "proxies-to-yaml": "Clash YAML",
+    "proxies-to-yaml": "Clash Config",
     "yaml-to-proxies": "Proxy Links"
-  },
-  "inputDescription": {
-    "proxies-to-yaml": "Paste your proxy links - one per line",
-    "yaml-to-proxies": "Paste your Clash YAML configuration"
-  },
-  "outputDescription": {
-    "proxies-to-yaml": "Preview and download your Clash configuration",
-    "yaml-to-proxies": "Preview and download your proxy links"
   },
   "inputPlaceholder": {
     "proxies-to-yaml": "Paste your proxy links here - one per line\n\nExamples:\nss://[base64]#SS-HongKongNode1\n\n💡 Tip: #SS-HongKongNode1 at the end becomes the proxy name in your YAML file",

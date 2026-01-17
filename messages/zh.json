@@ -6,19 +6,11 @@
   },
   "inputLabel": {
     "proxies-to-yaml": "代理链接",
-    "yaml-to-proxies": "YAML 配置"
+    "yaml-to-proxies": "Clash 配置"
   },
   "outputLabel": {
-    "proxies-to-yaml": "Clash YAML",
+    "proxies-to-yaml": "Clash 配置",
     "yaml-to-proxies": "代理链接"
-  },
-  "inputDescription": {
-    "proxies-to-yaml": "粘贴您的代理链接，每行一个",
-    "yaml-to-proxies": "粘贴您的 Clash YAML 配置"
-  },
-  "outputDescription": {
-    "proxies-to-yaml": "预览并下载您的 Clash 配置",
-    "yaml-to-proxies": "预览并下载您的代理链接"
   },
   "inputPlaceholder": {
     "proxies-to-yaml": "在此粘贴代理链接，每行一个\n\n示例：\nss://[base64]#SS-HongKongNode1\n\n💡 提示：链接末尾的 #SS-HongKongNode1 会成为 YAML 文件中的代理名称",
