@@ -2,7 +2,7 @@ hysteria://1.1.1.1:51443?protocol=udp&upmbps=10&downmbps=50&alpn=h3#hyV1-HongKon
 hysteria://1.1.1.1:55443?protocol=udp&upmbps=10&downmbps=50&alpn=h3#hyV2-HongKongNode1
 ss://YWVzLTI1Ni1nY206eHh4eHh4@1.1.1.1:64443#SS-HongKongNode1
 ssr://MS4xLjEuMTozNTQ0MzpvcmlnaW46bm9uZTpwbGFpbjo==#SSR-HongKongNode1
-vmess://eyJ2IjoiMiIsInBzIjoiVm1lc3MtSG9uZ0tvbmdOb2RlMSIsImFkZCI6IjEuMS4xLjEiLCJwb3J0IjoiMzA0NDMiLCJpZCI6Inh4eHh4eHh4IiwiYWlkIjoiMCIsInNjeSI6ImF1dG8iLCJuZXQiOiJ3cyIsInR5cGUiOiIiLCJ0bHMiOiIifQ==#Vmess-HongKongNode1
+vmess://eyJ2IjoiMiIsInBzIjoiVm1lc3MtSG9uZ0tvbmdOb2RlMSIsImFkZCI6IjEuMS4xLjEiLCJwb3J0IjoiMzA0NDMiLCJpZCI6Inh4eHh4eHh4IiwiYWlkIjoiMCIsInNjeSI6ImF1dG8iLCJuZXQiOiJ3cyIsInR5cGUiOiIiLCJ0bHMiOiIifQ==
 vless://aaa-bbb-ccc-ddd-eee@1.1.1.1:40443?encryption=none&security=none&type=tcp#Vless-HongKongNode1
 trojan://xxxxxxxx-xxxx-xxxx-xxxxxxxxxxxx@ca-trojan.bonds.id:60443#Torjan-HongKongNode1
 socks5://1.1.1.1:52443#Sock5-HongKongNode1

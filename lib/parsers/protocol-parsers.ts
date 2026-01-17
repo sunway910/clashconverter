@@ -1,7 +1,7 @@
 import { ParsedProxy, ProxyNode } from '../types';
 import { base64Decode, parseUrlParams, safeJsonParse } from '../utils';
 
-// Shadowsocks parser: ss://base64(method:password@server:port)#name
+// Shadowsocks parser: ss://base64(method:password@server:port)#name or ss://base64(method:password)@server:port#name
 export function parseSS(link: string): ParsedProxy | null {
   if (!link.startsWith('ss://')) return null;
 
@@ -15,17 +15,50 @@ export function parseSS(link: string): ParsedProxy | null {
     const name = hashIndex !== -1 ? decodeURIComponent(rest.slice(hashIndex + 1)) : 'SS';
 
     // Check if it's SIP002 format (base64 encoded)
-    const decoded = base64Decode(mainPart);
-    if (decoded) {
-      // Format: method:password@server:port
-      const atIndex = decoded.lastIndexOf('@');
-      if (atIndex !== -1) {
-        const userInfo = decoded.slice(0, atIndex);
-        const serverInfo = decoded.slice(atIndex + 1);
+    // Format 1: ss://base64(method:password@server:port)#name - everything is base64 encoded
+    // Format 2: ss://base64(method:password)@server:port#name - only method:password is base64 encoded
 
-        const colonIndex = userInfo.indexOf(':');
-        const method = userInfo.slice(0, colonIndex);
-        const password = userInfo.slice(colonIndex + 1);
+    // First, try to decode the entire mainPart
+    let decoded = base64Decode(mainPart);
+    if (decoded && decoded.includes('@')) {
+      // Format 1: method:password@server:port is base64 encoded
+      const atIndex = decoded.lastIndexOf('@');
+      const userInfo = decoded.slice(0, atIndex);
+      const serverInfo = decoded.slice(atIndex + 1);
+
+      const colonIndex = userInfo.indexOf(':');
+      const method = userInfo.slice(0, colonIndex);
+      const password = userInfo.slice(colonIndex + 1);
+
+      const [server, portStr] = serverInfo.split(':');
+      const port = parseInt(portStr, 10);
+
+      return {
+        name,
+        config: {
+          name,
+          type: 'ss',
+          server,
+          port,
+          cipher: method,
+          password,
+          udp: true,
+        } as ProxyNode,
+      };
+    }
+
+    // Format 2: base64(method:password)@server:port
+    // Find the @ separator - it should be between the base64 part and server part
+    const atIndex = mainPart.indexOf('@');
+    if (atIndex !== -1) {
+      const encodedUserInfo = mainPart.slice(0, atIndex);
+      const serverInfo = mainPart.slice(atIndex + 1);
+
+      decoded = base64Decode(encodedUserInfo);
+      if (decoded) {
+        const colonIndex = decoded.indexOf(':');
+        const method = decoded.slice(0, colonIndex);
+        const password = decoded.slice(colonIndex + 1);
 
         const [server, portStr] = serverInfo.split(':');
         const port = parseInt(portStr, 10);
@@ -45,24 +78,7 @@ export function parseSS(link: string): ParsedProxy | null {
       }
     }
 
-    // Try URL format: ss://method:password@server:port#name
-    const url = new URL(link);
-    const [server, portStr] = (url.hostname || '').split(':');
-    const port = parseInt(portStr || url.port || '8388', 10);
-    const [method, password] = decodeURIComponent(url.username).split(':');
-
-    return {
-      name: decodeURIComponent(url.hash.slice(1)) || 'SS',
-      config: {
-        name,
-        type: 'ss',
-        server: url.hostname || server,
-        port,
-        cipher: method || 'aes-256-gcm',
-        password,
-        udp: true,
-      } as ProxyNode,
-    };
+    return null;
   } catch {
     return null;
   }
@@ -146,11 +162,13 @@ export function parseVmess(link: string): ParsedProxy | null {
         network: config.net || 'tcp',
         tls: config.tls === 'tls' || config.tls === 'true',
         udp: true,
-        'skip-cert-verify': config.allowInsecure === 'true',
+        // For VMess with TLS, allowInsecure field controls skip-cert-verify
+        // When allowInsecure is not explicitly set to true, default to true for WS+TLS
+        'skip-cert-verify': config.allowInsecure === 'true' || config.allowInsecure === true || config.allowInsecure === 1 || (config.tls === 'tls' && config.net === 'ws'),
         servername: config.sni || config.host || '',
         'ws-opts': config.net === 'ws' ? {
           path: config.path || '/',
-          headers: config.host ? { Host: config.host } : undefined,
+          headers: config.host ? { host: config.host } : undefined,
         } : undefined,
       } as ProxyNode,
     };
@@ -187,23 +205,54 @@ export function parseTrojan(link: string): ParsedProxy | null {
   }
 }
 
-// Hysteria2 parser: hysteria2://uuid@server:port?params#name
+// Hysteria2 parser: hysteria2://password@server:port?params#name or hysteria2://password@server:port/?params#name
 export function parseHysteria2(link: string): ParsedProxy | null {
   if (!link.startsWith('hysteria2://')) return null;
 
   try {
-    const url = new URL(link);
-    const params = parseUrlParams(url.search.slice(1));
-    const name = url.hash ? decodeURIComponent(url.hash.slice(1)) : 'Hysteria2';
+    // Remove hysteria2:// prefix
+    let rest = link.slice(12);
+
+    // Extract hash (name) first
+    const hashIndex = rest.indexOf('#');
+    const name = hashIndex !== -1 ? decodeURIComponent(rest.slice(hashIndex + 1)) : 'Hysteria2';
+    if (hashIndex !== -1) {
+      rest = rest.slice(0, hashIndex);
+    }
+
+    // Extract query params
+    const queryIndex = rest.indexOf('?');
+    let params: Record<string, string> = {};
+    if (queryIndex !== -1) {
+      params = parseUrlParams(rest.slice(queryIndex + 1));
+      rest = rest.slice(0, queryIndex);
+    }
+
+    // Parse user info and server info
+    // Format: password@server:port or password@server:port/
+    const atIndex = rest.indexOf('@');
+    if (atIndex === -1) return null;
+
+    const password = decodeURIComponent(rest.slice(0, atIndex));
+    let serverInfo = rest.slice(atIndex + 1);
+
+    // Remove trailing slash if present
+    if (serverInfo.endsWith('/')) {
+      serverInfo = serverInfo.slice(0, -1);
+    }
+
+    const [server, portStr] = serverInfo.split(':');
+    const port = parseInt(portStr, 10);
+    if (!server || isNaN(port)) return null;
 
     return {
       name,
       config: {
         name,
-        type: 'hysteria',
-        server: url.hostname,
-        port: parseInt(url.port, 10),
-        password: decodeURIComponent(url.username),
+        type: 'hysteria2',
+        server,
+        port,
+        password,
         'skip-cert-verify': params.insecure === '1',
         sni: params.sni || '',
       } as ProxyNode,
@@ -252,25 +301,51 @@ export function parseVless(link: string): ParsedProxy | null {
     const params = parseUrlParams(url.search.slice(1));
     const name = url.hash ? decodeURIComponent(url.hash.slice(1)) : 'VLESS';
 
+    const config: ProxyNode = {
+      name,
+      type: 'vless',
+      server: url.hostname,
+      port: parseInt(url.port, 10),
+      uuid: decodeURIComponent(url.username),
+      udp: true,
+      network: params.type || 'tcp',
+      flow: params.flow || '',
+      'skip-cert-verify': params.allowInsecure === '1',
+    } as ProxyNode;
+
+    // Handle TLS
+    if (params.security === 'tls' || params.security === 'reality') {
+      config.tls = true;
+      config.servername = params.sni || '';
+    }
+
+    // Handle Reality
+    if (params.security === 'reality') {
+      config['reality-opts'] = {
+        'public-key': params.pbk || '',
+        'short-id': params.sid || '',
+      };
+      config['client-fingerprint'] = params.fp || 'chrome';
+    }
+
+    // WebSocket options
+    if (params.type === 'ws') {
+      config['ws-opts'] = {
+        path: params.path || '/',
+        headers: params.host ? { Host: params.host } : undefined,
+      };
+    }
+
+    // gRPC options
+    if (params.type === 'grpc') {
+      config['grpc-opts'] = {
+        'grpc-service-name': params.serviceName || params.service || '',
+      };
+    }
+
     return {
       name,
-      config: {
-        name,
-        type: 'vless',
-        server: url.hostname,
-        port: parseInt(url.port, 10),
-        uuid: decodeURIComponent(url.username),
-        udp: true,
-        network: params.type || 'tcp',
-        tls: params.security === 'tls',
-        'skip-cert-verify': params.allowInsecure === '1',
-        servername: params.sni || '',
-        flow: params.flow || '',
-        'ws-opts': params.type === 'ws' ? {
-          path: params.path || '/',
-          headers: params.host ? { Host: params.host } : undefined,
-        } : undefined,
-      } as ProxyNode,
+      config,
     };
   } catch {
     return null;

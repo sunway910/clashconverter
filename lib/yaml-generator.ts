@@ -227,7 +227,6 @@ function formatProxyJson(proxy: ProxyNode): string {
     case 'ss':
       obj.cipher = proxy.cipher || 'aes-256-gcm';
       obj.password = proxy.password;
-      obj.udp = proxy.udp ?? true;
       break;
 
     case 'ssr':
@@ -243,8 +242,10 @@ function formatProxyJson(proxy: ProxyNode): string {
       obj.uuid = proxy.uuid;
       obj.alterId = proxy.alterId || 0;
       obj.cipher = proxy.cipher || 'auto';
-      obj.udp = proxy.udp ?? true;
       obj.network = proxy.network || 'tcp';
+      if (proxy.tls !== undefined) obj.tls = proxy.tls;
+      if (proxy['skip-cert-verify'] !== undefined) obj['skip-cert-verify'] = proxy['skip-cert-verify'];
+      if (proxy.servername) obj.servername = proxy.servername;
       if (proxy['ws-opts']) {
         obj['ws-opts'] = proxy['ws-opts'];
       }
@@ -277,9 +278,16 @@ function formatProxyJson(proxy: ProxyNode): string {
       obj.uuid = proxy.uuid;
       obj.udp = proxy.udp ?? true;
       obj.network = proxy.network || 'tcp';
-      if (proxy.tls) obj.tls = proxy.tls;
+      if (proxy.tls !== undefined) obj.tls = proxy.tls;
+      if (proxy.servername) obj.servername = proxy.servername;
       if (proxy['skip-cert-verify']) obj['skip-cert-verify'] = proxy['skip-cert-verify'];
       if (proxy.flow) obj.flow = proxy.flow;
+      if (proxy['reality-opts']) {
+        obj['reality-opts'] = proxy['reality-opts'];
+      }
+      if (proxy['client-fingerprint']) {
+        obj['client-fingerprint'] = proxy['client-fingerprint'];
+      }
       if (proxy['ws-opts']) {
         obj['ws-opts'] = proxy['ws-opts'];
       }

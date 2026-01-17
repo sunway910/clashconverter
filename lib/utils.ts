@@ -22,9 +22,12 @@ export function base64Decode(str: string): string {
 }
 
 // Parse URL query parameters
+// Handles both formats: "key=value&key2=value2" and "url?key=value&key2=value2"
 export function parseUrlParams(url: string): Record<string, string> {
   const params: Record<string, string> = {};
-  const queryString = url.split('?')[1];
+  // If the string contains ?, split it and take the part after ?
+  // Otherwise, use the string as-is
+  const queryString = url.includes('?') ? url.split('?')[1] : url;
   if (!queryString) return params;
 
   queryString.split('&').forEach(param => {
