@@ -25,7 +25,9 @@
       "Bash(npm run lint)",
       "Bash(npx tsc:*)",
       "Bash(pnpm dev:*)",
-      "Bash(taskkill:*)"
+      "Bash(taskkill:*)",
+      "Bash(netstat:*)",
+      "Bash(xargs -I {} taskkill //F //PID:*)"
     ]
   }
 }

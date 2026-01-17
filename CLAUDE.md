@@ -4,17 +4,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**ClashConverter** (config2clash) is a client-side proxy configuration converter built with Next.js. It transforms various proxy protocols (SS, SSR, Vmess, Trojan, Hysteria, VLESS, HTTP, SOCKS5) into Clash YAML format.
+**ClashConverter** is a client-side proxy configuration converter built with Next.js. It transforms various proxy protocols (SS, SSR, Vmess, Trojan, Hysteria, VLESS, HTTP, SOCKS5) into Clash YAML format.
 
 **Key Design Principle**: Pure frontend static service - user inputs are never stored on backend servers for privacy. All processing happens client-side.
 
 ## Development Commands
 
 ```bash
-npm run dev      # Start development server
-npm run build    # Build for production
-npm start        # Start production server
-npm run lint     # Run ESLint
+pnpm dev      # Start development server
+pnpm build    # Build for production
+pnpm start        # Start production server
+pnpm run lint     # Run ESLint
 ```
 
 ## Technology Stack

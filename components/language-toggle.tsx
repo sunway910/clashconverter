@@ -2,18 +2,28 @@
 
 import * as React from 'react';
 import { Languages } from 'lucide-react';
-import { useLanguage, Language } from '@/components/language-provider';
+import { useLocale } from 'next-intl';
+import { usePathname, useRouter } from 'next/navigation';
 
 export function LanguageToggle() {
-  const { language, setLanguage } = useLanguage();
+  const locale = useLocale();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const toggleLanguage = () => {
+    const newLocale = locale === 'en' ? 'zh' : 'en';
+    // Replace the locale in the pathname
+    const newPathname = pathname.replace(`/${locale}`, `/${newLocale}`);
+    router.push(newPathname);
+  };
 
   return (
     <button
-      onClick={() => setLanguage(language === 'en' ? 'zh' : 'en')}
+      onClick={toggleLanguage}
       className="size-9 rounded-md border border-stone-200 dark:border-stone-800 bg-transparent hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors flex items-center justify-center text-sm font-medium"
       aria-label="Toggle language"
     >
-      {language === 'en' ? 'CN' : 'EN'}
+      {locale === 'en' ? 'EN' : 'CN'}
     </button>
   );
 }
