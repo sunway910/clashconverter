@@ -5,11 +5,12 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:cf": "next build && opennextjs-cloudflare",
-    "preview": "wrangler pages dev .open-next",
-    "deploy": "wrangler pages deploy .open-next",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "build:cf": "next build && opennextjs-cloudflare",
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
