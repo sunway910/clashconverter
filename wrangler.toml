@@ -12,9 +12,3 @@ main = ".open-next/worker.js"
 name = "clashconverter"
 compatibility_date = "2026-01-16"
 pages_build_output_dir = ".open-next"
-
-
-compatibility_flags = ["nodejs_compat"]
-[assets]
-directory = ".open-next/assets"
-binding = "__STATIC"
