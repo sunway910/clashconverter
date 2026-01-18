@@ -1,0 +1,11 @@
+# Cloudflare Workers/Pages configuration for Next.js with OpenNext
+# See: https://opennext.js.org/cloudflare
+
+name = "clashconverter"
+compatibility_date = "2024-01-01"
+pages_build_output_dir = ".open-next"
+
+# Environment variables (optional - can also be set in Cloudflare dashboard)
+# [vars]
+# NEXT_PUBLIC_GA_ID = ""
+# NEXT_PUBLIC_ADSENSE_ID = ""
