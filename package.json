@@ -5,6 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:cloudflare": "opennextjs-cloudflare",
+    "preview": "wrangler pages dev .open-next",
+    "deploy": "wrangler pages deploy .open-next",
     "start": "next start",
     "lint": "eslint"
   },
@@ -23,6 +26,8 @@
     "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {
+    "@opennextjs/cloudflare": "^1.14.9",
+    "wrangler": "^4.12.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

@@ -163,5 +163,12 @@ vite.config.ts.timestamp-*
 # vercel
 .vercel
 
+# cloudflare
+.wrangler
+.wrangler.toml
+
+# opennext
+.open-next
+
 # typescript
 next-env.d.ts
