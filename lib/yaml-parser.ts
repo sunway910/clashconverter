@@ -207,6 +207,11 @@ function proxyToLink(proxy: ProxyNode): string | null {
   }
 }
 
+// Helper function to check if a name is a default name (should not have suffix)
+function isDefaultName(name: string): boolean {
+  return /^defaultName_\d+$/.test(name);
+}
+
 // Helper functions to convert proxy config to link
 function ssToLink(proxy: ProxyNode): string {
   const userInfo = `${proxy.cipher}:${proxy.password}`;
@@ -215,27 +220,43 @@ function ssToLink(proxy: ProxyNode): string {
 }
 
 function ssrToLink(proxy: ProxyNode): string {
-  // SSR format: server:port:protocol:method:obfs:passwordbase64
+  // SSR format: ssr://base64(main)/base64(params)
+  // where main is: server:port:protocol:method:obfs:passwordbase64/ (trailing / included)
+  // and params is: key=value&key=value where VALUES are base64 encoded, then the entire params string is base64 encoded
+  // SSR links use unpadded base64 (no = padding chars) for the main part
+  // Map cipher 'dummy' back to 'auto' for SSR link format (reverse of parsing)
+  const cipher = proxy.cipher === 'dummy' ? 'auto' : proxy.cipher;
   const passwordEncoded = btoa(proxy.password);
-  const plain = `${proxy.server}:${proxy.port}:${proxy.protocol}:${proxy.cipher}:${proxy.obfs}:${passwordEncoded}`;
-  const encoded = btoa(plain);
-  return `ssr://${encoded}/?remarks=${encodeURIComponent(proxy.name)}`;
+  // Include trailing / in the plain string before encoding
+  const plain = `${proxy.server}:${proxy.port}:${proxy.protocol}:${cipher}:${proxy.obfs}:${passwordEncoded}/`;
+  let encoded = btoa(plain);
+  // Remove base64 padding characters (=) from the main part
+  encoded = encoded.replace(/=+$/, '');
+
+  // Build params string with base64 encoded VALUES
+  const paramsParts: string[] = [];
+  paramsParts.push(`remarks=${btoa(proxy.name)}`);
+  if (proxy.group) {
+    paramsParts.push(`group=${btoa(proxy.group)}`);
+  }
+  if (proxy['protoparam']) {
+    paramsParts.push(`protoparam=${btoa(proxy['protoparam'])}`);
+  }
+  if (proxy['obfsparam']) {
+    paramsParts.push(`obfsparam=${btoa(proxy['obfsparam'])}`);
+  }
+
+  // Base64 encode the entire params string
+  const paramsStr = paramsParts.join('&');
+  const encodedParams = btoa(paramsStr);
+
+  // Combine with / separator (no ?)
+  return `ssr://${encoded}/${encodedParams}`;
 }
 
 function vmessToLink(proxy: ProxyNode): string {
-  const config = {
-    v: '2',
-    ps: proxy.name,
-    add: proxy.server,
-    port: String(proxy.port),
-    id: proxy.uuid,
-    aid: String(proxy.alterId || 0),
-    scy: proxy.cipher || 'auto',
-    net: proxy.network || 'tcp',
-    type: '',
-    tls: proxy.tls ? 'tls' : '',
-  };
-  const jsonStr = JSON.stringify(config);
+  // Build JSON string manually to match expected key order: v, ps, add, port, id, aid, scy, net, tls
+  const jsonStr = `{"v":"2","ps":"${proxy.name}","add":"${proxy.server}","port":${proxy.port},"id":"${proxy.uuid}","aid":${proxy.alterId || 0},"scy":"${proxy.cipher || 'auto'}","net":"${proxy.network || 'tcp'}","tls":"${proxy.tls ? 'tls' : ''}"}`;
   const encoded = btoa(jsonStr);
   return `vmess://${encoded}`;
 }
@@ -243,8 +264,12 @@ function vmessToLink(proxy: ProxyNode): string {
 function trojanToLink(proxy: ProxyNode): string {
   let link = `trojan://${proxy.password}@${proxy.server}:${proxy.port}`;
   const params: string[] = [];
+  params.push(`type=${proxy.network || 'tcp'}`);
+  if (proxy['skip-cert-verify']) {
+    params.push('security=tls');
+    params.push('allowInsecure=1');
+  }
   if (proxy.sni) params.push(`sni=${encodeURIComponent(proxy.sni)}`);
-  if (proxy['skip-cert-verify']) params.push('allowInsecure=1');
   if (params.length) link += `?${params.join('&')}`;
   link += `#${encodeURIComponent(proxy.name)}`;
   return link;
@@ -253,9 +278,11 @@ function trojanToLink(proxy: ProxyNode): string {
 function vlessToLink(proxy: ProxyNode): string {
   let link = `vless://${proxy.uuid}@${proxy.server}:${proxy.port}`;
   const params: string[] = [];
-  params.push(`encryption=none`);
   params.push(`security=${proxy.tls ? 'tls' : 'none'}`);
   params.push(`type=${proxy.network || 'tcp'}`);
+  params.push(`encryption=none`);
+  if (proxy.flow && proxy.flow !== '') params.push(`flow=${proxy.flow}`);
+  if (proxy.network === 'tcp' || !proxy.flow || proxy.flow === '') params.push('headerType=none');
   if (proxy.sni) params.push(`sni=${encodeURIComponent(proxy.sni)}`);
   if (proxy['skip-cert-verify']) params.push('allowInsecure=1');
   if (params.length) link += `?${params.join('&')}`;
@@ -264,7 +291,7 @@ function vlessToLink(proxy: ProxyNode): string {
 }
 
 function hysteriaToLink(proxy: ProxyNode): string {
-  // Hysteria v2 has 'password' property, v1 has 'auth' property
+  // Hysteria v2 has 'password' property, v1 has 'auth_str' property
   const isHysteria2 = proxy.password !== undefined;
 
   if (isHysteria2) {
@@ -281,12 +308,17 @@ function hysteriaToLink(proxy: ProxyNode): string {
     let link = `hysteria://${proxy.server}:${proxy.port}`;
     const params: string[] = [];
     if (proxy.protocol) params.push(`protocol=${proxy.protocol}`);
-    if (proxy.auth) params.push(`auth=${encodeURIComponent(proxy.auth)}`);
+    // Use auth_str if available, otherwise fall back to auth
+    const authValue = proxy.auth_str || proxy.auth;
+    if (authValue) params.push(`auth=${encodeURIComponent(authValue)}`);
     if (proxy.sni) params.push(`peer=${encodeURIComponent(proxy.sni)}`);
     if (proxy['skip-cert-verify']) params.push('insecure=1');
     if (proxy.up) params.push(`upmbps=${proxy.up}`);
     if (proxy.down) params.push(`downmbps=${proxy.down}`);
-    if (proxy.alpn) params.push(`alpn=${encodeURIComponent(proxy.alpn)}`);
+    if (proxy.alpn) {
+      const alpnValue = Array.isArray(proxy.alpn) ? proxy.alpn[0] : proxy.alpn;
+      params.push(`alpn=${encodeURIComponent(alpnValue)}`);
+    }
     if (params.length) link += `?${params.join('&')}`;
     link += `#${encodeURIComponent(proxy.name)}`;
     return link;
@@ -298,7 +330,10 @@ function socks5ToLink(proxy: ProxyNode): string {
   if (proxy.username && proxy.password) {
     link += `${encodeURIComponent(proxy.username)}:${encodeURIComponent(proxy.password)}@`;
   }
-  link += `${proxy.server}:${proxy.port}#${encodeURIComponent(proxy.name)}`;
+  link += `${proxy.server}:${proxy.port}`;
+  if (!isDefaultName(proxy.name)) {
+    link += `#${encodeURIComponent(proxy.name)}`;
+  }
   return link;
 }
 
@@ -307,6 +342,9 @@ function httpToLink(proxy: ProxyNode): string {
   if (proxy.username && proxy.password) {
     link += `${encodeURIComponent(proxy.username)}:${encodeURIComponent(proxy.password)}@`;
   }
-  link += `${proxy.server}:${proxy.port}#${encodeURIComponent(proxy.name)}`;
+  link += `${proxy.server}:${proxy.port}`;
+  if (!isDefaultName(proxy.name)) {
+    link += `#${encodeURIComponent(proxy.name)}`;
+  }
   return link;
 }

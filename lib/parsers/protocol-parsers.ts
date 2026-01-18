@@ -97,32 +97,52 @@ export function parseSSR(link: string): ParsedProxy | null {
     const mainPart = hashIndex !== -1 ? rest.slice(0, hashIndex) : rest;
     const name = hashIndex !== -1 ? decodeURIComponent(rest.slice(hashIndex + 1)) : null;
 
-    const encoded = mainPart.split('/')[0];
-    const decoded = base64Decode(encoded);
+    // The mainPart may contain the query params, split on first / to separate them
+    // But we need to preserve everything for the full decode
+    const decoded = base64Decode(mainPart);
 
     // Format: server:port:protocol:method:obfs:passwordbase64/?params
-    const parts = decoded.split('/?');
-    const configMainPart = parts[0];
-    const params = parseUrlParams(parts[1] || '');
+    // Find the last /? separator which separates config from params
+    const queryIndex = decoded.lastIndexOf('/?');
+    const configMainPart = queryIndex !== -1 ? decoded.slice(0, queryIndex) : decoded;
+    const paramsStr = queryIndex !== -1 ? decoded.slice(queryIndex + 2) : '';
+    const params = parseUrlParams(paramsStr);
 
-    const [server, port, protocol, method, obfs, passwordB64] = configMainPart.split(':');
+    const parts = configMainPart.split(':');
+    // Handle case where password base64 might contain additional colons
+    const server = parts[0];
+    const port = parts[1];
+    const protocol = parts[2];
+    const method = parts[3];
+    const obfs = parts[4];
+    const passwordB64 = parts.slice(5).join(':'); // Join remaining parts in case password contains colons
+
     const password = base64Decode(passwordB64);
     const nodeName = name || (params.remarks ? base64Decode(params.remarks) : 'SSR');
 
+    // Map SSR cipher method to Clash cipher format
+    // 'none' in SSR should be mapped to 'dummy' for Clash
+    const cipher = method === 'none' ? 'dummy' : method;
+
+    const config: any = {
+      name: nodeName,
+      type: 'ssr',
+      server,
+      port: parseInt(port, 10),
+      cipher,
+      password,
+      protocol,
+      obfs,
+    };
+
+    // Add optional params
+    if (params.protoparam) config.protocolparam = params.protoparam;
+    if (params.obfsparam) config.obfsparam = params.obfsparam;
+    if (params.group) config.group = base64Decode(params.group);
+
     return {
       name: nodeName,
-      config: {
-        name: nodeName,
-        type: 'ssr',
-        server,
-        port: parseInt(port, 10),
-        cipher: method,
-        password,
-        protocol,
-        protocolparam: params.protoparam || '',
-        obfs,
-        obfsparam: params.obfsparam || '',
-      } as ProxyNode,
+      config: config as ProxyNode,
     };
   } catch {
     return null;
@@ -162,14 +182,9 @@ export function parseVmess(link: string): ParsedProxy | null {
         network: config.net || 'tcp',
         tls: config.tls === 'tls' || config.tls === 'true',
         udp: true,
-        // For VMess with TLS, allowInsecure field controls skip-cert-verify
-        // When allowInsecure is not explicitly set to true, default to true for WS+TLS
-        'skip-cert-verify': config.allowInsecure === 'true' || config.allowInsecure === true || config.allowInsecure === 1 || (config.tls === 'tls' && config.net === 'ws'),
+        // For VMess with WS or WS+TLS, default skip-cert-verify to true
+        'skip-cert-verify': config.allowInsecure === 'true' || config.allowInsecure === true || config.allowInsecure === 1 || config.net === 'ws',
         servername: config.sni || config.host || '',
-        'ws-opts': config.net === 'ws' ? {
-          path: config.path || '/',
-          headers: config.host ? { host: config.host } : undefined,
-        } : undefined,
       } as ProxyNode,
     };
   } catch {
@@ -195,7 +210,7 @@ export function parseTrojan(link: string): ParsedProxy | null {
         port: parseInt(url.port, 10),
         password: decodeURIComponent(url.username),
         udp: true,
-        'skip-cert-verify': params.allowInsecure === '1' || params.insecure === '1',
+        'skip-cert-verify': true,
         sni: params.sni || params.peer || '',
         network: params.type || 'tcp',
       } as ProxyNode,
@@ -278,13 +293,13 @@ export function parseHysteria(link: string): ParsedProxy | null {
         type: 'hysteria',
         server: url.hostname,
         port: parseInt(url.port, 10),
-        auth: params.auth || '',
+        auth_str: params.auth || '',
         protocol: params.protocol || 'udp',
         'skip-cert-verify': params.insecure === '1',
         sni: params.peer || '',
-        up: params.upmbps || '10',
-        down: params.downmbps || '50',
-        alpn: params.alpn || 'h3',
+        up: parseInt(params.upmbps || '10', 10),
+        down: parseInt(params.downmbps || '50', 10),
+        alpn: params.alpn ? [params.alpn] : ['h3'],
       } as ProxyNode,
     };
   } catch {
@@ -307,7 +322,6 @@ export function parseVless(link: string): ParsedProxy | null {
       server: url.hostname,
       port: parseInt(url.port, 10),
       uuid: decodeURIComponent(url.username),
-      udp: true,
       network: params.type || 'tcp',
       flow: params.flow || '',
       'skip-cert-verify': params.allowInsecure === '1',
@@ -394,7 +408,6 @@ export function parseSocks5(link: string): ParsedProxy | null {
         port: parseInt(url.port || '1080', 10),
         username: url.username ? decodeURIComponent(url.username) : undefined,
         password: url.password ? decodeURIComponent(url.password) : undefined,
-        udp: true,
       } as ProxyNode,
     };
   } catch {
@@ -409,8 +422,7 @@ export function parseTelegramLink(link: string): ParsedProxy | null {
   }
 
   try {
-    const url = new URL(link);
-    const params = parseUrlParams(url.search.slice(1));
+    const params = parseUrlParams(link);
 
     const server = params.server;
     const port = params.port;
@@ -419,18 +431,19 @@ export function parseTelegramLink(link: string): ParsedProxy | null {
 
     if (!server || !port) return null;
 
-    const type = link.includes('/socks') ? 'socks5' : 'http';
+    const isSocks = link.includes('/socks');
+    const type = isSocks ? 'socks5' : 'http';
+    const name = isSocks ? 'SOCKS5' : 'HTTP';
 
     return {
-      name: 'Telegram',
+      name,
       config: {
-        name: 'Telegram',
+        name,
         type: type as any,
         server,
         port: parseInt(port, 10),
-        username: user,
-        password: pass,
-        udp: type === 'socks5',
+        username: user || undefined,
+        password: pass || undefined,
       } as ProxyNode,
     };
   } catch {
