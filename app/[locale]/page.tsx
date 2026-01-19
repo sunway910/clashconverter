@@ -1,6 +1,7 @@
 import { Converter } from '@/components/converter';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { LanguageToggle } from '@/components/language-toggle';
+import { SEOContent } from '@/components/seo-content';
 import Image from 'next/image';
 
 export default function Home() {
@@ -17,7 +18,10 @@ export default function Home() {
           </div>
         </div>
       </header>
-      <Converter />
+      <div id="converter">
+        <Converter />
+      </div>
+      <SEOContent />
     </div>
   );
 }

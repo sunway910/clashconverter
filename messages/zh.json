@@ -64,5 +64,86 @@
   "downloadFilename": {
     "proxies-to-yaml": "clash-config.yaml",
     "yaml-to-proxies": "proxies.txt"
+  },
+  "seoContent": {
+    "title": "免费在线 Clash 转换器 - 代理链接转 Clash YAML 配置",
+    "intro": "ClashConverter 是一个免费的在线工具，可以将各种代理协议（SS、SSR、VMess、Trojan、Hysteria、VLESS、HTTP、SOCKS5）转换为 Clash YAML 配置格式，支持 Clash Meta (Mihomo) 和 Clash Premium 内核，是功能强大的代理转 Clash 工具。",
+    "privacy": "所有转换都直接在您的浏览器中进行 - 您的代理配置永远不会上传到任何服务器，确保完全的隐私和安全。这使得我们的 Clash 转换器成为转换敏感代理配置的最安全选择。",
+    "features": {
+      "title": "我们 Clash 转换器的核心功能",
+      "items": [
+        "支持 9 种代理协议：SS、SSR、VMess、VLESS、Trojan、Hysteria、Hysteria2、HTTP、SOCKS5",
+        "即时将代理链接转换为 Clash YAML 格式",
+        "将 Clash YAML 转换回可分享的代理链接",
+        "支持 Clash Meta (Mihomo) 和 Clash Premium 内核",
+        "客户端处理 - 无需上传服务器",
+        "批量转换 - 一次处理多个代理链接",
+        "自动生成代理组和优化规则",
+        "移动友好设计 - 适用于所有设备",
+        "完全免费，无限制，无需注册"
+      ]
+    },
+    "protocols": {
+      "title": "支持的代理协议",
+      "items": [
+        { "name": "Shadowsocks (SS)", "desc": "将 SS 链接转换为 Clash 格式 - 支持 AES、chacha20 等加密方式" },
+        { "name": "ShadowsocksR (SSR)", "desc": "转换带有 protocol、obfs 等自定义参数的 SSR 链接" },
+        { "name": "VMess", "desc": "转换 V2Ray 和 V2RayN 客户端常用的 VMess 链接" },
+        { "name": "VLESS", "desc": "转换 VLESS 链接 - Clash Meta/Mihomo 支持的轻量级协议" },
+        { "name": "Trojan", "desc": "转换带有 TLS 认证的 Trojan 链接" },
+        { "name": "Hysteria", "desc": "转换带有 QUIC 协议支持的 Hysteria v1 链接" },
+        { "name": "Hysteria2", "desc": "转换 Hysteria2 链接 - 性能提升的最新版本" },
+        { "name": "HTTP 代理", "desc": "转换带有用户名和密码认证的 HTTP/HTTPS 代理链接" },
+        { "name": "SOCKS5", "desc": "转换带或不带认证的 SOCKS5 代理链接" }
+      ]
+    },
+    "howToUse": {
+      "title": "如何使用我们的 Clash 转换器",
+      "steps": [
+        { "title": "粘贴您的代理链接", "desc": "在输入框中输入您的代理链接。每个链接应单独一行。支持的格式包括 ss://、ssr://、vmess://、vless://、trojan://、hysteria://、hysteria2://、http:// 和 socks5://" },
+        { "title": "选择内核类型", "desc": "在 Clash Meta (Mihomo) 完整协议支持或 Clash Premium 遗留兼容性之间选择。Clash Meta 支持 VLESS、Hysteria 和 Hysteria2，而 Clash Premium 不支持。" },
+        { "title": "转换和下载", "desc": "点击转换按钮，您的 Clash YAML 配置将立即生成。然后您可以下载配置文件或将其复制到剪贴板。" }
+      ]
+    },
+    "kernelComparison": {
+      "title": "Clash Meta (Mihomo) vs Clash Premium",
+      "meta": {
+        "title": "Clash Meta (Mihomo) - 推荐",
+        "description": "积极维护的 Clash 延续版本，支持所有现代代理协议。",
+        "features": [
+          "支持 VLESS、Hysteria、Hysteria2",
+          "定期更新和错误修复",
+          "Clash Verge、Clash Nyanpasu 使用",
+          "最适合新配置"
+        ]
+      },
+      "premium": {
+        "title": "Clash Premium - 仅限遗留",
+        "description": "原始 Clash 内核。自 2023 年以来不再积极维护。",
+        "features": [
+          "不支持 VLESS/Hysteria/Hysteria2",
+          "稳定但已过时",
+          "仅限遗留兼容性",
+          "仅在客户端要求时使用"
+        ]
+      }
+    },
+    "faq": {
+      "title": "常见问题",
+      "items": [
+        { "q": "什么是 Clash 转换器？", "a": "Clash 转换器是一个免费的在线工具，可以将各种代理协议（SS、SSR、VMess、Trojan、Hysteria、VLESS、HTTP、SOCKS5）转换为 Clash YAML 配置格式。它支持 Clash Meta (Mihomo) 和 Clash Premium 内核。" },
+        { "q": "Clash 转换器安全吗？", "a": "是的，Clash 转换器完全安全且注重隐私。所有转换都在您的浏览器客户端进行。您的代理配置永远不会上传到任何服务器，确保完全的隐私和安全。" },
+        { "q": "支持哪些代理协议？", "a": "Clash 转换器支持 9 种代理协议：Shadowsocks (SS)、ShadowsocksR (SSR)、VMess、VLESS、Trojan、Hysteria、Hysteria2、HTTP 和 SOCKS5。可以双向转换到和从 Clash YAML 格式。" },
+        { "q": "Clash Meta 和 Clash Premium 有什么区别？", "a": "Clash Meta (Mihomo) 是积极维护的版本，支持所有现代协议，包括 VLESS、Hysteria 和 Hysteria2。Clash Premium 是原始内核，不再维护，不支持这些新协议。" },
+        { "q": "如何将代理链接转换为 Clash 格式？", "a": "只需将您的代理链接（每行一个）粘贴到输入框中。每个链接应采用 ss://base64#name、vmess://base64#name 等格式。点击「转换」按钮，Clash YAML 配置将立即生成。" },
+        { "q": "我可以将 Clash YAML 转换回代理链接吗？", "a": "可以！点击「切换方向」按钮，从「代理转 YAML」模式切换到「YAML 转代理」模式。粘贴您的 Clash YAML 配置，工具将提取所有代理节点并转换回可分享的链接。" },
+        { "q": "为什么应该使用这个 Clash 转换器？", "a": "我们的 Clash 转换器提供最全面的协议支持，完全在浏览器中工作以保护隐私，没有限制或注册要求，并定期更新以支持最新的代理协议。" },
+        { "q": "这适用于 Clash Verge 和其他客户端吗？", "a": "是的！YAML 输出与所有基于 Clash 的客户端兼容，包括 Clash Verge、Clash Nyanpasu、Clash for Android、Clash for Windows 以及其他使用 Clash Meta (Mihomo) 或 Clash Premium 内核的客户端。" }
+      ]
+    },
+    "cta": {
+      "text": "准备好将您的代理链接转换为 Clash 格式了吗？",
+      "button": "立即开始转换"
+    }
   }
 }

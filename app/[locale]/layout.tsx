@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
 import { GoogleAnalytics } from "@/components/google-analytics";
 import { GoogleAdSense } from "@/components/google-adsense";
+import { generateMetadata as generateSEOMetadata, JSONLDStructuredData, HreflangLinks, PerformancePreconnects } from "@/components/seo-head";
 import "../globals.css";
 
 const geistSans = Geist({
@@ -21,17 +22,25 @@ const geistMono = Geist_Mono({
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 const ADSENSE_ID = process.env.NEXT_PUBLIC_ADSENSE_ID;
 
-export const metadata: Metadata = {
-  title: "Clash Converter - Proxy Configuration Converter",
-  description: "Convert various proxy protocols (SS, SSR, Vmess, Trojan, Hysteria, VLESS, HTTP, SOCKS5) to Clash YAML format",
-  icons: {
-    icon: [
-      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
-      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
-    ],
-    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
-  },
-};
+/**
+ * Generate SEO-optimized metadata for each locale
+ */
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+
+  const baseMetadata: Metadata = {
+    icons: {
+      icon: [
+        { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+        { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      ],
+      apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+    },
+    ...generateSEOMetadata({ locale })
+  };
+
+  return baseMetadata;
+}
 
 type Props = {
   children: React.ReactNode;
@@ -52,6 +61,9 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <head>
+        <PerformancePreconnects />
+        <HreflangLinks locale={locale} />
+        <JSONLDStructuredData locale={locale} type="all" />
         {ADSENSE_ID && <meta name="google-adsense-account" content={ADSENSE_ID} />}
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
