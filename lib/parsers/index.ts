@@ -1,9 +1,18 @@
 import { ParsedProxy, ProxyNode } from '../types';
 import { parseSS, parseSSR, parseVmess, parseTrojan, parseHysteria, parseHysteria2, parseVless, parseHttp, parseSocks5, parseTelegramLink } from './protocol-parsers';
 
+// js-set-map-lookups: Use Set for O(1) protocol lookups instead of Array.includes()
+const KNOWN_PROTOCOLS = new Set(['ss', 'ssr', 'vmess', 'trojan', 'hysteria', 'hysteria2', 'vless', 'http', 'https', 'socks', 'socks5']);
+
+// js-set-map-lookups: Use Set for O(1) supported protocol lookups
+const SUPPORTED_PROTOCOLS = new Set(['ss', 'ssr', 'vmess', 'trojan', 'hysteria', 'hysteria2', 'vless', 'http', 'https', 'socks', 'socks5']);
+
+// js-hoist-regexp: Hoist RegExp outside function for reuse
+const TELEGRAM_LINK_REGEX = /^https:\/\/t\.me\/(socks|http)/;
+
 // Helper function to check if a link is a Telegram proxy link
 function isTelegramLink(link: string): boolean {
-  return link.startsWith('https://t.me/socks') || link.startsWith('https://t.me/http');
+  return TELEGRAM_LINK_REGEX.test(link);
 }
 
 export function parseProxyLink(link: string): ParsedProxy | null {
@@ -12,7 +21,7 @@ export function parseProxyLink(link: string): ParsedProxy | null {
 
   // Check protocol prefix (case-insensitive) but keep original casing for base64 content
   const protocol = link.split(':')[0].toLowerCase();
-  const hasKnownProtocol = ['ss', 'ssr', 'vmess', 'trojan', 'hysteria', 'hysteria2', 'vless', 'http', 'https', 'socks', 'socks5'].includes(protocol);
+  const hasKnownProtocol = KNOWN_PROTOCOLS.has(protocol);
 
   // If it has a known protocol, only lowercase the protocol part
   if (hasKnownProtocol && link.includes('://')) {
@@ -51,9 +60,6 @@ export function parseMultipleProxies(input: string): { proxies: ProxyNode[]; uns
   const lines = input.split(/[\r\n]+/).filter(line => line.trim());
   const proxies: ProxyNode[] = [];
   const unsupported: string[] = [];
-
-  // Supported protocol types
-  const supportedProtocols = ['ss', 'ssr', 'vmess', 'trojan', 'hysteria', 'hysteria2', 'vless', 'http', 'https', 'socks', 'socks5'];
 
   // Track name occurrences for duplicate handling
   const nameCount = new Map<string, number>();
@@ -98,8 +104,8 @@ export function parseMultipleProxies(input: string): { proxies: ProxyNode[]; uns
       // Check if it looks like a proxy link (has ://) but failed to parse
       if (line.includes('://')) {
         const protocol = line.split(':')[0].toLowerCase().trim();
-        // Only report if it has a protocol prefix that's not in our supported list
-        if (protocol && !supportedProtocols.includes(protocol)) {
+        // js-set-map-lookups: Use Set.has() for O(1) lookup instead of Array.includes()
+        if (protocol && !SUPPORTED_PROTOCOLS.has(protocol)) {
           unsupported.push(protocol);
         }
       }

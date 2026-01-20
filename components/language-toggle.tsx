@@ -12,10 +12,13 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
+// js-index-maps: Use Map for O(1) language lookups instead of Array.find()
 const languages = [
   { value: 'en', label: 'English', nativeLabel: 'English' },
   { value: 'zh', label: 'Simplified Chinese', nativeLabel: '简体中文' },
 ];
+
+const LANGUAGE_MAP = new Map(languages.map(lang => [lang.value, lang]));
 
 export function LanguageToggle() {
   const locale = useLocale();
@@ -23,7 +26,8 @@ export function LanguageToggle() {
   const pathname = usePathname();
   const [open, setOpen] = React.useState(false);
 
-  const currentLanguage = languages.find((lang) => lang.value === locale);
+  // js-index-maps: Use Map.get() for O(1) lookup instead of Array.find()
+  const currentLanguage = LANGUAGE_MAP.get(locale);
 
   const handleValueChange = (newLocale: string) => {
     const newPathname = pathname.replace(`/${locale}`, `/${newLocale}`);

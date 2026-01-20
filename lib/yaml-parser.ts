@@ -1,5 +1,17 @@
 import { ProxyNode } from './types';
 
+// js-index-maps: Use Map for O(1) lookups instead of switch statement
+const PROXY_LINK_GENERATORS = new Map<string, (proxy: ProxyNode) => string | null>([
+  ['ss', ssToLink],
+  ['ssr', ssrToLink],
+  ['vmess', vmessToLink],
+  ['trojan', trojanToLink],
+  ['vless', vlessToLink],
+  ['hysteria', hysteriaToLink],
+  ['socks5', socks5ToLink],
+  ['http', httpToLink],
+]);
+
 // Parse Clash YAML to extract proxy nodes
 export function parseYamlToProxies(yaml: string): ProxyNode[] {
   const lines = yaml.split('\n');
@@ -184,27 +196,10 @@ export function proxiesToLinks(proxies: ProxyNode[]): string[] {
 }
 
 // Convert a single proxy to its link format
+// js-index-maps: Use Map.get() for O(1) lookup instead of switch statement
 function proxyToLink(proxy: ProxyNode): string | null {
-  switch (proxy.type) {
-    case 'ss':
-      return ssToLink(proxy);
-    case 'ssr':
-      return ssrToLink(proxy);
-    case 'vmess':
-      return vmessToLink(proxy);
-    case 'trojan':
-      return trojanToLink(proxy);
-    case 'vless':
-      return vlessToLink(proxy);
-    case 'hysteria':
-      return hysteriaToLink(proxy);
-    case 'socks5':
-      return socks5ToLink(proxy);
-    case 'http':
-      return httpToLink(proxy);
-    default:
-      return null;
-  }
+  const generator = PROXY_LINK_GENERATORS.get(proxy.type);
+  return generator ? generator(proxy) : null;
 }
 
 // Helper function to check if a name is a default name (should not have suffix)
