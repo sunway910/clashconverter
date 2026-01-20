@@ -23,7 +23,6 @@ function setHeader(lines: string[], nodeCount: number): void {
 function setProxyGroups(lines: string[], proxyNames: string[]): void {
   lines.push('');
   lines.push('proxy-groups:');
-
   for (const group of PROXY_GROUPS_CONFIG) {
     lines.push(`  - name: ${group.name}`);
     lines.push(`    type: ${group.type}`);
@@ -52,6 +51,7 @@ function setProxyGroups(lines: string[], proxyNames: string[]): void {
 
 // Generate DNS configuration
 function setDnsConfig(lines: string[]): void {
+  lines.push('');
   lines.push(...DNS_CONFIG);
 }
 
@@ -95,7 +95,6 @@ export function generateSimpleYaml(proxies: ProxyNode[]): string {
   setDnsConfig(lines);
 
   // Add rules section
-  lines.push('');
   lines.push(CLASH_RULES);
 
   return lines.join('\n');
