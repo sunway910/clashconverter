@@ -1,8 +1,9 @@
 'use client';
 
 import * as React from 'react';
-import Editor from '@monaco-editor/react';
+import dynamic from 'next/dynamic';
 import { useTheme } from 'next-themes';
+import { Loader2 } from 'lucide-react';
 
 interface PreviewEditorProps {
   value: string;
@@ -10,8 +11,21 @@ interface PreviewEditorProps {
   height?: string;
   onChange?: (value: string) => void;
   placeholder?: string;
-  key?: string; // Force remount on key change
+  key?: string;
 }
+
+// Dynamically import Monaco Editor to avoid Cloudflare Workers build issues
+const Editor = dynamic(
+  () => import('@monaco-editor/react').then(mod => ({ default: mod.Editor })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex items-center justify-center h-full py-20">
+        <Loader2 className="w-6 h-6 text-stone-500 animate-spin" />
+      </div>
+    ),
+  }
+);
 
 export function PreviewEditor({
   value,
@@ -48,7 +62,7 @@ export function PreviewEditor({
         theme={monacoTheme}
         onChange={onChange ? (val) => onChange(val || '') : undefined}
         options={{
-          readOnly: !onChange, // Only read-only if no onChange handler
+          readOnly: !onChange,
           minimap: { enabled: false },
           scrollBeyondLastLine: false,
           renderLineHighlight: 'all',
@@ -77,11 +91,6 @@ export function PreviewEditor({
           hideCursorInOverviewRuler: true,
           overviewRulerBorder: false,
         }}
-        loading={
-          <div className="flex items-center justify-center h-full py-20">
-            <div className="text-stone-500 text-sm">Loading editor...</div>
-          </div>
-        }
       />
     </div>
   );
