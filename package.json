@@ -13,16 +13,9 @@
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy"
   },
-  "browser": {
-    "@swc/wasm": false,
-    "@swc/core-linux-x64-musl": false,
-    "@swc/core-linux-x64-gnu": false,
-    "@swc/core-darwin-x64": false,
-    "@swc/core-darwin-arm64": false,
-    "@swc/core-win32-x64-msvc": false
-  },
   "dependencies": {
     "@codemirror/autocomplete": "^6.20.0",
+    "@opennextjs/cloudflare": "^1.14.9",
     "@codemirror/commands": "^6.10.1",
     "@codemirror/lang-json": "^6.0.2",
     "@codemirror/lang-yaml": "^6.1.2",
@@ -49,7 +42,7 @@
     "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {
-    "@opennextjs/cloudflare": "^1.15.0",
+    "@opennextjs/cloudflare": "^1.14.9",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

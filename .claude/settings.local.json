@@ -33,7 +33,11 @@
       "Bash(pnpm build:cf:*)",
       "Bash(pnpm build:*)",
       "Bash(pnpm lint:*)",
-      "Bash(pnpm run lint:*)"
+      "Bash(pnpm run lint:*)",
+      "Bash(find:*)",
+      "Bash(pnpm ls:*)",
+      "Bash(pnpm why:*)",
+      "Bash(pnpm exec opennextjs-cloudflare:*)"
     ]
   }
 }
