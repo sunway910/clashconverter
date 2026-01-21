@@ -13,6 +13,14 @@
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy"
   },
+  "browser": {
+    "@swc/wasm": false,
+    "@swc/core-linux-x64-musl": false,
+    "@swc/core-linux-x64-gnu": false,
+    "@swc/core-darwin-x64": false,
+    "@swc/core-darwin-arm64": false,
+    "@swc/core-win32-x64-msvc": false
+  },
   "dependencies": {
     "@codemirror/autocomplete": "^6.20.0",
     "@codemirror/commands": "^6.10.1",
@@ -26,7 +34,6 @@
     "@codemirror/view": "^6.39.11",
     "@lezer/common": "^1.5.0",
     "@lezer/highlight": "^1.2.3",
-    "@opennextjs/cloudflare": "^1.14.9",
     "@radix-ui/react-accordion": "^1.2.12",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-hover-card": "^1.1.15",
@@ -42,7 +49,7 @@
     "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {
-    "@opennextjs/cloudflare": "^1.14.9",
+    "@opennextjs/cloudflare": "^1.15.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
