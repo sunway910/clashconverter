@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@codemirror/autocomplete": "^6.20.0",
+    "@opennextjs/cloudflare": "1.14.9",
     "@codemirror/commands": "^6.10.1",
     "@codemirror/lang-json": "^6.0.2",
     "@codemirror/lang-yaml": "^6.1.2",
@@ -41,12 +42,12 @@
     "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {
-    "@opennextjs/cloudflare": "^1.15.0",
+    "@opennextjs/cloudflare": "1.14.9",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "autoprefixer": "^10.4.23",
-    "eslint": "^9",
+    "eslint": "^9.7",
     "eslint-config-next": "16.1.1",
     "postcss": "^8.5.6",
     "tailwindcss": "^3",
