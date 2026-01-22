@@ -3,7 +3,7 @@
 'use client';
 
 import * as React from 'react';
-import { EditorState, Compartment } from '@codemirror/state';
+import { EditorState, Compartment, StateEffect } from '@codemirror/state';
 import {
   EditorView,
   keymap,
@@ -26,6 +26,7 @@ import { json } from '@codemirror/lang-json';
 import { yaml } from '@codemirror/lang-yaml';
 import { tags as t } from '@lezer/highlight';
 import { useTheme } from 'next-themes';
+import { toast } from 'sonner';
 
 // ============================================================================
 // Type Definitions
@@ -38,6 +39,7 @@ interface PreviewEditorProps {
   onChange?: (value: string) => void;
   placeholder?: string;
   key?: string;
+  debounceMs?: number;
 }
 
 type LanguageType = 'json' | 'yaml' | 'plaintext';
@@ -88,17 +90,117 @@ const LIGHT_HIGHLIGHT_COLORS = {
 } as const;
 
 // ============================================================================
-// Memoized Style Creators
+// LRU Cache Implementation
 // ============================================================================
 
-/**
- * Cached highlight styles to avoid recreation on every render
- */
-const highlightStyleCache = new Map<ThemeMode, ReturnType<typeof HighlightStyle.define>>();
+interface LRUCacheNode<K, V> {
+  key: K;
+  value: V;
+  prev: LRUCacheNode<K, V> | null;
+  next: LRUCacheNode<K, V> | null;
+}
 
-/**
- * Creates or retrieves a cached highlight style for the given theme
- */
+class LRUCache<K, V> {
+  private capacity: number;
+  private cache: Map<K, LRUCacheNode<K, V>>;
+  private head: LRUCacheNode<K, V> | null;
+  private tail: LRUCacheNode<K, V> | null;
+
+  constructor(capacity: number) {
+    this.capacity = capacity;
+    this.cache = new Map();
+    this.head = null;
+    this.tail = null;
+  }
+
+  get(key: K): V | undefined {
+    const node = this.cache.get(key);
+    if (!node) return undefined;
+
+    // Move to head (most recently used)
+    this.moveToHead(node);
+    return node.value;
+  }
+
+  set(key: K, value: V): void {
+    const existingNode = this.cache.get(key);
+
+    if (existingNode) {
+      existingNode.value = value;
+      this.moveToHead(existingNode);
+    } else {
+      const newNode: LRUCacheNode<K, V> = {
+        key,
+        value,
+        prev: null,
+        next: null,
+      };
+
+      if (this.cache.size >= this.capacity) {
+        // Remove least recently used (tail)
+        if (this.tail) {
+          this.cache.delete(this.tail.key);
+          this.removeNode(this.tail);
+        }
+      }
+
+      this.cache.set(key, newNode);
+      this.addToHead(newNode);
+    }
+  }
+
+  private moveToHead(node: LRUCacheNode<K, V>): void {
+    this.removeNode(node);
+    this.addToHead(node);
+  }
+
+  private addToHead(node: LRUCacheNode<K, V>): void {
+    node.prev = null;
+    node.next = this.head;
+
+    if (this.head) {
+      this.head.prev = node;
+    }
+
+    this.head = node;
+
+    if (!this.tail) {
+      this.tail = node;
+    }
+  }
+
+  private removeNode(node: LRUCacheNode<K, V>): void {
+    if (node.prev) {
+      node.prev.next = node.next;
+    } else {
+      this.head = node.next;
+    }
+
+    if (node.next) {
+      node.next.prev = node.prev;
+    } else {
+      this.tail = node.prev;
+    }
+  }
+
+  clear(): void {
+    this.cache.clear();
+    this.head = null;
+    this.tail = null;
+  }
+}
+
+// ============================================================================
+// Memoized Style Creators with LRU Cache
+// ============================================================================
+
+const HIGHLIGHT_CACHE_CAPACITY = 4;
+const THEME_CACHE_CAPACITY = 16;
+
+const highlightStyleCache = new LRUCache<ThemeMode, ReturnType<typeof HighlightStyle.define>>(
+  HIGHLIGHT_CACHE_CAPACITY
+);
+
 function getHighlightStyle(isDark: boolean): ReturnType<typeof HighlightStyle.define> {
   const themeMode: ThemeMode = isDark ? 'dark' : 'light';
 
@@ -127,24 +229,19 @@ function getHighlightStyle(isDark: boolean): ReturnType<typeof HighlightStyle.de
   return highlightStyle;
 }
 
-/**
- * Cached theme extensions to avoid recreation on every render
- */
-const themeExtensionCache = new Map<string, ReturnType<typeof EditorView.theme>>();
+const themeExtensionCache = new LRUCache<ThemeMode, ReturnType<typeof EditorView.theme>>(
+  THEME_CACHE_CAPACITY
+);
 
-/**
- * Creates or retrieves a cached theme extension for the given theme and height
- */
-function getThemeExtension(isDark: boolean, height: string): ReturnType<typeof EditorView.theme> {
-  const cacheKey = `${isDark ? 'dark' : 'light'}:${height}`;
+function getThemeExtension(isDark: boolean): ReturnType<typeof EditorView.theme> {
+  const themeMode: ThemeMode = isDark ? 'dark' : 'light';
 
-  let themeExtension = themeExtensionCache.get(cacheKey);
+  let themeExtension = themeExtensionCache.get(themeMode);
   if (!themeExtension) {
     const colors = isDark ? DARK_HIGHLIGHT_COLORS : LIGHT_HIGHLIGHT_COLORS;
 
     themeExtension = EditorView.theme({
       '&': {
-        height,
         fontSize: '12px',
         fontFamily: "'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace",
         backgroundColor: colors.bg,
@@ -184,7 +281,7 @@ function getThemeExtension(isDark: boolean, height: string): ReturnType<typeof E
       },
     });
 
-    themeExtensionCache.set(cacheKey, themeExtension);
+    themeExtensionCache.set(themeMode, themeExtension);
   }
 
   return themeExtension;
@@ -194,9 +291,6 @@ function getThemeExtension(isDark: boolean, height: string): ReturnType<typeof E
 // Language Extensions
 // ============================================================================
 
-/**
- * Memoized language extensions
- */
 const languageExtensions = {
   json: json(),
   yaml: yaml(),
@@ -222,6 +316,101 @@ function createEditorCompartments(): EditorCompartments {
 }
 
 // ============================================================================
+// Debounce Hook
+// ============================================================================
+
+function useDebounceCallback<T extends (...args: never[]) => unknown>(
+  callback: T,
+  delay: number
+): T {
+  const timeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const callbackRef = React.useRef(callback);
+
+  React.useEffect(() => {
+    callbackRef.current = callback;
+  }, [callback]);
+
+  React.useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  return React.useCallback(
+    (...args: Parameters<T>) => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
+      timeoutRef.current = setTimeout(() => {
+        callbackRef.current(...args);
+      }, delay);
+    },
+    [delay]
+  ) as T;
+}
+
+// ============================================================================
+// Error Boundary Component
+// ============================================================================
+
+interface EditorErrorBoundaryProps {
+  children: React.ReactNode;
+  height?: string;
+  onError?: (error: Error) => void;
+}
+
+interface EditorErrorBoundaryState {
+  hasError: boolean;
+  error?: Error;
+}
+
+class EditorErrorBoundary extends React.Component<
+  EditorErrorBoundaryProps,
+  EditorErrorBoundaryState
+> {
+  constructor(props: EditorErrorBoundaryProps) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: Error): EditorErrorBoundaryState {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error) {
+    this.props.onError?.(error);
+    toast.error('Editor initialization failed');
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div
+          className="flex items-center justify-center rounded-md border border-red-300 bg-red-50 dark:border-red-900 dark:bg-red-950"
+          style={{ height: this.props.height || '400px' }}
+        >
+          <div className="text-center">
+            <p className="text-sm font-medium text-red-900 dark:text-red-100">
+              Editor failed to initialize
+            </p>
+            {this.state.error && (
+              <p className="mt-1 text-xs text-red-700 dark:text-red-300">
+                {this.state.error.message}
+              </p>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
+// ============================================================================
 // Main Component
 // ============================================================================
 
@@ -232,6 +421,7 @@ export function PreviewEditor({
   onChange,
   placeholder,
   key: editorKey,
+  debounceMs = 150,
 }: PreviewEditorProps) {
   const { theme, systemTheme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
@@ -241,38 +431,57 @@ export function PreviewEditor({
   const editorRef = React.useRef<HTMLDivElement>(null);
   const viewRef = React.useRef<EditorView | null>(null);
   const onChangeRef = React.useRef(onChange);
+  const isUserChangeRef = React.useRef(false);
 
-  // Memoized theme state
+  // Memoized theme state with proper type narrowing
   const themeState = React.useMemo(() => {
     const currentTheme = theme === 'system' ? systemTheme : theme;
+    // Ensure we always have a valid theme
+    const resolvedTheme: ThemeMode =
+      currentTheme === 'dark' ? 'dark' : currentTheme === 'light' ? 'light' : 'light';
+
     return {
-      isDark: currentTheme === 'dark',
-      resolvedTheme: currentTheme as 'light' | 'dark' | undefined,
+      isDark: resolvedTheme === 'dark',
+      resolvedTheme,
     };
   }, [theme, systemTheme]);
 
+  // Debounced onChange callback
+  const debouncedOnChange = useDebounceCallback(
+    React.useCallback((val: string) => {
+      onChangeRef.current?.(val);
+    }, []),
+    debounceMs
+  );
+
   // Memoized base extensions that don't change
-  const baseExtensions = React.useMemo(() => [
-    keymap.of([...defaultKeymap, ...historyKeymap, ...searchKeymap]),
-    history(),
-    drawSelection(),
-    dropCursor(),
-    lineNumbers(),
-    highlightSelectionMatches(),
-  ], []);
+  const baseExtensions = React.useMemo(
+    () => [
+      keymap.of([...defaultKeymap, ...historyKeymap, ...searchKeymap]),
+      history(),
+      drawSelection(),
+      dropCursor(),
+      lineNumbers(),
+      highlightSelectionMatches(),
+    ],
+    []
+  );
 
   // Memoized fold gutter config
-  const foldGutterExt = React.useMemo(() => foldGutter({
-    openText: '▼',
-    closedText: '▶',
-  }), []);
+  const foldGutterExt = React.useMemo(
+    () =>
+      foldGutter({
+        openText: '▼',
+        closedText: '▶',
+      }),
+    []
+  );
 
   // Memoized bracket matching and indent extensions
-  const structuralExtensions = React.useMemo(() =>
-    language !== 'plaintext'
-      ? [bracketMatching(), indentOnInput()]
-      : [],
-  [language]);
+  const structuralExtensions = React.useMemo(
+    () => (language !== 'plaintext' ? [bracketMatching(), indentOnInput()] : []),
+    [language]
+  );
 
   // Update onChange ref without causing re-renders
   React.useEffect(() => {
@@ -289,7 +498,7 @@ export function PreviewEditor({
     if (!mounted || !editorRef.current) return;
 
     const { isDark } = themeState;
-    const themeExtension = getThemeExtension(isDark, height);
+    const themeExtension = getThemeExtension(isDark);
     const highlightStyle = getHighlightStyle(isDark);
     const languageExtension = getLanguageExtension(language);
 
@@ -311,8 +520,11 @@ export function PreviewEditor({
       compartments.placeholder.of(placeholderExt(placeholder || '')),
       // Update listener for onChange
       EditorView.updateListener.of((update) => {
-        if (update.docChanged && onChangeRef.current) {
-          onChangeRef.current(update.state.doc.toString());
+        if (update.docChanged) {
+          isUserChangeRef.current = true;
+          if (onChangeRef.current) {
+            debouncedOnChange(update.state.doc.toString());
+          }
         }
       }),
     ];
@@ -322,36 +534,77 @@ export function PreviewEditor({
       extensions,
     });
 
-    const view = new EditorView({
-      state: startState,
-      parent: editorRef.current,
-    });
+    let view: EditorView | null = null;
 
-    viewRef.current = view;
+    try {
+      view = new EditorView({
+        state: startState,
+        parent: editorRef.current,
+      });
+      viewRef.current = view;
+    } catch (error) {
+      throw new Error(
+        `Failed to initialize CodeMirror: ${error instanceof Error ? error.message : String(error)}`
+      );
+    }
 
     return () => {
-      view.destroy();
-      viewRef.current = null;
+      if (view) {
+        view.destroy();
+        viewRef.current = null;
+      }
     };
     // Only re-initialize on mount or editorKey change
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mounted, editorKey]);
 
-  // Update language when it changes
+  // Combined update effect for language, theme, readOnly, placeholder
+  // This reduces multiple dispatch calls into a single batch
   React.useEffect(() => {
     if (!viewRef.current || !mounted) return;
 
+    const { isDark } = themeState;
+    const themeExtension = getThemeExtension(isDark);
+    const highlightStyle = getHighlightStyle(isDark);
     const languageExtension = getLanguageExtension(language);
+
+    const effects: StateEffect<unknown>[] = [];
+
+    // Language update
+    effects.push(compartmentsRef.current.language.reconfigure(languageExtension));
+
+    // Theme and highlight style update
+    effects.push(compartmentsRef.current.theme.reconfigure(themeExtension));
+    effects.push(
+      compartmentsRef.current.highlightStyle.reconfigure(syntaxHighlighting(highlightStyle))
+    );
+
+    // Read-only state update
+    effects.push(
+      compartmentsRef.current.readOnly.reconfigure(EditorState.readOnly.of(!onChange))
+    );
+
+    // Placeholder update
+    effects.push(compartmentsRef.current.placeholder.reconfigure(placeholderExt(placeholder || '')));
+
     viewRef.current.dispatch({
-      effects: compartmentsRef.current.language.reconfigure(languageExtension),
+      effects,
     });
-  }, [language, mounted]);
+  }, [language, themeState.isDark, onChange, placeholder, mounted]);
 
   // Update document value from outside changes
+  // Only update if the change didn't come from the user
   React.useEffect(() => {
     if (!viewRef.current) return;
 
     const currentValue = viewRef.current.state.doc.toString();
+
+    // Skip update if this was a user-triggered change
+    if (isUserChangeRef.current) {
+      isUserChangeRef.current = false;
+      return;
+    }
+
     if (currentValue !== value) {
       viewRef.current.dispatch({
         changes: {
@@ -363,55 +616,21 @@ export function PreviewEditor({
     }
   }, [value]);
 
-  // Update theme, highlight style, and structural extensions together
-  React.useEffect(() => {
-    if (!viewRef.current || !mounted) return;
-
-    const { isDark } = themeState;
-    const themeExtension = getThemeExtension(isDark, height);
-    const highlightStyle = getHighlightStyle(isDark);
-
-    viewRef.current.dispatch({
-      effects: [
-        compartmentsRef.current.theme.reconfigure(themeExtension),
-        compartmentsRef.current.highlightStyle.reconfigure(syntaxHighlighting(highlightStyle)),
-      ],
-    });
-  }, [themeState.isDark, height, mounted]);
-
-  // Update read-only state
-  React.useEffect(() => {
-    if (!viewRef.current) return;
-
-    viewRef.current.dispatch({
-      effects: compartmentsRef.current.readOnly.reconfigure(EditorState.readOnly.of(!onChange)),
-    });
-  }, [onChange]);
-
-  // Update placeholder
-  React.useEffect(() => {
-    if (!viewRef.current) return;
-
-    viewRef.current.dispatch({
-      effects: compartmentsRef.current.placeholder.reconfigure(placeholderExt(placeholder || '')),
-    });
-  }, [placeholder]);
-
   return (
-    <div
-      className={`rounded-md border overflow-hidden ${
-        themeState.isDark
-          ? 'border-stone-800 bg-stone-950'
-          : 'border-stone-200 bg-white'
-      }`}
-      style={{ height }}
-    >
-      {!mounted && (
-        <div className="flex items-center justify-center h-full py-20">
-          <div className="text-stone-500 text-sm">Loading editor...</div>
-        </div>
-      )}
-      <div ref={editorRef} className="h-full" />
-    </div>
+    <EditorErrorBoundary height={height}>
+      <div
+        className={`overflow-hidden rounded-md border ${
+          themeState.isDark ? 'border-stone-800 bg-stone-950' : 'border-stone-200 bg-white'
+        }`}
+        style={{ height }}
+      >
+        {!mounted && (
+          <div className="flex h-full items-center justify-center py-20">
+            <div className="text-sm text-stone-500">Loading editor...</div>
+          </div>
+        )}
+        <div ref={editorRef} className="h-full" />
+      </div>
+    </EditorErrorBoundary>
   );
 }
