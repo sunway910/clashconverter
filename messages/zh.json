@@ -54,7 +54,7 @@
       "title": "Sing-Box",
       "description": "通用代理平台，支持多种协议和平台。",
       "features": [
-        "支持 SS、VMess、VLESS、Trojan、Hysteria、Hysteria2、HTTP、SOCKS5",
+        "支持 SS、VMess、VLESS、Trojan、Hysteria、Hysteria2、HTTP",
         "不支持 ShadowsocksR (SSR)",
         "支持 Android、iOS、Windows、macOS、Linux 客户端",
         "JSON 格式配置"

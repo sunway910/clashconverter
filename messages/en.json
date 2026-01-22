@@ -54,7 +54,7 @@
       "title": "Sing-Box",
       "description": "A universal proxy platform with support for multiple protocols and platforms.",
       "features": [
-        "Supports SS, VMess, VLESS, Trojan, Hysteria, Hysteria2, HTTP, SOCKS5",
+        "Supports SS, VMess, VLESS, Trojan, Hysteria, Hysteria2, HTTP",
         "Does NOT support ShadowsocksR (SSR)",
         "Used by Android, iOS, Windows, macOS, Linux clients",
         "JSON format configuration"
