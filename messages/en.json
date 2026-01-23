@@ -1,6 +1,68 @@
 {
   "title": "Clash Converter",
   "subtitle": "Convert between proxy links, Clash YAML, and sing-box JSON formats",
+  "clientDialog": {
+    "buttonLabel": "Install Client",
+    "title": "Install Proxy Client",
+    "description": "Choose a client to download and install. Different clients support different platforms and features.",
+    "downloadButton": "Download",
+    "clients": {
+      "clash-party": {
+        "name": "Clash Party (Mihomo)",
+        "description": "Modern Clash client with Mihomo kernel. Supports Windows, macOS, and Linux.",
+        "url": "https://github.com/mihomo-party-org/releases"
+      },
+      "clash-verge": {
+        "name": "Clash Verge Rev",
+        "description": "Feature-rich Clash client based on Tauri. Supports Windows, macOS, and Linux.",
+        "url": "https://github.com/clash-verge-rev/releases"
+      },
+      "sing-box": {
+        "name": "Sing-Box",
+        "description": "Universal proxy platform. Supports Android, iOS, Windows, macOS, and Linux.",
+        "url": "https://github.com/SagerNet/sing-box/releases"
+      },
+      "shadowrocket": {
+        "name": "Shadowrocket",
+        "description": "Powerful iOS proxy client. Supports multiple protocols and rule customization.",
+        "url": "https://apps.apple.com/us/app/shadowrocket/id932747118"
+      },
+      "v2rayng": {
+        "name": "V2RayNG",
+        "description": "Free and open-source Android client for V2Ray and other protocols.",
+        "url": "https://github.com/2dust/v2rayNG/releases"
+      }
+    }
+  },
+  "proxyNodeDialog": {
+    "buttonLabel": "Install Proxy Node",
+    "title": "One-Click Proxy Node Installation",
+    "description": "Quickly deploy your proxy server with these one-click installation scripts.",
+    "viewButton": "View Script",
+    "notice": "These scripts help you quickly deploy proxy servers. Please ensure you have a VPS with root access before proceeding.",
+    "scripts": {
+      "v2ray-wss": {
+        "name": "V2Ray-WSS",
+        "description": "WebSocket secure proxy with TLS support. Easy to deploy and configure.",
+        "url": "https://github.com/yeahwu/v2ray-wss"
+      },
+      "v2ray": {
+        "name": "233boy V2Ray",
+        "description": "Popular V2Ray one-click installation script with multiple protocol support.",
+        "url": "https://github.com/233boy/v2ray"
+      },
+      "v2ray-agent": {
+        "name": "V2Ray Agent",
+        "description": "Comprehensive V2Ray/Xray panel with multi-user management support.",
+        "url": "https://github.com/mack-a/v2ray-agent"
+      },
+      "marzban": {
+        "name": "Marzban",
+        "description": "Advanced panel with support for V2Ray, Xray, and Sing-Box protocols.",
+        "url": "https://github.com/Gozargah/Marzban"
+      }
+    }
+  },
   "inputLabel": "Input",
   "outputLabel": "Output",
   "formatTypes": {
@@ -83,7 +145,7 @@
   },
   "seoContent": {
     "title": "Free Online Clash & sing-box Converter - Convert Proxy Links",
-    "intro": "ClashConverter is a free online tool that converts various proxy protocols (SS, SSR, VMess, Trojan, Hysteria, VLESS, HTTP, SOCKS5) into Clash YAML or sing-box JSON configuration format. This tool supports Clash Meta (Mihomo), Clash Premium, and sing-box kernels, making it the most versatile proxy conversion tool available.",
+    "intro": "ClashConverter is a free online tool that converts various proxy protocols (SS, SSR, VMess, Trojan, Hysteria, VLESS, HTTP, SOCKS5) into Clash YAML or sing-box JSON configuration format. This tool supports Clash Meta (Mihomo), Clash Premium, and Sing-Box, making it the most versatile proxy conversion tool available.",
     "privacy": "All conversions happen directly in your browser - your proxy configurations are never uploaded to any server, ensuring complete privacy and security. This makes our converter the safest choice for converting your sensitive proxy configurations.",
     "features": {
       "title": "Key Features of Our Converter",
@@ -91,7 +153,7 @@
         "Support for 9 proxy protocols: SS, SSR, VMess, VLESS, Trojan, Hysteria, Hysteria2, HTTP, SOCKS5",
         "Convert proxy links to Clash YAML or sing-box JSON format instantly",
         "Convert Clash YAML back to shareable proxy links",
-        "Support for Clash Meta (Mihomo), Clash Premium, and sing-box kernels",
+        "Support for Clash Meta (Mihomo), Clash Premium, and Sing-Box",
         "Client-side processing - no server upload required",
         "Bulk conversion - process multiple proxy links at once",
         "Automatic proxy group generation with optimized rules",
@@ -157,7 +219,7 @@
     "faq": {
       "title": "Frequently Asked Questions",
       "items": [
-        { "q": "What is Clash Converter?", "a": "Clash Converter is a free online tool that converts various proxy protocols (SS, SSR, VMess, Trojan, Hysteria, VLESS, HTTP, SOCKS5) into Clash YAML or sing-box JSON configuration format. It supports Clash Meta (Mihomo), Clash Premium, and sing-box kernels." },
+        { "q": "What is Clash Converter?", "a": "Clash Converter is a free online tool that converts various proxy protocols (SS, SSR, VMess, Trojan, Hysteria, VLESS, HTTP, SOCKS5) into Clash YAML or sing-box JSON configuration format. It supports Clash Meta (Mihomo), Clash Premium, and Sing-Box." },
         { "q": "Is Clash Converter safe to use?", "a": "Yes, Clash Converter is completely safe and privacy-focused. All conversion happens client-side in your browser. Your proxy configurations are never uploaded to any server, ensuring complete privacy and security." },
         { "q": "Which proxy protocols are supported?", "a": "Clash Converter supports 9 proxy protocols: Shadowsocks (SS), ShadowsocksR (SSR), VMess, VLESS, Trojan, Hysteria, Hysteria2, HTTP, and SOCKS5. It can convert both to and from Clash YAML format." },
         { "q": "What is the difference between Clash Meta and Clash Premium?", "a": "Clash Meta (Mihomo) is the actively maintained version that supports all modern protocols including VLESS, Hysteria, and Hysteria2. Clash Premium is the original kernel that is no longer maintained and does not support these newer protocols." },

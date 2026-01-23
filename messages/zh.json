@@ -1,6 +1,68 @@
 {
   "title": "Clash 转换器",
   "subtitle": "在代理链接、Clash YAML 和 Sing-Box JSON 格式之间转换",
+  "clientDialog": {
+    "buttonLabel": "安装客户端",
+    "title": "安装代理客户端",
+    "description": "选择一个客户端进行下载和安装。不同的客户端支持不同的平台和功能。",
+    "downloadButton": "下载",
+    "clients": {
+      "clash-party": {
+        "name": "Clash Party (Mihomo)",
+        "description": "使用 Mihomo 内核的现代 Clash 客户端。支持 Windows、macOS 和 Linux。",
+        "url": "https://github.com/mihomo-party-org/releases"
+      },
+      "clash-verge": {
+        "name": "Clash Verge Rev",
+        "description": "基于 Tauri 的功能丰富的 Clash 客户端。支持 Windows、macOS 和 Linux。",
+        "url": "https://github.com/clash-verge-rev/releases"
+      },
+      "sing-box": {
+        "name": "Sing-Box",
+        "description": "通用代理平台。支持 Android、iOS、Windows、macOS 和 Linux。",
+        "url": "https://github.com/SagerNet/sing-box/releases"
+      },
+      "shadowrocket": {
+        "name": "Shadowrocket",
+        "description": "功能强大的 iOS 代理客户端。支持多种协议和规则自定义。",
+        "url": "https://apps.apple.com/us/app/shadowrocket/id932747118"
+      },
+      "v2rayng": {
+        "name": "V2RayNG",
+        "description": "免费开源的 Android 客户端，支持 V2Ray 等多种协议。",
+        "url": "https://github.com/2dust/v2rayNG/releases"
+      }
+    }
+  },
+  "proxyNodeDialog": {
+    "buttonLabel": "安装代理节点",
+    "title": "一键安装代理节点",
+    "description": "使用这些一键安装脚本快速部署您的代理服务器。",
+    "viewButton": "查看脚本",
+    "notice": "这些脚本可帮助您快速部署代理服务器。在开始之前，请确保您拥有具有 root 权限的 VPS。",
+    "scripts": {
+      "v2ray-wss": {
+        "name": "V2Ray-WSS",
+        "description": "支持 TLS 的 WebSocket 安全代理。易于部署和配置。",
+        "url": "https://github.com/yeahwu/v2ray-wss"
+      },
+      "v2ray": {
+        "name": "233boy V2Ray",
+        "description": "流行的 V2Ray 一键安装脚本，支持多种协议。",
+        "url": "https://github.com/233boy/v2ray"
+      },
+      "v2ray-agent": {
+        "name": "V2Ray Agent",
+        "description": "功能全面的 V2Ray/Xray 面板，支持多用户管理。",
+        "url": "https://github.com/mack-a/v2ray-agent"
+      },
+      "marzban": {
+        "name": "Marzban",
+        "description": "高级面板，支持 V2Ray、Xray 和 Sing-Box 协议。",
+        "url": "https://github.com/Gozargah/Marzban"
+      }
+    }
+  },
   "inputLabel": "输入",
   "outputLabel": "输出",
   "formatTypes": {
