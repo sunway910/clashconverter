@@ -21,7 +21,7 @@ export const seoConfig: SEOConfig = {
   siteUrl: 'https://clashconverter.com',
   defaultTitle: 'Clash Converter - Convert Proxy Links to Clash YAML',
   titleTemplate: '%s | ClashConverter',
-  description: 'Free online converter tool. Convert SS, SSR, VMess, Trojan, Hysteria, VLESS, HTTP & SOCKS5 proxy links to Clash YAML or sing-box JSON format. Support for Clash Meta (Mihomo), Clash Premium, and sing-box. Fast, secure, client-side conversion.',
+  description: 'Free online converter tool. Convert SS, SSR, VMess, Trojan, Hysteria, VLESS, HTTP & SOCKS5 proxy links to Clash YAML or Sing-Box JSON format. Support for Clash Meta (Mihomo), Clash Premium, and Sing-Box. Fast, secure, client-side conversion.',
   keywords: [
     'clash converter',
     'clash yaml converter',
@@ -82,8 +82,8 @@ export function getLocalizedMetadata(locale: string) {
       alternateLocale: 'zh_CN'
     },
     zh: {
-      title: 'Clash转换器 - 代理链接转Clash/sing-box配置',
-      description: '免费在线转换工具。支持将SS、SSR、VMess、Trojan、Hysteria、VLESS、HTTP和SOCKS5代理链接转换为Clash YAML或sing-box JSON格式。支持Clash Meta (Mihomo)、Clash Premium和sing-box内核。快速、安全、纯前端转换。',
+      title: 'Clash转换器 - 代理链接转Clash/Sing-Box配置',
+      description: '免费在线转换工具。支持将SS、SSR、VMess、Trojan、Hysteria、VLESS、HTTP和SOCKS5代理链接转换为Clash YAML或Sing-Box JSON格式。支持Clash Meta (Mihomo)、Clash Premium和Sing-Box。快速、安全、纯前端转换。',
       canonical: canonicalUrl,
       locale: 'zh_CN',
       alternateLocale: 'en_US'
@@ -122,11 +122,11 @@ export function generateSoftwareApplicationSchema(locale: string) {
       'Convert Hysteria2 links to Clash YAML',
       'Convert HTTP proxy to Clash YAML',
       'Convert SOCKS5 proxy to Clash YAML',
-      'Convert proxy links to sing-box JSON',
+      'Convert proxy links to Sing-Box JSON',
       'Convert Clash YAML to proxy links',
       'Support for Clash Meta (Mihomo)',
       'Support for Clash Premium',
-      'Support for sing-box',
+      'Support for Sing-Box',
       'Client-side processing (no server upload)',
       'Privacy-focused conversion'
     ],
@@ -177,8 +177,8 @@ export function generateFAQSchema(locale: string) {
         answer: 'Yes! Click the "Swap Direction" button to switch from "Proxies to YAML" mode to "YAML to Proxies" mode. Paste your Clash YAML config and the tool will extract and convert all proxy nodes back to shareable links.'
       },
       {
-        question: 'What is sing-box and does this tool support it?',
-        answer: 'sing-box is a universal proxy platform that supports multiple protocols. Clash Converter now supports converting proxy links to sing-box JSON configuration format. It supports SS, VMess, VLESS, Trojan, Hysteria, Hysteria2, and HTTP protocols for sing-box output.'
+        question: 'What is Sing-Box and does this tool support it?',
+        answer: 'Sing-Box is a universal proxy platform that supports multiple protocols. Clash Converter now supports converting proxy links to Sing-Box JSON configuration format. It supports SS, VMess, VLESS, Trojan, Hysteria, Hysteria2, and HTTP protocols for Sing-Box output.'
       }
     ],
     zh: [
@@ -207,8 +207,8 @@ export function generateFAQSchema(locale: string) {
         answer: '可以！点击"切换方向"按钮，从"代理转YAML"模式切换到"YAML转代理"模式。粘贴您的Clash YAML配置，工具将提取所有代理节点并转换回可分享的链接。'
       },
       {
-        question: '什么是sing-box，这个工具支持吗？',
-        answer: 'sing-box是一个支持多种协议的通用代理平台。Clash转换器现在支持将代理链接转换为sing-box JSON配置格式。支持SS、VMess、VLESS、Trojan、Hysteria、Hysteria2和HTTP协议输出为sing-box格式。'
+        question: '什么是Sing-Box，这个工具支持吗？',
+        answer: 'Sing-Box是一个支持多种协议的通用代理平台。Clash转换器现在支持将代理链接转换为Sing-Box JSON配置格式。支持SS、VMess、VLESS、Trojan、Hysteria、Hysteria2和HTTP协议输出为Sing-Box格式。'
       }
     ]
   };

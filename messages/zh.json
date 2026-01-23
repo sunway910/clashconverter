@@ -1,20 +1,23 @@
 {
   "title": "Clash 转换器",
-  "subtitle": {
-    "proxies-to-yaml": "将代理链接转换为 Clash YAML 格式",
-    "yaml-to-proxies": "从 Clash YAML 中提取代理链接"
-  },
-  "inputLabel": {
-    "proxies-to-yaml": "代理链接",
-    "yaml-to-proxies": "Clash 配置"
-  },
-  "outputLabel": {
-    "proxies-to-yaml": "Clash 配置",
-    "yaml-to-proxies": "代理链接"
+  "subtitle": "在代理链接、Clash YAML 和 Sing-Box JSON 格式之间转换",
+  "inputLabel": "输入",
+  "outputLabel": "输出",
+  "formatTypes": {
+    "txt": "代理链接",
+    "clash-meta": "Clash Meta",
+    "clash-premium": "Clash Premium",
+    "sing-box": "Sing-Box"
   },
   "inputPlaceholder": {
-    "proxies-to-yaml": "在此粘贴代理链接，每行一个\n\n支持的协议：\n\nhysteria://server:port?protocol=udp&auth=xxx&peer=xxx#Hysteria-节点\nhysteria2://password@server:port/?sni=xxx#Hysteria2-节点\nss://[base64]#SS-节点\nssr://[base64]#SSR-节点\nvmess://[base64]#Vmess-节点\nvless://uuid@server:port?encryption=none&security=tls&type=tcp#Vless-节点\ntrojan://password@server:port#Trojan-节点\nsocks5://server:port#Socks5-节点\nhttp://user:pass@server:port#Http-节点\n\n💡 提示：链接末尾的 #名称 会成为 YAML 文件中的代理名称",
-    "yaml-to-proxies": "proxies:\n  - name: SS-HongKong\n    type: ss\n    server: hk.example.com\n    port: 443\n  - name: VMESS-US\n    type: vmess\n    server: us.example.com\n    port: 443\n\nproxy-groups:\n  - name: 🚀 节点选择\n    type: select\n    proxies: ..."
+    "txt": "在此粘贴代理链接，每行一个\n\n支持的协议：\n\nhysteria://server:port?protocol=udp&auth=xxx&peer=xxx#Hysteria-节点\nhysteria2://password@server:port/?sni=xxx#Hysteria2-节点\nss://[base64]#SS-节点\nssr://[base64]#SSR-节点\nvmess://[base64]#Vmess-节点\nvless://uuid@server:port?encryption=none&security=tls&type=tcp#Vless-节点\ntrojan://password@server:port#Trojan-节点\nsocks5://server:port#Socks5-节点\nhttp://user:pass@server:port#Http-节点\n\n💡 提示：链接末尾的 #名称 会成为输出文件中的代理名称",
+    "clash": "proxies:\n  - name: SS-HongKong\n    type: ss\n    server: hk.example.com\n    port: 443\n  - name: VMESS-US\n    type: vmess\n    server: us.example.com\n    port: 443\n\nproxy-groups:\n  - name: 🚀 节点选择\n    type: select\n    proxies: ...",
+    "sing-box": "'{'\n  \"outbounds\": [\n    '{'\n      \"type\": \"shadowsocks\",\n      \"tag\": \"SS-HongKong\",\n      \"server\": \"hk.example.com\",\n      \"server_port\": 443,\n      \"method\": \"aes-128-gcm\",\n      \"password\": \"password\"\n    '}',\n    ..."
+  },
+  "outputPlaceholder": {
+    "txt": "# 您的代理链接将显示在这里",
+    "clash": "# 您的 Clash 配置将显示在这里",
+    "sing-box": "# 您的 sing-box 配置将显示在这里"
   },
   "itemsFound": "找到 {count} 个项目",
   "clear": "清除",
@@ -30,6 +33,16 @@
     "sing-box": "Sing-Box"
   },
   "kernelDescriptions": {
+    "txt": {
+      "title": "代理链接",
+      "description": "可分享的代理链接 URI 格式，用于导入客户端。",
+      "features": [
+        "大多数客户端支持的通用格式",
+        "易于分享和分发",
+        "单个链接包含所有代理配置",
+        "可直接导入代理客户端"
+      ]
+    },
     "clash-meta": {
       "title": "Clash Meta (Mihomo)",
       "description": "「Clash Meta」内核拥有最新功能和协议支持。",
@@ -68,25 +81,17 @@
     "hysteria": "Hysteria",
     "hysteria2": "Hysteria2"
   },
-  "outputPlaceholder": {
-    "proxies-to-yaml": "# 您的 Clash 配置将显示在这里",
-    "yaml-to-proxies": "# 您的代理链接将显示在这里"
-  },
-  "downloadFilename": {
-    "proxies-to-yaml": "clash-config.yaml",
-    "yaml-to-proxies": "proxies.txt"
-  },
   "seoContent": {
-    "title": "免费在线 Clash & sing-box 转换器 - 代理链接转换",
-    "intro": "ClashConverter 是一个免费的在线工具，可以将各种代理协议（SS、SSR、VMess、Trojan、Hysteria、VLESS、HTTP、SOCKS5）转换为 Clash YAML 或 sing-box JSON 配置格式。支持 Clash Meta (Mihomo)、Clash Premium 和 sing-box 内核，是功能强大的代理转换工具。",
+    "title": "免费在线 Clash & Sing-Box 转换器 - 代理链接转换",
+    "intro": "ClashConverter 是一个免费的在线工具，可以将各种代理协议（SS、SSR、VMess、Trojan、Hysteria、VLESS、HTTP、SOCKS5）转换为 Clash YAML 或 Sing-Box JSON 配置格式。支持 Clash Meta (Mihomo)、Clash Premium 和 sing-box 内核，是功能强大的代理转换工具。",
     "privacy": "所有转换都直接在您的浏览器中进行 - 您的代理配置永远不会上传到任何服务器，确保完全的隐私和安全。这使得我们的转换器成为转换敏感代理配置的最安全选择。",
     "features": {
       "title": "我们转换器的核心功能",
       "items": [
         "支持 9 种代理协议：SS、SSR、VMess、VLESS、Trojan、Hysteria、Hysteria2、HTTP、SOCKS5",
-        "即时将代理链接转换为 Clash YAML 或 sing-box JSON 格式",
+        "即时将代理链接转换为 Clash YAML 或 Sing-Box JSON 格式",
         "将 Clash YAML 转换回可分享的代理链接",
-        "支持 Clash Meta (Mihomo)、Clash Premium 和 sing-box 内核",
+        "支持 Clash Meta (Mihomo)、Clash Premium 和 Sing-Box",
         "客户端处理 - 无需上传服务器",
         "批量转换 - 一次处理多个代理链接",
         "自动生成代理组和优化规则",
@@ -112,7 +117,7 @@
       "title": "如何使用我们的转换器",
       "steps": [
         { "title": "粘贴您的代理链接", "desc": "在输入框中输入您的代理链接。每个链接应单独一行。支持的格式包括 ss://、ssr://、vmess://、vless://、trojan://、hysteria://、hysteria2://、http:// 和 socks5://" },
-        { "title": "选择输出格式", "desc": "在 Clash Meta (Mihomo) 完整协议支持、Clash Premium 遗留兼容性或 sing-box JSON 格式之间选择。Clash Meta 和 sing-box 支持 VLESS、Hysteria 和 Hysteria2，而 Clash Premium 不支持。" },
+        { "title": "选择输出格式", "desc": "在 Clash Meta (Mihomo) 完整协议支持、Clash Premium 遗留兼容性或 Sing-Box JSON 格式之间选择。Clash Meta 和 Sing-Box 支持 VLESS、Hysteria 和 Hysteria2，而 Clash Premium 不支持。" },
         { "title": "转换和下载", "desc": "点击转换按钮，您的配置将立即生成。然后您可以下载配置文件或将其复制到剪贴板。" }
       ]
     },
@@ -139,7 +144,7 @@
         ]
       },
       "singbox": {
-        "title": "sing-box - 通用平台",
+        "title": "Sing-Box - 通用平台",
         "description": "支持多种协议和平台的通用代理平台。",
         "features": [
           "支持 SS、VMess、VLESS、Trojan、Hysteria、Hysteria2、HTTP",
@@ -152,16 +157,16 @@
     "faq": {
       "title": "常见问题",
       "items": [
-        { "q": "什么是 Clash 转换器？", "a": "Clash 转换器是一个免费的在线工具，可以将各种代理协议（SS、SSR、VMess、Trojan、Hysteria、VLESS、HTTP、SOCKS5）转换为 Clash YAML 或 sing-box JSON 配置格式。支持 Clash Meta (Mihomo)、Clash Premium 和 sing-box 内核。" },
+        { "q": "什么是 Clash 转换器？", "a": "Clash 转换器是一个免费的在线工具，可以将各种代理协议（SS、SSR、VMess、Trojan、Hysteria、VLESS、HTTP、SOCKS5）转换为 Clash YAML 或 Sing-Box JSON 配置格式。支持 Clash Meta (Mihomo)、Clash Premium 和 sing-box 内核。" },
         { "q": "Clash 转换器安全吗？", "a": "是的，Clash 转换器完全安全且注重隐私。所有转换都在您的浏览器客户端进行。您的代理配置永远不会上传到任何服务器，确保完全的隐私和安全。" },
         { "q": "支持哪些代理协议？", "a": "Clash 转换器支持 9 种代理协议：Shadowsocks (SS)、ShadowsocksR (SSR)、VMess、VLESS、Trojan、Hysteria、Hysteria2、HTTP 和 SOCKS5。可以双向转换到和从 Clash YAML 格式。" },
         { "q": "Clash Meta 和 Clash Premium 有什么区别？", "a": "Clash Meta (Mihomo) 是积极维护的版本，支持所有现代协议，包括 VLESS、Hysteria 和 Hysteria2。Clash Premium 是原始内核，不再维护，不支持这些新协议。" },
         { "q": "如何将代理链接转换为 Clash 格式？", "a": "只需将您的代理链接（每行一个）粘贴到输入框中。每个链接应采用 ss://base64#name、vmess://base64#name 等格式。点击「转换」按钮，Clash YAML 配置将立即生成。" },
         { "q": "我可以将 Clash YAML 转换回代理链接吗？", "a": "可以！点击「切换方向」按钮，从「代理转 YAML」模式切换到「YAML 转代理」模式。粘贴您的 Clash YAML 配置，工具将提取所有代理节点并转换回可分享的链接。" },
         { "q": "为什么应该使用这个 Clash 转换器？", "a": "我们的 Clash 转换器提供最全面的协议支持，完全在浏览器中工作以保护隐私，没有限制或注册要求，并定期更新以支持最新的代理协议。" },
-        { "q": "这适用于 Clash Verge 和其他客户端吗？", "a": "是的！YAML 输出与所有基于 Clash 的客户端兼容，包括 Clash Verge、Clash Nyanpasu、Clash for Android、Clash for Windows 以及其他使用 Clash Meta (Mihomo) 或 Clash Premium 内核的客户端。sing-box JSON 输出可用于所有平台的 sing-box 客户端。" },
-        { "q": "什么是 sing-box，为什么要使用它？", "a": "sing-box 是一个支持多种协议和平台的通用代理平台。它积极维护，支持 Android、iOS、Windows、macOS 和 Linux。sing-box 支持 SS、VMess、VLESS、Trojan、Hysteria、Hysteria2 和 HTTP 协议。如果您需要跨平台兼容性或喜欢 JSON 配置格式，可以使用 sing-box。" },
-        { "q": "sing-box 输出支持哪些协议？", "a": "sing-box 输出支持 SS、VMess、VLESS、Trojan、Hysteria、Hysteria2 和 HTTP 协议。不支持 SSR 和 SOCKS5 - 如果您的输入中包含这些协议，它们将被过滤并提示。" },
+        { "q": "这适用于 Clash Verge 和其他客户端吗？", "a": "是的！YAML 输出与所有基于 Clash 的客户端兼容，包括 Clash Verge、Clash Nyanpasu、Clash for Android、Clash for Windows 以及其他使用 Clash Meta (Mihomo) 或 Clash Premium 内核的客户端。Sing-Box JSON 输出可用于所有平台的 Sing-Box 客户端。" },
+        { "q": "什么是 Sing-Box，为什么要使用它？", "a": "Sing-Box 是一个支持多种协议和平台的通用代理平台。它积极维护，支持 Android、iOS、Windows、macOS 和 Linux。Sing-Box 支持 SS、VMess、VLESS、Trojan、Hysteria、Hysteria2 和 HTTP 协议。如果您需要跨平台兼容性或喜欢 JSON 配置格式，可以使用 Sing-Box。" },
+        { "q": "Sing-Box 输出支持哪些协议？", "a": "Sing-Box 输出支持 SS、VMess、VLESS、Trojan、Hysteria、Hysteria2 和 HTTP 协议。不支持 SSR 和 SOCKS5 - 如果您的输入中包含这些协议，它们将被过滤并提示。" },
         { "q": "为什么无法在 ShadowRocket 中探测 Hy2 节点的延迟", "a": "请在 App 中修改配置: 设置 – 延迟测试方法 - CONNNECT" }
       ]
     },

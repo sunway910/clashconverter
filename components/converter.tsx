@@ -25,17 +25,13 @@ import {
   HoverCardTrigger,
 } from '@/components/ui/hover-card';
 import { PreviewEditor } from '@/components/preview-editor';
-import { parseMultipleProxies } from '@/lib/parsers';
-import { parseYamlToProxies, proxiesToLinks } from '@/lib/yaml-parser';
+import { parseInput, FormatType } from '@/lib/unified-parser';
+import { proxiesToLinks } from '@/lib/yaml-parser';
 import { generateSimpleYaml } from '@/lib/yaml-generator';
 import { generateSingBoxConfig, SING_BOX_SUPPORTED_PROTOCOLS } from '@/lib/sing-box-generator';
-import type { OutputFormat } from '@/lib/types';
 import { Download, FileText, Copy, ArrowRightLeft, Info, Cpu } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
-
-type ConversionMode = 'proxies-to-yaml' | 'yaml-to-proxies';
-type OutputFormatType = 'clash-meta' | 'clash-premium' | 'sing-box';
 
 // js-set-map-lookups: Use Set for O(1) lookups instead of Array.includes()
 const CLASH_PREMIUM_UNSUPPORTED_PROTOCOLS = new Set(['vless', 'hysteria', 'hysteria2']);
@@ -68,7 +64,7 @@ ProtocolCards.displayName = 'ProtocolCards';
 
 // rerender-memo: Memoize kernel features component to prevent unnecessary re-renders
 interface KernelFeaturesProps {
-  kernelType: OutputFormatType;
+  kernelType: FormatType;
   features: string[];
   title: string;
   description: string;
@@ -106,62 +102,111 @@ const generateTimestamp = (): string => {
 
 export function Converter() {
   const [input, setInput] = useState('');
-  const [mode, setMode] = useState<ConversionMode>('proxies-to-yaml');
+  const [inputFormat, setInputFormat] = useState<FormatType>('txt');
+  const [outputFormat, setOutputFormat] = useState<FormatType>('clash-meta');
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [outputFormat, setOutputFormat] = useState<OutputFormatType>('clash-meta');
   const t = useTranslations();
   const pendingInputRef = useRef<string | null>(null);
   const previousFilteredCountRef = useRef<Record<string, number>>({});
   const previousUnsupportedProtocolsRef = useRef<Set<string>>(new Set());
 
-  // Parse input based on mode
+  // Parse input and generate output based on formats
   const result = useMemo(() => {
     if (!input.trim()) {
       previousUnsupportedProtocolsRef.current = new Set();
       previousFilteredCountRef.current = {};
-      return '';
+      return { output: '', filteredCounts: {}, isJson: false, unsupported: [] };
     }
 
-    if (mode === 'proxies-to-yaml') {
-      const { proxies, unsupported } = parseMultipleProxies(input);
-      let filteredProxies = proxies;
-      let filteredCounts: Record<string, number> = {};
+    // Parse input based on inputFormat
+    const parseResult = parseInput(input, inputFormat);
+    let { proxies, unsupported } = parseResult;
+    let filteredCounts: Record<string, number> = {};
+    let isJson = false;
 
-      if (outputFormat === 'clash-premium') {
-        filteredProxies = proxies.filter(proxy => {
-          if (CLASH_PREMIUM_UNSUPPORTED_PROTOCOLS.has(proxy.type)) {
-            filteredCounts[proxy.type] = (filteredCounts[proxy.type] || 0) + 1;
-            return false;
-          }
-          return true;
-        });
-        return { output: generateSimpleYaml(filteredProxies), filteredCounts, isJson: false };
-      }
-
-      if (outputFormat === 'sing-box') {
-        // sing-box doesn't support SSR
-        filteredProxies = proxies.filter(proxy => {
-          if (!SING_BOX_SUPPORTED_PROTOCOLS.has(proxy.type)) {
-            filteredCounts[proxy.type] = (filteredCounts[proxy.type] || 0) + 1;
-            return false;
-          }
-          return true;
-        });
-        return { output: generateSingBoxConfig(filteredProxies), filteredCounts, isJson: true };
-      }
-
-      // clash-meta (default) - supports all protocols
-      return { output: generateSimpleYaml(filteredProxies), filteredCounts: {}, isJson: false };
-    } else {
-      const proxies = parseYamlToProxies(input);
-      return { output: proxiesToLinks(proxies).join('\n'), filteredCounts: {}, isJson: false };
+    // Apply protocol filtering based on outputFormat
+    if (outputFormat === 'clash-premium') {
+      proxies = proxies.filter(p => {
+        if (CLASH_PREMIUM_UNSUPPORTED_PROTOCOLS.has(p.type)) {
+          filteredCounts[p.type] = (filteredCounts[p.type] || 0) + 1;
+          return false;
+        }
+        return true;
+      });
+    } else if (outputFormat === 'sing-box') {
+      proxies = proxies.filter(p => {
+        if (!SING_BOX_SUPPORTED_PROTOCOLS.has(p.type)) {
+          filteredCounts[p.type] = (filteredCounts[p.type] || 0) + 1;
+          return false;
+        }
+        return true;
+      });
     }
-  }, [input, mode, outputFormat]);
 
-  const output = typeof result === 'string' ? result : result.output;
-  const filteredCounts = typeof result === 'string' ? {} : result.filteredCounts;
-  const isJson = typeof result === 'string' ? false : result.isJson ?? false;
-  const { proxies, unsupported } = useMemo(() => parseMultipleProxies(input), [input]);
+    // Generate output based on outputFormat
+    let output = '';
+    switch (outputFormat) {
+      case 'txt':
+        output = proxiesToLinks(proxies).join('\n');
+        break;
+      case 'clash-meta':
+      case 'clash-premium':
+        output = generateSimpleYaml(proxies);
+        isJson = false;
+        break;
+      case 'sing-box':
+        output = generateSingBoxConfig(proxies);
+        isJson = true;
+        break;
+    }
+
+    return { output, filteredCounts, isJson, unsupported };
+  }, [input, inputFormat, outputFormat]);
+
+  const output = result.output;
+  const filteredCounts = result.filteredCounts;
+  const isJson = result.isJson;
+  const unsupported = result.unsupported;
+
+  // Compute input/output languages for syntax highlighting
+  const inputLanguage = useMemo(() => {
+    switch (inputFormat) {
+      case 'sing-box': return 'json';
+      case 'txt': return 'plaintext';
+      default: return 'yaml';
+    }
+  }, [inputFormat]);
+
+  const outputLanguage = useMemo(() => {
+    switch (outputFormat) {
+      case 'sing-box': return 'json';
+      case 'txt': return 'plaintext';
+      default: return 'yaml';
+    }
+  }, [outputFormat]);
+
+  // Compute placeholders
+  const inputPlaceholder = useMemo(() => {
+    switch (inputFormat) {
+      case 'txt':
+        return t('inputPlaceholder.txt');
+      case 'sing-box':
+        return t('inputPlaceholder.sing-box');
+      default:
+        return t('inputPlaceholder.clash');
+    }
+  }, [inputFormat, t]);
+
+  const outputPlaceholder = useMemo(() => {
+    switch (outputFormat) {
+      case 'txt':
+        return t('outputPlaceholder.txt');
+      case 'sing-box':
+        return t('outputPlaceholder.sing-box');
+      default:
+        return t('outputPlaceholder.clash');
+    }
+  }, [outputFormat, t]);
 
   // Handle toasts
   useEffect(() => {
@@ -179,32 +224,32 @@ export function Converter() {
     });
     previousUnsupportedProtocolsRef.current = new Set(uniqueUnsupported);
 
-    if (mode === 'proxies-to-yaml' && outputFormat === 'clash-premium') {
+    if (outputFormat === 'clash-premium') {
       Object.entries(filteredCounts).forEach(([protocol, count]) => {
         if (previousFilteredCountRef.current[protocol] !== count) {
-          toast.warning(`${count} ${protocol.toUpperCase()} node(s) filtered out`);
+          toast.warning(`${count} ${protocol.toUpperCase()} node(s) filtered out (not supported by Clash Premium)`);
         }
       });
       previousFilteredCountRef.current = filteredCounts;
-    } else if (mode === 'proxies-to-yaml' && outputFormat === 'sing-box') {
+    } else if (outputFormat === 'sing-box') {
       Object.entries(filteredCounts).forEach(([protocol, count]) => {
         if (previousFilteredCountRef.current[protocol] !== count) {
-          toast.warning(`${count} ${protocol.toUpperCase()} node(s) filtered out (not supported by sing-box)`);
+          toast.warning(`${count} ${protocol.toUpperCase()} node(s) filtered out (not supported by Sing-Box)`);
         }
       });
       previousFilteredCountRef.current = filteredCounts;
     } else if (outputFormat === 'clash-meta') {
       previousFilteredCountRef.current = {};
     }
-  }, [input, unsupported, filteredCounts, mode, outputFormat]);
+  }, [input, unsupported, filteredCounts, outputFormat]);
 
-  // Handle pending input after mode change
+  // Handle pending input after format change
   useEffect(() => {
     if (pendingInputRef.current !== null) {
       setInput(pendingInputRef.current);
       pendingInputRef.current = null;
     }
-  }, [mode]);
+  }, [inputFormat]);
 
   const handleCopy = useCallback(async () => {
     try {
@@ -221,17 +266,20 @@ export function Converter() {
     let filename: string;
     let mimeType: string;
 
-    if (mode === 'proxies-to-yaml') {
-      if (outputFormat === 'sing-box') {
+    switch (outputFormat) {
+      case 'sing-box':
         filename = `sing-box-${timestamp}.json`;
         mimeType = 'application/json';
-      } else {
+        break;
+      case 'txt':
+        filename = `proxies-${timestamp}.txt`;
+        mimeType = 'text/plain';
+        break;
+      case 'clash-meta':
+      case 'clash-premium':
+      default:
         filename = `clashconvert-${timestamp}.yaml`;
         mimeType = 'text/yaml';
-      }
-    } else {
-      filename = `proxies-${timestamp}.txt`;
-      mimeType = 'text/plain';
     }
 
     const blob = new Blob([output], { type: mimeType });
@@ -246,29 +294,28 @@ export function Converter() {
     URL.revokeObjectURL(url);
 
     toast.success('Downloaded successfully');
-  }, [output, mode, outputFormat]);
+  }, [output, outputFormat]);
 
-  const handleSwapMode = useCallback(() => {
-    const newMode = mode === 'proxies-to-yaml' ? 'yaml-to-proxies' : 'proxies-to-yaml';
+  const handleSwapFormat = useCallback(() => {
+    // Swap input and output formats
+    const newInputFormat = outputFormat;
+    const newOutputFormat = inputFormat;
+    setInputFormat(newInputFormat);
+    setOutputFormat(newOutputFormat);
+    // Move current output to input for convenience
     pendingInputRef.current = output;
-    setMode(newMode);
-  }, [mode, output]);
+  }, [inputFormat, outputFormat, output]);
 
+  // Compute item count
   const itemCount = useMemo(() => {
-    if (mode === 'proxies-to-yaml') {
-      return proxies.length;
-    }
-    return parseYamlToProxies(input).length;
-  }, [mode, proxies.length, input]);
+    const parseResult = parseInput(input, inputFormat);
+    return parseResult.proxies.length;
+  }, [input, inputFormat]);
 
+  // Get kernel description for output format
   const kernelTitle = t.raw(`kernelDescriptions.${outputFormat}.title` as any);
   const kernelDescription = t.raw(`kernelDescriptions.${outputFormat}.description` as any);
   const kernelFeatures = t.raw(`kernelDescriptions.${outputFormat}.features` as any) as string[];
-
-  // Output language based on mode
-  const outputLanguage = mode === 'proxies-to-yaml' ? (isJson ? 'json' : 'yaml') : 'plaintext';
-  // Input language based on mode (plaintext for proxies, yaml for yaml-to-proxies mode)
-  const inputLanguage = mode === 'proxies-to-yaml' ? 'plaintext' : 'yaml';
 
   return (
       <div className="w-full max-w-6xl mx-auto px-3 py-4 md:p-8 space-y-4 md:space-y-6">
@@ -276,7 +323,7 @@ export function Converter() {
         <div className="text-center space-y-1 md:space-y-2">
           <Image src="/clash_converter.svg" alt={t('title')} width={240} height={80} className="mx-auto" />
           <p className="text-sm md:text-base text-muted-foreground">
-            {t(`subtitle.${mode}`)}
+            {t('subtitle')}
           </p>
         </div>
 
@@ -288,13 +335,27 @@ export function Converter() {
                 <div className="flex items-center justify-between">
                   <CardTitle className="flex items-center gap-2 cursor-pointer hover:text-stone-600 dark:hover:text-stone-400 transition-colors" onClick={() => setDialogOpen(true)}>
                     <FileText className="w-5 h-5" />
-                    {t(`inputLabel.${mode}`)}
+                    {t('inputLabel')}
                   </CardTitle>
-                  <DialogTrigger asChild>
-                    <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-                      <Info className="w-4 h-4" />
-                    </Button>
-                  </DialogTrigger>
+                  <div className="flex items-center gap-2">
+                    <Cpu className="w-4 h-4 text-muted-foreground" />
+                    <Select value={inputFormat} onValueChange={(value) => setInputFormat(value as FormatType)}>
+                      <SelectTrigger className="w-[140px] h-8 text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="txt">{t('formatTypes.txt')}</SelectItem>
+                        <SelectItem value="clash-meta">{t('formatTypes.clash-meta')}</SelectItem>
+                        <SelectItem value="clash-premium">{t('formatTypes.clash-premium')}</SelectItem>
+                        <SelectItem value="sing-box">{t('formatTypes.sing-box')}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <DialogTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                        <Info className="w-4 h-4" />
+                      </Button>
+                    </DialogTrigger>
+                  </div>
                 </div>
               </CardHeader>
               <CardContent>
@@ -302,7 +363,7 @@ export function Converter() {
                   value={input}
                   language={inputLanguage}
                   height="300px"
-                  placeholder={t(`inputPlaceholder.${mode}`)}
+                  placeholder={inputPlaceholder}
                   onChange={(val) => setInput(val)}
                 />
                 <div className="mt-3 md:mt-4 flex items-center justify-between text-xs md:text-sm text-muted-foreground">
@@ -332,8 +393,8 @@ export function Converter() {
                 size="sm"
                 variant="outline"
                 className="rounded-full shadow-lg bg-background"
-                onClick={handleSwapMode}
-                title="Swap conversion direction"
+                onClick={handleSwapFormat}
+                title="Swap formats"
             >
               <ArrowRightLeft className="w-4 h-4" />
             </Button>
@@ -345,47 +406,46 @@ export function Converter() {
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center gap-2">
                   <Download className="w-5 h-5" />
-                  {t(`outputLabel.${mode}`)}
+                  {t('outputLabel')}
                 </CardTitle>
-                {mode === 'proxies-to-yaml' && (
-                    <div className="flex items-center gap-2">
-                      <Cpu className="w-4 h-4 text-muted-foreground" />
-                      <Select value={outputFormat} onValueChange={(value) => setOutputFormat(value as OutputFormatType)}>
-                        <SelectTrigger className="w-[180px] h-8 text-xs">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="clash-meta">{t('kernelTypes.clash-meta')}</SelectItem>
-                          <SelectItem value="clash-premium">{t('kernelTypes.clash-premium')}</SelectItem>
-                          <SelectItem value="sing-box">{t('kernelTypes.sing-box')}</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <HoverCard openDelay={200}>
-                        <HoverCardTrigger asChild>
-                          <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-                            <Info className="w-4 h-4 text-muted-foreground" />
-                          </Button>
-                        </HoverCardTrigger>
-                        <HoverCardContent className="w-80">
-                          <KernelFeatures
-                            kernelType={outputFormat}
-                            title={kernelTitle}
-                            description={kernelDescription}
-                            features={kernelFeatures}
-                          />
-                        </HoverCardContent>
-                      </HoverCard>
-                    </div>
-                )}
+                <div className="flex items-center gap-2">
+                  <Cpu className="w-4 h-4 text-muted-foreground" />
+                  <Select value={outputFormat} onValueChange={(value) => setOutputFormat(value as FormatType)}>
+                    <SelectTrigger className="w-[140px] h-8 text-xs">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="txt">{t('formatTypes.txt')}</SelectItem>
+                      <SelectItem value="clash-meta">{t('formatTypes.clash-meta')}</SelectItem>
+                      <SelectItem value="clash-premium">{t('formatTypes.clash-premium')}</SelectItem>
+                      <SelectItem value="sing-box">{t('formatTypes.sing-box')}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <HoverCard openDelay={200}>
+                    <HoverCardTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                        <Info className="w-4 h-4 text-muted-foreground" />
+                      </Button>
+                    </HoverCardTrigger>
+                    <HoverCardContent className="w-80">
+                      <KernelFeatures
+                        kernelType={outputFormat}
+                        title={kernelTitle}
+                        description={kernelDescription}
+                        features={kernelFeatures}
+                      />
+                    </HoverCardContent>
+                  </HoverCard>
+                </div>
               </div>
             </CardHeader>
             <CardContent>
               <PreviewEditor
-                key={mode === 'proxies-to-yaml' ? outputFormat : 'yaml-to-proxies'}
+                key={outputFormat}
                 value={output}
                 language={outputLanguage}
                 height="300px"
-                placeholder={t(`outputPlaceholder.${mode}`)}
+                placeholder={outputPlaceholder}
               />
               <div className="mt-3 md:mt-4 flex gap-2">
                 <Button
@@ -412,7 +472,7 @@ export function Converter() {
                 <Button
                     variant="outline"
                     className="w-full"
-                    onClick={handleSwapMode}
+                    onClick={handleSwapFormat}
                     disabled={!input || !output}
                     size="sm"
                 >

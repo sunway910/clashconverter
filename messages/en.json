@@ -1,20 +1,23 @@
 {
   "title": "Clash Converter",
-  "subtitle": {
-    "proxies-to-yaml": "Convert proxy links to Clash YAML format",
-    "yaml-to-proxies": "Extract proxy links from Clash YAML"
-  },
-  "inputLabel": {
-    "proxies-to-yaml": "Proxy Links",
-    "yaml-to-proxies": "Clash Config"
-  },
-  "outputLabel": {
-    "proxies-to-yaml": "Clash Config",
-    "yaml-to-proxies": "Proxy Links"
+  "subtitle": "Convert between proxy links, Clash YAML, and sing-box JSON formats",
+  "inputLabel": "Input",
+  "outputLabel": "Output",
+  "formatTypes": {
+    "txt": "Proxy Links",
+    "clash-meta": "Clash Meta",
+    "clash-premium": "Clash Premium",
+    "sing-box": "Sing-Box"
   },
   "inputPlaceholder": {
-    "proxies-to-yaml": "Paste your proxy links here - one per line\n\nSupported protocols:\n\nhysteria://server:port?protocol=udp&auth=xxx&peer=xxx#Hysteria-Node\nhysteria2://password@server:port/?sni=xxx#Hysteria2-Node\nss://[base64]#SS-Node\nssr://[base64]#SSR-Node\nvmess://[base64]#Vmess-Node\nvless://uuid@server:port?encryption=none&security=tls&type=tcp#Vless-Node\ntrojan://password@server:port#Trojan-Node\nsocks5://server:port#Socks5-Node\nhttp://user:pass@server:port#Http-Node\n\n💡 Tip: The #name suffix becomes the proxy name in your YAML file",
-    "yaml-to-proxies": "proxies:\n  - name: SS-HongKong\n    type: ss\n    server: hk.example.com\n    port: 443\n  - name: VMESS-US\n    type: vmess\n    server: us.example.com\n    port: 443\n\nproxy-groups:\n  - name: PROXY\n    type: select\n    proxies: ..."
+    "txt": "Paste your proxy links here - one per line\n\nSupported protocols:\n\nhysteria://server:port?protocol=udp&auth=xxx&peer=xxx#Hysteria-Node\nhysteria2://password@server:port/?sni=xxx#Hysteria2-Node\nss://[base64]#SS-Node\nssr://[base64]#SSR-Node\nvmess://[base64]#Vmess-Node\nvless://uuid@server:port?encryption=none&security=tls&type=tcp#Vless-Node\ntrojan://password@server:port#Trojan-Node\nsocks5://server:port#Socks5-Node\nhttp://user:pass@server:port#Http-Node\n\n💡 Tip: The #name suffix becomes the proxy name in your output file",
+    "clash": "proxies:\n  - name: SS-HongKong\n    type: ss\n    server: hk.example.com\n    port: 443\n  - name: VMESS-US\n    type: vmess\n    server: us.example.com\n    port: 443\n\nproxy-groups:\n  - name: PROXY\n    type: select\n    proxies: ...",
+    "sing-box": "'{'\n  \"outbounds\": [\n    '{'\n      \"type\": \"shadowsocks\",\n      \"tag\": \"SS-HongKong\",\n      \"server\": \"hk.example.com\",\n      \"server_port\": 443,\n      \"method\": \"aes-128-gcm\",\n      \"password\": \"password\"\n    '}',\n    ..."
+  },
+  "outputPlaceholder": {
+    "txt": "# Your proxy links will appear here",
+    "clash": "# Your Clash config will appear here",
+    "sing-box": "# Your sing-box config will appear here"
   },
   "itemsFound": "{count} item(s) found",
   "clear": "Clear",
@@ -30,6 +33,16 @@
     "sing-box": "Sing-Box"
   },
   "kernelDescriptions": {
+    "txt": {
+      "title": "Proxy Links",
+      "description": "Shareable proxy links in URI format. Used for importing into clients.",
+      "features": [
+        "Universal format supported by most clients",
+        "Easy to share and distribute",
+        "Contains all proxy configuration in a single link",
+        "Can be imported directly into proxy clients"
+      ]
+    },
     "clash-meta": {
       "title": "Clash Meta (Mihomo)",
       "description": "The continuation of Clash Meta with the latest features and protocol support.",
@@ -67,14 +80,6 @@
     "vless": "VLESS",
     "hysteria": "Hysteria",
     "hysteria2": "Hysteria2"
-  },
-  "outputPlaceholder": {
-    "proxies-to-yaml": "# Your Clash config will appear here",
-    "yaml-to-proxies": "# Your proxy links will appear here"
-  },
-  "downloadFilename": {
-    "proxies-to-yaml": "clash-config.yaml",
-    "yaml-to-proxies": "proxies.txt"
   },
   "seoContent": {
     "title": "Free Online Clash & sing-box Converter - Convert Proxy Links",

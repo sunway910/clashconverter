@@ -3,7 +3,6 @@
     "allow": [
       "Skill(vercel-react-best-practices)",
       "Skill(web-design-guidelines)",
-      "WebSearch",
       "Bash(tree:*)",
       "Bash(pnpm install)",
       "Bash(pnpm run dev)",
@@ -37,7 +36,14 @@
       "Bash(find:*)",
       "Bash(pnpm ls:*)",
       "Bash(pnpm why:*)",
-      "Bash(pnpm exec opennextjs-cloudflare:*)"
+      "Bash(pnpm exec opennextjs-cloudflare:*)",
+      "Bash(pnpm run build)"
     ]
-  }
+  },
+  "disabledMcpjsonServers": [
+    "web-search-prime",
+    "zai-mcp-server",
+    "web-reader",
+    "zread"
+  ]
 }

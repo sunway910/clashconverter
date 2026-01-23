@@ -244,13 +244,38 @@ function getThemeExtension(isDark: boolean): ReturnType<typeof EditorView.theme>
         fontSize: '12px',
         fontFamily: "'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace",
         backgroundColor: colors.bg,
+        height: '100%',
       },
       '&.cm-focused': { outline: 'none' },
       '.cm-scroller': {
         overflow: 'auto',
-        fontFamily: "'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace"
+        fontFamily: "'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace",
+        height: '100%',
+        // Firefox scrollbar styling
+        scrollbarWidth: 'thin',
+        scrollbarColor: isDark ? '#444 transparent' : '#ccc transparent',
       },
-      '.cm-content': { padding: '12px 0' },
+      // WebKit scrollbar styling (Chrome, Safari, Edge)
+      '.cm-scroller::-webkit-scrollbar': {
+        width: '10px',
+        height: '10px',
+      },
+      '.cm-scroller::-webkit-scrollbar-track': {
+        background: 'transparent',
+      },
+      '.cm-scroller::-webkit-scrollbar-thumb': {
+        background: isDark ? '#444' : '#ccc',
+        borderRadius: '5px',
+        border: '2px solid transparent',
+        backgroundClip: 'padding-box',
+      },
+      '.cm-scroller::-webkit-scrollbar-thumb:hover': {
+        background: isDark ? '#555' : '#999',
+      },
+      '.cm-content': {
+        padding: '12px 0',
+        minHeight: '100%',
+      },
       '.cm-line': { padding: '0 4px', lineHeight: '18px' },
       '.cm-selectionBackground': { background: colors.selectionBg },
       '&.cm-focused .cm-selectionBackground': { background: colors.selectionBgFocused },
@@ -258,6 +283,7 @@ function getThemeExtension(isDark: boolean): ReturnType<typeof EditorView.theme>
         backgroundColor: colors.gutter,
         color: colors.gutterText,
         border: 'none',
+        minHeight: '100%',
       },
       '.cm-gutterElement': {
         padding: '0 4px',
@@ -617,17 +643,17 @@ export function PreviewEditor({
   return (
     <EditorErrorBoundary height={height}>
       <div
-        className={`overflow-hidden rounded-md border ${
+        className={`rounded-md border ${
           themeState.isDark ? 'border-stone-800 bg-stone-950' : 'border-stone-200 bg-white'
         }`}
-        style={{ height }}
+        style={{ height, overflow: 'hidden' }}
       >
         {!mounted && (
           <div className="flex h-full items-center justify-center py-20">
             <div className="text-sm text-stone-500">Loading editor...</div>
           </div>
         )}
-        <div ref={editorRef} className="h-full" />
+        <div ref={editorRef} className="h-full overflow-auto" />
       </div>
     </EditorErrorBoundary>
   );
