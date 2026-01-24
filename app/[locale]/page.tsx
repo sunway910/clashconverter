@@ -1,9 +1,9 @@
 import { Converter } from '@/components/converter';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { LanguageToggle } from '@/components/language-toggle';
-import { ClientDialog } from '@/components/client-dialog';
+import { ClientDialog } from '@/components/dialogs/client-dialog';
 import { ProxyNodeDialog } from '@/components/proxy-node-dialog';
-import { SEOContent } from '@/components/seo-content';
+import { SEOContent } from '@/components/seo/seo-content';
 import Image from 'next/image';
 
 export default function Home() {

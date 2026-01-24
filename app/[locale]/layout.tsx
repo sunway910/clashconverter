@@ -6,7 +6,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
 import { GoogleAnalytics } from "@/components/google-analytics";
 import { GoogleAdSense } from "@/components/google-adsense";
-import { generateMetadata as generateSEOMetadata, JSONLDStructuredData, HreflangLinks, PerformancePreconnects } from "@/components/seo-head";
+import { generateMetadata as generateSEOMetadata, JSONLDStructuredData, HreflangLinks, PerformancePreconnects } from "@/components/seo/seo-head";
 import "../globals.css";
 
 const geistSans = Geist({
