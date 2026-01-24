@@ -1,12 +1,12 @@
-import { ProxyNode } from './types';
-import { CLASH_RULES } from './rules-content';
+import { ProxyNode } from '../../types';
+import { CLASH_RULES } from '../config/rules';
 import {
   DNS_CONFIG,
   BASIC_CONFIG,
   HEADER_BANNER,
   FOOTER_BANNER,
   PROXY_GROUPS_CONFIG,
-} from './clash-config';
+} from '../config/dns';
 
 // Generate header with metadata
 function setHeader(lines: string[], nodeCount: number): void {

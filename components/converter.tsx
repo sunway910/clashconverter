@@ -24,11 +24,11 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from '@/components/ui/hover-card';
-import { PreviewEditor } from '@/components/preview-editor';
-import { parseInput, FormatType } from '@/lib/unified-parser';
-import { proxiesToLinks } from '@/lib/yaml-parser';
-import { generateSimpleYaml } from '@/lib/yaml-generator';
-import { generateSingBoxConfig, SING_BOX_SUPPORTED_PROTOCOLS } from '@/lib/sing-box-generator';
+import { PreviewEditor } from '@/components/preview/preview-editor';
+import { parseInput, FormatType } from '@/lib/parser';
+import { proxiesToLinks } from '@/lib/clash/parser/yaml';
+import { generateSimpleYaml } from '@/lib/clash/generator/yaml';
+import { generateSingBoxConfig, SING_BOX_SUPPORTED_PROTOCOLS } from '@/lib/singbox/generator';
 import { Download, FileText, Copy, ArrowRightLeft, Info, Cpu } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';

@@ -1,7 +1,7 @@
-import { ProxyNode } from './types';
-import { parseMultipleProxies } from './parsers';
-import { parseYamlToProxies } from './yaml-parser';
-import { parseSingBoxToProxies } from './sing-box-parser';
+import { ProxyNode } from '../types';
+import { parseMultipleProxies } from '../parsers';
+import { parseYamlToProxies } from '../clash/parser/yaml';
+import { parseSingBoxToProxies } from '../singbox/parser';
 
 /**
  * Format type for input/output
