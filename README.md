@@ -58,7 +58,7 @@ A client-side proxy configuration converter that transforms various proxy protoc
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/clashconverter.git
+git clone https://github.com/sunway910/clashconverter.git
 cd clashconverter
 
 # Install dependencies
@@ -212,20 +212,6 @@ NEXT_PUBLIC_ENABLE_DNS_CONFIG=true
 | HTTP | ✅ | ✅ | ✅ |
 | SOCKS5 | ✅ | ✅ | ❌ |
 
-## Development
-
-### Type Checking
-
-```bash
-npx tsc --noEmit
-```
-
-### Linting
-
-```bash
-pnpm run lint
-```
-
 ## SEO
 
 The application is optimized for search engines with:
@@ -236,24 +222,6 @@ The application is optimized for search engines with:
 - Hreflang links for multilingual SEO
 - Optimized page titles and descriptions
 - 114+ targeted keywords for better ranking
-
-## Deployment
-
-### Vercel / Standard Node.js
-
-```bash
-pnpm build
-pnpm start
-```
-
-### Cloudflare Workers
-
-```bash
-pnpm build:cf
-pnpm deploy:cf
-```
-
-The project uses `@opennextjs/cloudflare` for seamless Cloudflare Workers deployment.
 
 ## License
 
