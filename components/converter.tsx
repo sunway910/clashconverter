@@ -118,7 +118,6 @@ export function Converter() {
 
   const output = result.output;
   const filteredCounts = result.filteredCounts;
-  const isJson = result.isJson;
   const unsupported = result.unsupported;
 
   // Compute input/output languages for syntax highlighting

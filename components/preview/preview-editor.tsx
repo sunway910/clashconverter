@@ -18,7 +18,6 @@ import {
   indentOnInput,
   foldGutter,
   syntaxHighlighting,
-  defaultHighlightStyle,
   HighlightStyle,
 } from '@codemirror/language';
 import { searchKeymap, highlightSelectionMatches } from '@codemirror/search';
@@ -180,12 +179,6 @@ class LRUCache<K, V> {
     } else {
       this.tail = node.prev;
     }
-  }
-
-  clear(): void {
-    this.cache.clear();
-    this.head = null;
-    this.tail = null;
   }
 }
 
