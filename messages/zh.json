@@ -3,6 +3,9 @@
   "subtitle": "在代理链接、Clash YAML 和 Sing-Box 格式之间转换",
   "about": "关于",
   "backToHome": "返回首页",
+  "footer": {
+    "rights": "版权所有。"
+  },
   "resources": {
     "menuTitle": "资源",
     "title": "资源与下载",

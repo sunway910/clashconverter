@@ -6,7 +6,9 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
 import { GoogleAnalytics } from "@/components/google-analytics";
 import { GoogleAdSense } from "@/components/google-adsense";
-import { generateMetadata as generateSEOMetadata, JSONLDStructuredData, HreflangLinks, PerformancePreconnects } from "@/components/seo/seo-head";
+import { Footer } from "@/components/footer";
+import { generateMetadata as generateSEOMetadata, HreflangLinks, JSONLDStructuredData, PerformancePreconnects } from "@/components/seo/seo-head";
+import React from "react";
 import "../globals.css";
 
 const geistSans = Geist({
@@ -28,18 +30,16 @@ const ADSENSE_ID = process.env.NEXT_PUBLIC_ADSENSE_ID;
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
 
-  const baseMetadata: Metadata = {
+  return {
     icons: {
       icon: [
-        { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
-        { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+        {url: "/favicon-16x16.png", sizes: "16x16", type: "image/png"},
+        {url: "/favicon-32x32.png", sizes: "32x32", type: "image/png"},
       ],
-      apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+      apple: [{url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png"}],
     },
-    ...generateSEOMetadata({ locale })
+    ...generateSEOMetadata({locale})
   };
-
-  return baseMetadata;
 }
 
 type Props = {
@@ -63,7 +63,7 @@ export default async function LocaleLayout({
       <head>
         <PerformancePreconnects />
         <HreflangLinks locale={locale} />
-        <JSONLDStructuredData locale={locale} type="all" />
+        <JSONLDStructuredData locale={locale} type="all" /><title></title>
         {ADSENSE_ID && <meta name="google-adsense-account" content={ADSENSE_ID} />}
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
@@ -71,7 +71,12 @@ export default async function LocaleLayout({
         <GoogleAdSense adsenseId={ADSENSE_ID || ''} />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <NextIntlClientProvider messages={messages}>
-            {children}
+            <div className="flex min-h-screen flex-col">
+              <div className="flex-1">
+                {children}
+              </div>
+              <Footer />
+            </div>
             <Toaster richColors position="top-center" />
           </NextIntlClientProvider>
         </ThemeProvider>

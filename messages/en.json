@@ -3,6 +3,9 @@
   "subtitle": "Convert between Proxy Links, Clash YAML, and Sing-Box JSON",
   "about": "About",
   "backToHome": "Back to Home",
+  "footer": {
+    "rights": "All rights reserved."
+  },
   "resources": {
     "menuTitle": "Resources",
     "title": "Resources & Downloads",
