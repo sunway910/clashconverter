@@ -1,6 +1,6 @@
 # Clash Converter
 
-A client-side proxy configuration converter that transforms various proxy protocols into Clash YAML format. Built with Next.js 16, featuring real-time preview, multi-language support, and comprehensive SEO optimization.
+A client-side proxy configuration converter that transforms various proxy protocols into Clash YAML or Sing-Box JSON formats. Built with Next.js 16, featuring real-time preview with CodeMirror, multi-language support, and comprehensive SEO optimization.
 
 [![Clash Converter](https://img.shields.io/badge/Clash-Converter-blue)](https://clashconverter.com)
 [![Next.js](https://img.shields.io/badge/Next.js-16.1.1-black)](https://nextjs.org/)
@@ -19,14 +19,19 @@ A client-side proxy configuration converter that transforms various proxy protoc
   - HTTP / HTTPS
   - SOCKS5
   - Telegram SOCKS links
-- **Bidirectional Conversion**: Convert proxy links to Clash YAML and vice versa
-- **Kernel Selection**: Generate configs for Clash Meta (Mihomo) or Clash Premium
-- **DNS Configuration**: Includes comprehensive DNS settings with fake-ip mode
+- **Multiple Output Formats**:
+  - **Proxy Links** - Shareable URI format
+  - **Clash Meta (Mihomo)** - Full protocol support
+  - **Clash Premium** - Legacy compatibility
+  - **Sing-Box** - Universal proxy platform (JSON)
+- **Bidirectional Conversion**: Convert between proxy links, Clash YAML, and Sing-Box JSON
+- **CodeMirror Editor**: Full-featured code preview with syntax highlighting for YAML/JSON
+- **Protocol-specific Dialogs**: Edit individual proxy nodes with dedicated dialog UI
 - **IP-Based Locale Detection**: Automatically detects user location and redirects to appropriate language
 - **Multi-Language**: English and Simplified Chinese (简体中文)
 - **Theme Support**: Dark/Light mode with system preference detection
-- **Live Preview**: Real-time preview of generated YAML
-- **Download Support**: One-click download of generated configuration files
+- **Resources Page**: Proxy client downloads and installation scripts
+- **About Page**: Project information and documentation
 
 ## Supported Protocols
 
@@ -59,6 +64,12 @@ cd clashconverter
 # Install dependencies
 pnpm install
 
+# Type Checking
+npx tsc --noEmit
+
+# Linting
+pnpm run lint
+
 # Start development server
 pnpm dev
 ```
@@ -72,34 +83,60 @@ pnpm build
 pnpm start
 ```
 
+### Cloudflare Workers Deployment
+
+```bash
+# Build for Cloudflare
+pnpm build:cf
+
+# Deploy to Cloudflare
+pnpm deploy:cf
+
+# Preview locally
+pnpm preview
+```
+
 ## Project Structure
 
 ```
 clashconverter/
 ├── app/                      # Next.js App Router
 │   ├── [locale]/             # Localized routes
-│   │   └── page.tsx          # Main converter page
+│   │   ├── page.tsx          # Main converter page
+│   │   ├── about/            # About page
+│   │   └── resources/        # Resources page
 │   ├── layout.tsx            # Root layout
-│   └── globals.css           # Global styles
+│   ├── globals.css           # Global styles
+│   ├── robots.ts             # SEO robots.txt
+│   └── sitemap.ts            # SEO sitemap
 ├── components/               # React components
 │   ├── converter.tsx         # Main converter component
+│   ├── footer.tsx            # Footer component
 │   ├── language-toggle.tsx   # Language selector
 │   ├── theme-toggle.tsx      # Theme switcher
+│   ├── theme-provider.tsx    # Theme context provider
 │   ├── google-analytics.tsx  # GA integration
+│   ├── google-adsense.tsx    # AdSense integration
+│   ├── preview/              # CodeMirror preview editor
+│   ├── dialogs/              # Dialog components
+│   ├── seo/                  # SEO components
+│   ├── about/                # About page components
+│   ├── resources/            # Resources page components
 │   └── ui/                   # shadcn/ui components
 ├── lib/                      # Core utilities
-│   ├── parsers/              # Protocol parsers
-│   │   ├── index.ts          # Parser orchestration
-│   │   └── protocol-parsers.ts  # Individual protocol parsers
-│   ├── types.ts              # TypeScript type definitions
-│   ├── yaml-parser.ts        # YAML to proxy links
-│   ├── yaml-generator.ts     # Proxy links to YAML
-│   ├── rules-content.ts      # Clash rules
-│   └── utils.ts              # Utility functions
+│   ├── core/                 # Core architecture
+│   │   ├── interfaces.ts     # Type definitions
+│   │   ├── base-generator.ts # Base generator class
+│   │   ├── factory.ts        # Factory pattern
+│   │   ├── converter.ts      # Main converter
+│   │   └── registry.ts       # Format registry
+│   ├── adapters/             # Protocol adapters
+│   ├── parsers/              # Input parsers
+│   ├── generators/           # Output generators
+│   ├── clash/                # Clash-specific modules
+│   └── singbox/              # Sing-Box specific modules
 ├── messages/                 # next-intl translations
-│   ├── en.json               # English translations
-│   └── zh.json               # Chinese translations
-├── proxy.ts             # Next.js proxy for routing
+├── middleware.ts             # Locale detection middleware
 └── public/                   # Static assets
 ```
 
@@ -107,12 +144,38 @@ clashconverter/
 
 - **Framework**: Next.js 16.1.1 (App Router)
 - **Language**: TypeScript 5.6+ (strict mode)
-- **Styling**: Tailwind CSS v4
+- **Styling**: Tailwind CSS v3 with custom configuration
 - **Components**: shadcn/ui (New York style, Stone color scheme)
 - **Icons**: Lucide React
+- **Code Editor**: CodeMirror 6 with YAML/JSON support
 - **Internationalization**: next-intl v4
 - **Notifications**: Sonner
 - **Theme**: next-themes
+- **Deployment**: @opennextjs/cloudflare for Cloudflare Workers
+
+## Architecture
+
+The converter uses a sophisticated architecture pattern:
+
+### Core System
+- **Factory Pattern**: `FormatFactory` creates parsers and generators
+- **Registry Pattern**: Auto-initializes all supported formats
+- **Base Classes**: `BaseFormatGenerator` provides common functionality
+- **Interfaces**: Strict typing for `IFormatParser` and `IFormatGenerator`
+
+### Adapter Pattern
+Each protocol has its own adapter class for parsing and generation:
+- Clean abstraction layer for protocol-specific logic
+- Easy to add new protocol support
+- Centralized protocol handling
+
+### Supported Formats
+| Format | Input | Output | Notes |
+|--------|-------|--------|-------|
+| Proxy Links | ✅ | ✅ | Universal URI format |
+| Clash Meta | ✅ | ✅ | Full protocol support |
+| Clash Premium | ✅ | ✅ | No VLESS/Hysteria/Hysteria2 |
+| Sing-Box | ✅ | ✅ | No SSR/SOCKS5 support |
 
 ## Configuration
 
@@ -126,28 +189,71 @@ NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
 
 # Google AdSense (optional)
 NEXT_PUBLIC_ADSENSE_ID=ca-pub-XXXXXXXXXXXXXXXX
+
+# Contact Email (optional, defaults to clashconverter@gmail.com)
+NEXT_PUBLIC_CONTACT_EMAIL=your-email@gmail.com
+
+# DNS Configuration (optional, defaults to true)
+# Set to 'false' to disable DNS section in generated Clash YAML
+NEXT_PUBLIC_ENABLE_DNS_CONFIG=true
 ```
 
 ### Kernel Compatibility
 
-| Feature | Clash Meta (Mihomo) | Clash Premium |
-|---------|---------------------|---------------|
-| VLESS | ✅ | ❌ |
-| Hysteria | ✅ | ❌ |
-| Hysteria2 | ✅ | ❌ |
-| VMess | ✅ | ✅ |
-| Trojan | ✅ | ✅ |
-| SS | ✅ | ✅ |
-| SSR | ✅ | ✅ |
+| Feature | Clash Meta (Mihomo) | Clash Premium | Sing-Box |
+|---------|---------------------|---------------|----------|
+| VLESS | ✅ | ❌ | ✅ |
+| Hysteria | ✅ | ❌ | ✅ |
+| Hysteria2 | ✅ | ❌ | ✅ |
+| VMess | ✅ | ✅ | ✅ |
+| Trojan | ✅ | ✅ | ✅ |
+| SS | ✅ | ✅ | ✅ |
+| SSR | ✅ | ✅ | ❌ |
+| HTTP | ✅ | ✅ | ✅ |
+| SOCKS5 | ✅ | ✅ | ❌ |
+
+## Development
+
+### Type Checking
+
+```bash
+npx tsc --noEmit
+```
+
+### Linting
+
+```bash
+pnpm run lint
+```
 
 ## SEO
 
 The application is optimized for search engines with:
 - Meta tags for social sharing (Open Graph, Twitter Card)
-- Structured data markup
-- Sitemap generation
+- Structured data markup (JSON-LD) for SoftwareApplication, FAQPage, HowTo, etc.
+- Dynamic sitemap generation with locale support
 - Robots.txt configuration
+- Hreflang links for multilingual SEO
 - Optimized page titles and descriptions
+- 114+ targeted keywords for better ranking
+
+## Deployment
+
+### Vercel / Standard Node.js
+
+```bash
+pnpm build
+pnpm start
+```
+
+### Cloudflare Workers
+
+```bash
+pnpm build:cf
+pnpm deploy:cf
+```
+
+The project uses `@opennextjs/cloudflare` for seamless Cloudflare Workers deployment.
 
 ## License
 
