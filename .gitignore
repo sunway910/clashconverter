@@ -84,9 +84,8 @@ dist
 
 # Gatsby files
 .cache/
-# Comment in the public line in if your project uses Gatsby and not Next.js
-# https://nextjs.org/blog/next-9-1#public-directory-support
-# public
+# Note: public/ directory is used by Next.js for static assets and should be tracked
+
 
 # vuepress build output
 .vuepress/dist
