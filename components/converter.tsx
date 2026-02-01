@@ -107,8 +107,6 @@ export function Converter() {
   // Parse input and generate output based on formats
   const result = useMemo(() => {
     if (!input.trim()) {
-      previousUnsupportedProtocolsRef.current = new Set();
-      previousFilteredCountRef.current = {};
       return { output: '', filteredCounts: {}, isJson: false, unsupported: [] };
     }
 
@@ -132,7 +130,9 @@ export function Converter() {
   const outputLanguage = useMemo(() => {
     switch (outputFormat) {
       case 'sing-box': return 'json';
-      case 'txt': return 'plaintext';
+      case 'txt':
+      case 'loon':
+        return 'plaintext';
       default: return 'yaml';
     }
   }, [outputFormat]);
@@ -155,6 +155,8 @@ export function Converter() {
         return t('outputPlaceholder.txt');
       case 'sing-box':
         return t('outputPlaceholder.sing-box');
+      case 'loon':
+        return '# Your Loon configuration will appear here';
       default:
         return t('outputPlaceholder.clash');
     }
@@ -176,21 +178,30 @@ export function Converter() {
     });
     previousUnsupportedProtocolsRef.current = new Set(uniqueUnsupported);
 
+    // Show filtering notifications for formats that don't support all protocols
     if (outputFormat === 'clash-premium') {
       Object.entries(filteredCounts).forEach(([protocol, count]) => {
         if (previousFilteredCountRef.current[protocol] !== count) {
           toast.warning(`${count} ${protocol.toUpperCase()} node(s) filtered out (not supported by Clash Premium)`);
         }
       });
-      previousFilteredCountRef.current = filteredCounts;
+      previousFilteredCountRef.current = { ...filteredCounts };
     } else if (outputFormat === 'sing-box') {
       Object.entries(filteredCounts).forEach(([protocol, count]) => {
         if (previousFilteredCountRef.current[protocol] !== count) {
           toast.warning(`${count} ${protocol.toUpperCase()} node(s) filtered out (not supported by Sing-Box)`);
         }
       });
-      previousFilteredCountRef.current = filteredCounts;
-    } else if (outputFormat === 'clash-meta') {
+      previousFilteredCountRef.current = { ...filteredCounts };
+    } else if (outputFormat === 'loon') {
+      Object.entries(filteredCounts).forEach(([protocol, count]) => {
+        if (previousFilteredCountRef.current[protocol] !== count) {
+          toast.warning(`${count} ${protocol.toUpperCase()} node(s) filtered out (not supported by Loon)`);
+        }
+      });
+      previousFilteredCountRef.current = { ...filteredCounts };
+    } else {
+      // Reset for clash-meta and txt which support all protocols
       previousFilteredCountRef.current = {};
     }
   }, [input, unsupported, filteredCounts, outputFormat]);
@@ -225,6 +236,10 @@ export function Converter() {
         break;
       case 'txt':
         filename = `proxies-${timestamp}.txt`;
+        mimeType = 'text/plain';
+        break;
+      case 'loon':
+        filename = `loon-${timestamp}.conf`;
         mimeType = 'text/plain';
         break;
       case 'clash-meta':
@@ -300,6 +315,7 @@ export function Converter() {
                         <SelectItem value="clash-meta">{t('formatTypes.clash-meta')}</SelectItem>
                         <SelectItem value="clash-premium">{t('formatTypes.clash-premium')}</SelectItem>
                         <SelectItem value="sing-box">{t('formatTypes.sing-box')}</SelectItem>
+                        <SelectItem value="loon">{t('formatTypes.loon')}</SelectItem>
                       </SelectContent>
                     </Select>
                     <DialogTrigger asChild>
@@ -371,6 +387,7 @@ export function Converter() {
                       <SelectItem value="clash-meta">{t('formatTypes.clash-meta')}</SelectItem>
                       <SelectItem value="clash-premium">{t('formatTypes.clash-premium')}</SelectItem>
                       <SelectItem value="sing-box">{t('formatTypes.sing-box')}</SelectItem>
+                      <SelectItem value="loon">{t('formatTypes.loon')}</SelectItem>
                     </SelectContent>
                   </Select>
                   <HoverCard openDelay={200}>

@@ -27,6 +27,10 @@ const clients = [
     icon: '🚀',
   },
   {
+    id: 'loon',
+    icon: '🌙',
+  },
+  {
     id: 'sing-box',
     icon: '📦',
   },
