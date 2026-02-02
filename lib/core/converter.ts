@@ -5,17 +5,7 @@
 
 import type { ProxyNode } from '../types';
 import type { FormatType, ConversionResult, ParseResult } from './interfaces';
-import type { NodeFilterOptions } from '../config/types';
 import { FormatFactory } from './factory';
-import { NodeFilter } from '../filters';
-
-/**
- * Filter options for conversion
- */
-export interface ConversionOptions {
-  /** Node filter options */
-  filter?: NodeFilterOptions;
-}
 
 /**
  * Unified format converter
@@ -27,14 +17,12 @@ export class FormatConverter {
    * @param input - The input string to convert
    * @param inputFormat - The format of the input
    * @param outputFormat - The desired output format
-   * @param options - Conversion options (optional)
    * @returns ConversionResult containing output and metadata
    */
   convert(
     input: string,
     inputFormat: FormatType,
-    outputFormat: FormatType,
-    options?: ConversionOptions
+    outputFormat: FormatType
   ): ConversionResult {
     // Handle empty input
     if (!input.trim()) {
@@ -42,7 +30,7 @@ export class FormatConverter {
         output: '',
         filteredCounts: {},
         unsupported: [],
-        isJson: outputFormat === 'sing-box',
+        isJson: outputFormat === 'sing-box' || outputFormat === 'loon',
       };
     }
 
@@ -50,34 +38,22 @@ export class FormatConverter {
     const parser = FormatFactory.createParser(inputFormat);
     const parseResult = parser.parse(input);
 
-    // Step 2: Apply custom filters if provided
-    let proxies = parseResult.proxies;
-    if (options?.filter) {
-      proxies = NodeFilter.filterAtParse(proxies, options.filter);
-    }
-
-    // Step 3: Filter proxies based on output format's supported protocols
+    // Step 2: Filter proxies based on output format's supported protocols
     const generator = FormatFactory.createGenerator(outputFormat);
     const supportedProtocols = generator.getSupportedProtocols();
     const { proxies: filteredProxies, filteredCounts } = this.filterByProtocolSupport(
-      proxies,
+      parseResult.proxies,
       supportedProtocols
     );
 
-    // Step 4: Apply generate-time filters if needed
-    let finalProxies = filteredProxies;
-    if (options?.filter) {
-      finalProxies = NodeFilter.filterAtGenerate(filteredProxies, options.filter);
-    }
-
-    // Step 5: Generate output
-    const output = generator.generate(finalProxies);
+    // Step 3: Generate output
+    const output = generator.generate(filteredProxies);
 
     return {
       output,
       filteredCounts,
       unsupported: parseResult.unsupported,
-      isJson: outputFormat === 'sing-box',
+      isJson: outputFormat === 'sing-box' || outputFormat === 'loon',
     };
   }
 
@@ -166,17 +142,15 @@ export class FormatConverter {
  * @param input - The input string to convert
  * @param inputFormat - The format of the input
  * @param outputFormat - The desired output format
- * @param options - Conversion options (optional)
  * @returns ConversionResult containing output and metadata
  */
 export function convert(
   input: string,
   inputFormat: FormatType,
-  outputFormat: FormatType,
-  options?: ConversionOptions
+  outputFormat: FormatType
 ): ConversionResult {
   const converter = new FormatConverter();
-  return converter.convert(input, inputFormat, outputFormat, options);
+  return converter.convert(input, inputFormat, outputFormat);
 }
 
 /**

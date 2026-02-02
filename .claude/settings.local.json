@@ -39,9 +39,19 @@
       "Bash(pnpm ls:*)",
       "Bash(pnpm why:*)",
       "Bash(pnpm exec opennextjs-cloudflare:*)",
-      "Bash(git reset:*)"
+      "Bash(git reset:*)",
+      "Bash(npx ts-node:*)",
+      "Bash(pnpm exec tsx:*)",
+      "Bash(cmp:*)",
+      "Bash(awk:*)",
+      "Bash(git ls-tree:*)"
     ],
-    "defaultMode": "acceptEdits"
+    "defaultMode": "acceptEdits",
+    "additionalDirectories": [
+      "D:\\DevelopProject\\ACL4SSR",
+      "D:\\DevelopProject\\sub-web",
+      "D:\\DevelopProject\\subconverter"
+    ]
   },
   "hooks": {
     "PreToolUse": [
