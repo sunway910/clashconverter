@@ -25,7 +25,9 @@ import {
   HoverCardTrigger,
 } from '@/components/ui/hover-card';
 import { PreviewEditor } from '@/components/preview/preview-editor';
+import { SubscriptionDialog } from '@/components/dialogs/subscription-dialog';
 import { parseInput, convert, FormatType } from '@/lib/parser';
+import { isSubscriptionLink } from '@/lib/subscription';
 import { Download, FileText, Copy, ArrowRightLeft, Info, Cpu } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
@@ -99,10 +101,13 @@ export function Converter() {
   const [inputFormat, setInputFormat] = useState<FormatType>('txt');
   const [outputFormat, setOutputFormat] = useState<FormatType>('clash-meta');
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [subscriptionDialogOpen, setSubscriptionDialogOpen] = useState(false);
+  const [pendingSubscriptionUrl, setPendingSubscriptionUrl] = useState('');
   const t = useTranslations();
   const pendingInputRef = useRef<string | null>(null);
   const previousFilteredCountRef = useRef<Record<string, number>>({});
   const previousUnsupportedProtocolsRef = useRef<Set<string>>(new Set());
+  const lastProcessedInputRef = useRef<string>('');
 
   // Parse input and generate output based on formats
   const result = useMemo(() => {
@@ -272,6 +277,42 @@ export function Converter() {
     // Move current output to input for convenience
     pendingInputRef.current = output;
   }, [inputFormat, outputFormat, output]);
+
+  // Detect subscription link and show dialog
+  useEffect(() => {
+    // Skip if input is empty or already processed
+    const trimmedInput = input.trim();
+    if (!trimmedInput || trimmedInput === lastProcessedInputRef.current) {
+      return;
+    }
+
+    // Check if input is a single subscription URL (not already processed content)
+    const lines = trimmedInput.split(/[\r\n]+/).filter(line => line.trim());
+    if (lines.length === 1 && isSubscriptionLink(lines[0])) {
+      // Store the URL and show dialog
+      setPendingSubscriptionUrl(lines[0]);
+      setSubscriptionDialogOpen(true);
+      // Mark as processed to avoid showing dialog again
+      lastProcessedInputRef.current = trimmedInput;
+    }
+  }, [input]);
+
+  // Handle subscription conversion callback
+  const handleSubscriptionConvert = useCallback((content: string, detectedInputFormat: string, suggestedOutputFormat?: string) => {
+    // Set the converted content as input
+    setInput(content);
+    setInputFormat(detectedInputFormat as FormatType);
+
+    // Set suggested output format if provided
+    if (suggestedOutputFormat) {
+      setOutputFormat(suggestedOutputFormat as FormatType);
+    }
+
+    // Update the last processed input to avoid re-triggering
+    lastProcessedInputRef.current = content;
+
+    toast.success(t('subscription.successToast'));
+  }, [t]);
 
   // Compute item count
   const itemCount = useMemo(() => {
@@ -452,6 +493,14 @@ export function Converter() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Subscription Dialog */}
+        <SubscriptionDialog
+          open={subscriptionDialogOpen}
+          onOpenChange={setSubscriptionDialogOpen}
+          subscriptionUrl={pendingSubscriptionUrl}
+          onConvert={handleSubscriptionConvert}
+        />
       </div>
   );
 }
