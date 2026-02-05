@@ -9,6 +9,7 @@ import { FormatFactory } from './factory';
 import { TxtParser } from '../parsers/txt-parser';
 import { ClashYamlParser } from '../parsers/clash-yaml-parser';
 import { SingBoxJsonParser } from '../parsers/singbox-json-parser';
+import { SubscribeUrlParser } from '../parsers/subscribe-url-parser';
 
 // Import generators
 import { TxtGenerator } from '../generators/txt-generator';
@@ -26,6 +27,7 @@ export function initializeFormatRegistry(): void {
   FormatFactory.registerParser(new TxtParser());
   FormatFactory.registerParser(new ClashYamlParser());
   FormatFactory.registerParser(new SingBoxJsonParser());
+  FormatFactory.registerParser(new SubscribeUrlParser());
 
   // Register all generators
   FormatFactory.registerGenerator(new TxtGenerator());

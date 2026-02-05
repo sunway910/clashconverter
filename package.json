@@ -7,6 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "test": "vitest run",
+    "test:ui": "vitest --ui",
+    "test:watch": "vitest watch",
+    "test:coverage": "vitest run --coverage",
     "build:cf": "opennextjs-cloudflare build",
     "deploy:cf": "npx wrangler deploy",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
@@ -15,7 +19,6 @@
   },
   "dependencies": {
     "@codemirror/autocomplete": "^6.20.0",
-    "@opennextjs/cloudflare": "1.14.9",
     "@codemirror/commands": "^6.10.1",
     "@codemirror/lang-json": "^6.0.2",
     "@codemirror/lang-yaml": "^6.1.2",
@@ -27,6 +30,7 @@
     "@codemirror/view": "^6.39.11",
     "@lezer/common": "^1.5.0",
     "@lezer/highlight": "^1.2.3",
+    "@opennextjs/cloudflare": "1.14.9",
     "@radix-ui/react-accordion": "^1.2.12",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-hover-card": "^1.1.15",
@@ -46,12 +50,15 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitest/ui": "^4.0.18",
     "autoprefixer": "^10.4.23",
     "eslint": "^9.7",
     "eslint-config-next": "16.1.1",
+    "happy-dom": "^20.5.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^3",
     "typescript": "^5.6.3",
+    "vitest": "^4.0.18",
     "wrangler": "^4.59.2"
   }
 }

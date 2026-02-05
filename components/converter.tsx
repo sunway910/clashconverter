@@ -25,7 +25,9 @@ import {
   HoverCardTrigger,
 } from '@/components/ui/hover-card';
 import { PreviewEditor } from '@/components/preview/preview-editor';
+import { SubscriptionDialog } from '@/components/dialogs/subscription-dialog';
 import { parseInput, convert, FormatType } from '@/lib/parser';
+import { isSubscriptionLink } from '@/lib/subscription';
 import { Download, FileText, Copy, ArrowRightLeft, Info, Cpu } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
@@ -99,10 +101,13 @@ export function Converter() {
   const [inputFormat, setInputFormat] = useState<FormatType>('txt');
   const [outputFormat, setOutputFormat] = useState<FormatType>('clash-meta');
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [subscriptionDialogOpen, setSubscriptionDialogOpen] = useState(false);
+  const [pendingSubscriptionUrl, setPendingSubscriptionUrl] = useState('');
   const t = useTranslations();
   const pendingInputRef = useRef<string | null>(null);
   const previousFilteredCountRef = useRef<Record<string, number>>({});
   const previousUnsupportedProtocolsRef = useRef<Set<string>>(new Set());
+  const lastProcessedInputRef = useRef<string>('');
 
   // Parse input and generate output based on formats
   const result = useMemo(() => {
@@ -122,7 +127,9 @@ export function Converter() {
   const inputLanguage = useMemo(() => {
     switch (inputFormat) {
       case 'sing-box': return 'json';
-      case 'txt': return 'plaintext';
+      case 'txt':
+      case 'subscribe-url':
+        return 'plaintext';
       default: return 'yaml';
     }
   }, [inputFormat]);
@@ -140,6 +147,8 @@ export function Converter() {
   // Compute placeholders
   const inputPlaceholder = useMemo(() => {
     switch (inputFormat) {
+      case 'subscribe-url':
+        return t('inputPlaceholder.subscribe-url');
       case 'txt':
         return t('inputPlaceholder.txt');
       case 'sing-box':
@@ -273,6 +282,42 @@ export function Converter() {
     pendingInputRef.current = output;
   }, [inputFormat, outputFormat, output]);
 
+  // Detect subscription link and show dialog
+  useEffect(() => {
+    // Skip if input is empty or already processed
+    const trimmedInput = input.trim();
+    if (!trimmedInput || trimmedInput === lastProcessedInputRef.current) {
+      return;
+    }
+
+    // Check if input is a single subscription URL (not already processed content)
+    const lines = trimmedInput.split(/[\r\n]+/).filter(line => line.trim());
+    if (lines.length === 1 && isSubscriptionLink(lines[0])) {
+      // Store the URL and show dialog
+      setPendingSubscriptionUrl(lines[0]);
+      setSubscriptionDialogOpen(true);
+      // Mark as processed to avoid showing dialog again
+      lastProcessedInputRef.current = trimmedInput;
+    }
+  }, [input]);
+
+  // Handle subscription conversion callback
+  const handleSubscriptionConvert = useCallback((content: string, detectedInputFormat: string, suggestedOutputFormat?: string) => {
+    // Set the converted content as input
+    setInput(content);
+    setInputFormat(detectedInputFormat as FormatType);
+
+    // Set suggested output format if provided
+    if (suggestedOutputFormat) {
+      setOutputFormat(suggestedOutputFormat as FormatType);
+    }
+
+    // Update the last processed input to avoid re-triggering
+    lastProcessedInputRef.current = content;
+
+    toast.success(t('subscription.successToast'));
+  }, [t]);
+
   // Compute item count
   const itemCount = useMemo(() => {
     const parseResult = parseInput(input, inputFormat);
@@ -311,6 +356,7 @@ export function Converter() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
+                        <SelectItem value="subscribe-url">{t('formatTypes.subscribe-url')}</SelectItem>
                         <SelectItem value="txt">{t('formatTypes.txt')}</SelectItem>
                         <SelectItem value="clash-meta">{t('formatTypes.clash-meta')}</SelectItem>
                         <SelectItem value="clash-premium">{t('formatTypes.clash-premium')}</SelectItem>
@@ -452,6 +498,14 @@ export function Converter() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Subscription Dialog */}
+        <SubscriptionDialog
+          open={subscriptionDialogOpen}
+          onOpenChange={setSubscriptionDialogOpen}
+          subscriptionUrl={pendingSubscriptionUrl}
+          onConvert={handleSubscriptionConvert}
+        />
       </div>
   );
 }

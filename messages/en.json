@@ -138,6 +138,27 @@
   },
   "inputLabel": "Input",
   "outputLabel": "Output",
+  "subscription": {
+    "title": "Subscription Link Detected",
+    "description": "Would you like to automatically fetch and convert this subscription link?",
+    "detectSubscription": "We detected a subscription link in your input.",
+    "autoConvertDescription": "We will fetch the subscription content and automatically convert it to the appropriate format.",
+    "convert": "Convert",
+    "cancel": "Cancel",
+    "close": "Close",
+    "retry": "Retry",
+    "processing": "Processing Subscription...",
+    "fetching": "Fetching subscription content, please wait...",
+    "success": "Conversion Successful!",
+    "failed": "Conversion Failed",
+    "converted": "Your subscription has been converted successfully!",
+    "error": "Conversion Error",
+    "fetchError": "Failed to fetch subscription content. Please check the URL and try again.",
+    "unknownError": "An unknown error occurred",
+    "proxiesFound": "{count} proxy(s) found and converted",
+    "contentType": "Content Type",
+    "successToast": "Subscription converted successfully!"
+  },
   "filter": {
     "title": "Node Filter",
     "settings": "Filter Settings",
@@ -175,6 +196,7 @@
     "loadFailed": "Failed to load preset"
   },
   "formatTypes": {
+    "subscribe-url": "Subscribe URL",
     "txt": "Proxy Links",
     "clash-meta": "Clash Meta",
     "clash-premium": "Clash Premium",
@@ -182,6 +204,7 @@
     "loon": "Loon"
   },
   "inputPlaceholder": {
+    "subscribe-url": "Paste your subscription link here\n\nSupported subscription types:\n\nType 1: Direct YAML download\nhttps://example.com/link/...?clash=3\n\nType 2: Base64 encoded proxy links\nhttps://example.com/api/v1/client/subscribe?token=xxx\n\n💡 We will automatically fetch and convert the subscription content",
     "txt": "Paste your proxy links here - one per line\n\nSupported protocols:\n\nhysteria://server:port?protocol=udp&auth=xxx&peer=xxx#Hysteria-Node\nhysteria2://password@server:port/?sni=xxx#Hysteria2-Node\nss://[base64]#SS-Node\nssr://[base64]#SSR-Node\nvmess://[base64]#Vmess-Node\nvless://uuid@server:port?encryption=none&security=tls&type=tcp#Vless-Node\ntrojan://password@server:port#Trojan-Node\nsocks5://server:port#Socks5-Node\nhttp://user:pass@server:port#Http-Node\n\n💡 Tip: The #name suffix becomes the proxy name in your output file",
     "clash": "proxies:\n  - name: SS-HongKong\n    type: ss\n    server: hk.example.com\n    port: 443\n  - name: VMESS-US\n    type: vmess\n    server: us.example.com\n    port: 443\n\nproxy-groups:\n  - name: PROXY\n    type: select\n    proxies: ...",
     "sing-box": "'{'\n  \"outbounds\": [\n    '{'\n      \"type\": \"shadowsocks\",\n      \"tag\": \"SS-HongKong\",\n      \"server\": \"hk.example.com\",\n      \"server_port\": 443,\n      \"method\": \"aes-128-gcm\",\n      \"password\": \"password\"\n    '}',\n    ..."
