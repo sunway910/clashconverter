@@ -13,6 +13,111 @@ const PROXY_LINK_GENERATORS = new Map<string, (proxy: ProxyNode) => string | nul
   ['http', httpToLink],
 ]);
 
+// Parse inline YAML proxy format: - {name: X, type: ss, server: ..., port: ..., ...}
+// This format is valid YAML but not valid JSON (keys are not quoted)
+function parseInlineYamlProxy(line: string): ProxyNode | null {
+  // Remove the "- {" prefix and closing "}" suffix
+  const content = line.trim();
+  if (!content.startsWith('- {') && !content.startsWith("- {")) {
+    return null;
+  }
+
+  // Extract content between braces
+  const match = content.match(/^-\s*\{(.+)\}\s*$/);
+  if (!match) {
+    return null;
+  }
+
+  const innerContent = match[1];
+
+  // Parse key-value pairs from the inline format
+  // Format: name: X, type: ss, server: ..., port: ..., ...
+  // Values can be:
+  // - Quoted strings: "value" or 'value'
+  // - Unquoted strings: value
+  // - Numbers: 1234
+  // - Booleans: true/false
+  // - Null: null or ~
+
+  const config: any = {};
+
+  // Use a state machine to parse the content
+  let i = 0;
+  while (i < innerContent.length) {
+    // Skip whitespace and comma
+    while (i < innerContent.length && (innerContent[i] === ' ' || innerContent[i] === '\t' || innerContent[i] === ',')) {
+      i++;
+    }
+    if (i >= innerContent.length) break;
+
+    // Parse key (ends with colon)
+    let keyEnd = i;
+    while (keyEnd < innerContent.length && innerContent[keyEnd] !== ':') {
+      keyEnd++;
+    }
+    if (keyEnd >= innerContent.length) break;
+
+    const key = innerContent.substring(i, keyEnd).trim();
+    i = keyEnd + 1; // Skip colon
+
+    // Skip whitespace after colon
+    while (i < innerContent.length && (innerContent[i] === ' ' || innerContent[i] === '\t')) {
+      i++;
+    }
+    if (i >= innerContent.length) break;
+
+    // Parse value
+    let value: any;
+
+    // Check for quoted string
+    if (innerContent[i] === '"' || innerContent[i] === "'") {
+      const quote = innerContent[i];
+      i++; // Skip opening quote
+      let valueEnd = i;
+      while (valueEnd < innerContent.length && innerContent[valueEnd] !== quote) {
+        // Handle escaped quotes
+        if (innerContent[valueEnd] === '\\' && valueEnd + 1 < innerContent.length) {
+          valueEnd += 2;
+        } else {
+          valueEnd++;
+        }
+      }
+      value = innerContent.substring(i, valueEnd);
+      i = valueEnd + 1; // Skip closing quote
+    } else {
+      // Unquoted value - parse until next comma or end
+      let valueEnd = i;
+      while (valueEnd < innerContent.length && innerContent[valueEnd] !== ',') {
+        valueEnd++;
+      }
+      let valueStr = innerContent.substring(i, valueEnd).trim();
+
+      // Parse value type
+      if (valueStr === 'true') {
+        value = true;
+      } else if (valueStr === 'false') {
+        value = false;
+      } else if (valueStr === 'null' || valueStr === '~' || valueStr === '') {
+        value = null;
+      } else if (!isNaN(Number(valueStr))) {
+        value = Number(valueStr);
+      } else {
+        value = valueStr;
+      }
+      i = valueEnd;
+    }
+
+    config[key] = value;
+  }
+
+  // Validate required fields
+  if (!config.name || !config.type) {
+    return null;
+  }
+
+  return config as ProxyNode;
+}
+
 // Parse Clash YAML to extract proxy nodes
 export function parseYamlToProxies(yaml: string): ProxyNode[] {
   const lines = yaml.split('\n');
@@ -41,6 +146,7 @@ export function parseYamlToProxies(yaml: string): ProxyNode[] {
 
     // Parse proxy lines in various formats:
     // 1. Single-line JSON format: - {"type":"ss",...} or - {'type':'ss',...}
+    // 2. Single-line YAML format: - {name: X, type: ss, ...} (keys not quoted)
     if (trimmedLine.startsWith('- {') || trimmedLine.startsWith("- {")) {
       try {
         const jsonStr = trimmedLine.substring(2).trim();
@@ -48,14 +154,21 @@ export function parseYamlToProxies(yaml: string): ProxyNode[] {
         if (proxyConfig.type && proxyConfig.name) {
           proxies.push(proxyConfig as ProxyNode);
         }
+        continue;
       } catch {
-        // JSON parse failed, try multiline YAML parsing
+        // JSON parse failed - try inline YAML format parser
+        const inlineProxy = parseInlineYamlProxy(trimmedLine);
+        if (inlineProxy) {
+          proxies.push(inlineProxy);
+          continue;
+        }
+        // If inline parsing also fails, try multiline YAML parsing
         const proxy = parseYamlProxyLine(lines, i);
         if (proxy) {
           proxies.push(proxy);
         }
+        continue;
       }
-      continue;
     }
 
     // 2. Check for multiline YAML format starting with "- name:"

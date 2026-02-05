@@ -69,7 +69,15 @@ export async function fetchSubscriptionContent(url: string): Promise<string> {
 
     return data.content;
   } catch (error) {
-    throw new Error(`Failed to fetch subscription: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    // Don't double-wrap error messages that already start with "Failed to fetch"
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    if (errorMessage.startsWith('Failed to fetch subscription:') ||
+        errorMessage.startsWith('HTTP ') ||
+        errorMessage.startsWith('Request timeout') ||
+        errorMessage.startsWith('Server error')) {
+      throw error;
+    }
+    throw new Error(`Failed to fetch subscription: ${errorMessage}`);
   }
 }
 
@@ -79,14 +87,36 @@ export async function fetchSubscriptionContent(url: string): Promise<string> {
 export function detectContentType(content: string): SubscriptionContentType {
   const trimmedContent = content.trim();
 
-  // Check if it's YAML format (starts with proxy, proxies, or has YAML structure)
+  // Check if it's YAML format
+  // Look for common Clash YAML patterns including:
+  // - Full config patterns (mixed-port, allow-lan, dns, rules, etc.)
+  // - Proxy patterns (proxies, proxy-groups, etc.)
+  // - Node patterns (name:, type: with known protocols)
+
+  // Full Clash config patterns
   if (
-    trimmedContent.startsWith('proxies:') ||
-    trimmedContent.startsWith('proxy-groups:') ||
-    trimmedContent.startsWith('proxy-providers:') ||
-    /^[\s-]*name:/.test(trimmedContent) ||
-    /^[\s-]*type:\s*(ss|ssr|vmess|trojan|hysteria|vless|http|socks)/.test(trimmedContent)
+    /^mixed-port:\s*\d+/m.test(trimmedContent) ||
+    /^allow-lan:\s*(true|false)/m.test(trimmedContent) ||
+    /^mode:\s*(rule|global|direct)/m.test(trimmedContent) ||
+    /^dns:\s*$/m.test(trimmedContent) ||
+    /^proxies:\s*$/m.test(trimmedContent) ||
+    /^proxy-groups:\s*$/m.test(trimmedContent) ||
+    /^rules:\s*$/m.test(trimmedContent)
   ) {
+    return 'yaml';
+  }
+
+  // Proxy node patterns
+  if (
+    /^[\s-]*name:/.test(trimmedContent) ||
+    /^[\s-]*type:\s*(ss|ssr|vmess|trojan|hysteria|hysteria2|vless|http|socks|socks5)/m.test(trimmedContent)
+  ) {
+    return 'yaml';
+  }
+
+  // Inline proxy format (common in subscription responses)
+  // Matches: {name: X, type: ss, ...} with or without quotes around keys
+  if (/\{\s*name:\s*[^:,}]+,\s*type:\s*(ss|ssr|vmess|trojan|hysteria|hysteria2|vless)/i.test(trimmedContent)) {
     return 'yaml';
   }
 

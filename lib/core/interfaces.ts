@@ -8,7 +8,7 @@ import type { ProxyNode } from '../types';
 /**
  * Supported format types for input and output
  */
-export type FormatType = 'txt' | 'clash-meta' | 'clash-premium' | 'sing-box' | 'loon';
+export type FormatType = 'txt' | 'clash-meta' | 'clash-premium' | 'sing-box' | 'loon' | 'subscribe-url';
 
 /**
  * Result of parsing input

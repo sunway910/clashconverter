@@ -127,7 +127,9 @@ export function Converter() {
   const inputLanguage = useMemo(() => {
     switch (inputFormat) {
       case 'sing-box': return 'json';
-      case 'txt': return 'plaintext';
+      case 'txt':
+      case 'subscribe-url':
+        return 'plaintext';
       default: return 'yaml';
     }
   }, [inputFormat]);
@@ -145,6 +147,8 @@ export function Converter() {
   // Compute placeholders
   const inputPlaceholder = useMemo(() => {
     switch (inputFormat) {
+      case 'subscribe-url':
+        return t('inputPlaceholder.subscribe-url');
       case 'txt':
         return t('inputPlaceholder.txt');
       case 'sing-box':
@@ -352,6 +356,7 @@ export function Converter() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
+                        <SelectItem value="subscribe-url">{t('formatTypes.subscribe-url')}</SelectItem>
                         <SelectItem value="txt">{t('formatTypes.txt')}</SelectItem>
                         <SelectItem value="clash-meta">{t('formatTypes.clash-meta')}</SelectItem>
                         <SelectItem value="clash-premium">{t('formatTypes.clash-premium')}</SelectItem>
