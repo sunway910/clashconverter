@@ -1,9 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { SubscriptionDialog } from '@/components/dialogs/subscription-dialog';
 import { useTranslations } from 'next-intl';
-import { FormatType } from '@/lib/parser';
 import { ConverterHeader } from './converter-header';
 import { InputSection } from './converter-input-section';
 import { OutputSection } from './converter-output-section';

@@ -44,7 +44,10 @@
       "Bash(pnpm exec tsx:*)",
       "Bash(cmp:*)",
       "Bash(awk:*)",
-      "Bash(git ls-tree:*)"
+      "Bash(git ls-tree:*)",
+      "Bash(pnpm run build:*)",
+      "Bash(pnpm test:*)",
+      "Bash(ss:*)"
     ],
     "defaultMode": "acceptEdits",
     "additionalDirectories": [
