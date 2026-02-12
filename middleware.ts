@@ -40,11 +40,11 @@ const intlMiddleware = createMiddleware({
   localePrefix: 'always' // Always show locale prefix to avoid conflicts
 });
 
-// Main proxy function for Edge Runtime
-export async function proxy(request: NextRequest) {
+// Main middleware function for Edge Runtime
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Skip proxy for non-page routes
+  // Skip middleware for non-page routes
   if (pathname.startsWith('/api') ||
       pathname.startsWith('/_next') ||
       pathname.startsWith('/_vercel') ||
