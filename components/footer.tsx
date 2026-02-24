@@ -1,5 +1,5 @@
 import { useTranslations } from 'next-intl';
-import { Mail } from 'lucide-react';
+import { Mail, Github } from 'lucide-react';
 
 const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'clashconverter@gmail.com';
 
@@ -16,14 +16,26 @@ export function Footer() {
             © {currentYear} ClashConverter. {t('rights')}
           </p>
 
-          {/* Contact */}
-          <a
-            href={`mailto:${CONTACT_EMAIL}`}
-            className="flex items-center gap-1.5 text-stone-600 transition-colors hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-100"
-          >
-            <Mail className="h-4 w-4" />
-            <span>{CONTACT_EMAIL}</span>
-          </a>
+          {/* Contact & GitHub */}
+          <div className="flex flex-col items-center gap-3 md:flex-row md:gap-6">
+            <a
+              href={`mailto:${CONTACT_EMAIL}`}
+              className="flex items-center gap-1.5 text-stone-600 transition-colors hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-100"
+            >
+              <Mail className="h-4 w-4" />
+              <span>{CONTACT_EMAIL}</span>
+            </a>
+
+            <a
+              href="https://github.com/sunway910/clashconverter"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-stone-600 transition-colors hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-100"
+            >
+              <Github className="h-4 w-4" />
+              <span>GitHub</span>
+            </a>
+          </div>
         </div>
       </div>
     </footer>
