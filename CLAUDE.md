@@ -8,6 +8,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Key Design Principle**: Pure frontend static service - user inputs are never stored on backend servers for privacy. All processing happens client-side.
 
+**Task Hook** Execute `pnpm test && pnpm build` after each task item completed.
+
 ## Development Commands
 
 ```bash
@@ -34,102 +36,11 @@ pnpm preview   # Preview Cloudflare build locally
 - **Notifications**: Sonner (toast)
 - **Theme**: next-themes
 - **Deployment**: @opennextjs/cloudflare for Cloudflare Workers
+- **Component**: shadcn@latest
+- **Validation**: zod v4 for runtime schema validation
+- **YAML**: yaml library for YAML parsing/generation
 
 ## Architecture
-
-### Project Structure
-```
-app/                      # Next.js App Router directory
-├── [locale]/             # Localized routes (en, zh)
-│   ├── page.tsx          # Main converter page
-│   ├── about/            # About page with SEO metadata
-│   ├── resources/        # Resources page with downloads
-│   └── layout.tsx        # Locale-specific layout (fonts, providers)
-├── layout.tsx            # Root layout (minimal wrapper)
-├── globals.css           # Tailwind v3 + dark mode CSS variables
-├── sitemap.ts            # Dynamic sitemap generation
-└── robots.ts             # SEO robots.txt
-
-components/               # React components
-├── converter.tsx         # Main converter component
-├── footer.tsx            # Footer with copyright & contact
-├── language-toggle.tsx   # Language selector (Select)
-├── theme-toggle.tsx      # Theme switcher (dark/light)
-├── theme-provider.tsx    # Theme context provider
-├── google-analytics.tsx  # GA integration
-├── google-adsense.tsx    # AdSense integration
-├── preview/              # CodeMirror preview editor
-│   └── preview-editor.tsx
-├── dialogs/              # Dialog components
-│   └── client-dialog.tsx
-├── seo/                  # SEO components
-│   └── seo-head.tsx      # Dynamic metadata & structured data
-├── about/                # About page components
-│   └── about-content.tsx
-├── resources/            # Resources page components
-│   └── resources-content.tsx
-└── ui/                   # shadcn/ui components
-    ├── button.tsx
-    ├── textarea.tsx
-    ├── card.tsx
-    ├── dialog.tsx
-    ├── select.tsx
-    ├── hover-card.tsx
-    └── accordion.tsx
-
-lib/                      # Core utilities
-├── core/                 # Core architecture (NEW)
-│   ├── interfaces.ts     # IFormatParser, IFormatGenerator
-│   ├── base-generator.ts # Base class for generators
-│   ├── factory.ts        # FormatFactory for parsers/generators
-│   ├── converter.ts      # Main conversion orchestrator
-│   ├── registry.ts       # Auto-initializes supported formats
-│   └── index.ts
-├── adapters/             # Protocol adapters (NEW)
-│   ├── protocol-adapter.ts
-│   ├── ss-adapter.ts
-│   ├── ssr-adapter.ts
-│   ├── vmess-adapter.ts
-│   ├── vless-adapter.ts
-│   ├── trojan-adapter.ts
-│   ├── hysteria-adapter.ts
-│   ├── http-adapter.ts
-│   ├── socks5-adapter.ts
-│   └── index.ts
-├── parsers/              # Input format parsers
-│   ├── index.ts          # Parser orchestration
-│   ├── protocol-parsers.ts # Individual protocol parsers
-│   ├── clash-yaml-parser.ts
-│   ├── singbox-json-parser.ts
-│   └── txt-parser.ts
-├── generators/           # Output format generators
-│   ├── index.ts
-│   ├── clash-yaml-generator.ts
-│   ├── clash-premium-generator.ts
-│   ├── singbox-json-generator.ts
-│   └── txt-generator.ts
-├── clash/                # Clash-specific modules
-│   ├── config/
-│   │   ├── dns.ts        # DNS configuration
-│   │   └── rules.ts      # Clash routing rules
-│   ├── generator/
-│   │   └── yaml.ts       # Clash YAML generator
-│   └── parser/
-│       └── yaml.ts       # Clash YAML parser
-├── singbox/              # Sing-Box specific modules
-│   ├── generator.ts      # Sing-Box JSON generator
-│   └── parser.ts         # Sing-Box JSON parser
-├── types.ts              # TypeScript interfaces
-├── utils.ts              # Utility functions
-└── seo.ts                # SEO utilities & structured data
-
-messages/                 # next-intl translation files
-├── en.json               # English translations
-└── zh.json               # Simplified Chinese translations
-
-middleware.ts             # Locale detection middleware (not proxy.ts)
-i18n.ts                   # next-intl configuration
-```
 
 ### Path Aliases (configured in tsconfig.json and components.json)
 - `@/*` → `./` (root directory)
@@ -137,7 +48,7 @@ i18n.ts                   # next-intl configuration
 - `@/lib` → Library directory
 
 ### Component System
-- Uses shadcn/ui with RSC (React Server Components) enabled
+- Uses shadcn@latest with RSC (React Server Components) enabled
 - Style: "new-york" with "stone" base color
 - CSS variables enabled for theming (supports dark/light mode)
 - When adding shadcn components: use `npx shadcn@latest add <component>`
@@ -168,62 +79,73 @@ The app supports 9 proxy protocols:
 - **Clash Meta (Mihomo)** - Full protocol support
 - **Clash Premium** - Limited protocol support (no VLESS/Hysteria)
 - **Sing-Box JSON** - No SSR/SOCKS5 support
+- **Loon** - iOS client, SS/SSR/VMess/Trojan only (INI format)
 
 ### Key Implementation Details
 
 #### Core Architecture (`lib/core/`)
 - **Factory Pattern**: `FormatFactory` creates appropriate parsers/generators
-- **Registry Pattern**: Auto-initializes all supported formats on startup
+- **Registry Pattern**: Auto-initializes all supported formats and protocol adapters on startup
 - **Base Classes**: `BaseFormatGenerator` provides common functionality
 - **Interfaces**: Strict typing with `IFormatParser` and `IFormatGenerator`
+- **Error Handling**: Custom error classes with structured error codes
 
 #### Adapter Pattern (`lib/adapters/`)
-Each protocol has its own adapter class:
+Each protocol has its own adapter class implementing `IProtocolAdapter`:
+- `toClashJson(node)`: Convert ProxyNode to Clash JSON format
+- `toSingBoxJson(node)`: Convert ProxyNode to Sing-Box JSON format
+- `toLink(node)`: Convert ProxyNode to shareable link
+
+Benefits:
 - Clean abstraction for protocol-specific logic
 - Consistent interface for all protocols
 - Easy to extend with new protocols
+- Eliminates code duplication
+
+#### Type System (`lib/types/`)
+- **Strong Typing**: Discriminated union types for all 9 protocols (no `[key: string]: any`)
+- **Zod Validation**: Runtime schema validation with `validateProxyNode()`, `safeValidateProxyNode()`
+- **Type Guards**: Protocol-specific type guards (`isSSProxy`, `isVMessProxy`, etc.)
+
+```typescript
+// Type-safe proxy node (discriminated union)
+type ProxyNode =
+  | SSProxyNode
+  | SSRProxyNode
+  | VMessProxyNode
+  | VLESSProxyNode
+  | TrojanProxyNode
+  | HysteriaProxyNode
+  | Hysteria2ProxyNode
+  | HTTPProxyNode
+  | SOCKS5ProxyNode;
+```
 
 #### Parser Logic (`lib/parsers/`)
 - `parseProxyLink()`: Attempts to parse a single link using all protocol parsers
 - `parseMultipleProxies()`: Parses multiple lines, returns `{ proxies, unsupported }`
-- Protocol case handling: Only the protocol prefix is lowercased; base64 content preserves original casing
-- Unsupported protocols trigger error toasts via Sonner
+- Uses yaml library for YAML parsing (replaced custom parser)
+- Zod validation for all parsed nodes
 
 #### Generator Logic (`lib/generators/`)
-- **Clash YAML Generator**: Generates complete Clash YAML with DNS, proxy groups, rules
-- **Clash Premium Generator**: Filters out unsupported protocols (VLESS, Hysteria, Hysteria2)
-- **Sing-Box JSON Generator**: Generates Sing-Box configuration (filters SSR/SOCKS5)
-- **Text Generator**: Converts proxy nodes back to shareable links
+- **Clash YAML Generator**: Uses yaml library + adapters for complete Clash YAML output
+- **Clash Premium Generator**: Filters out unsupported protocols
+- **Sing-Box JSON Generator**: Uses adapters for Sing-Box format
+- **Text Generator**: Uses adapters for proxy link generation
+- **Loon Generator**: INI format for iOS client
 
-#### Type System (`lib/types.ts`)
-```typescript
-type ProxyType = 'ss' | 'ssr' | 'vmess' | 'trojan' | 'hysteria' | 'hysteria2' | 'vless' | 'http' | 'socks5';
-type FormatType = 'txt' | 'clash-meta' | 'clash-premium' | 'sing-box';
+All generators now use protocol adapters via `ProtocolAdapterRegistry` for format conversion.
 
-interface ProxyNode {
-  name: string;
-  type: ProxyType;
-  server: string;
-  port: number;
-  [key: string]: any; // Protocol-specific fields
-}
-
-interface ParseResult {
-  proxies: ProxyNode[];
-  unsupported: string[];
-  filteredCounts: Record<string, number>;
-}
-
-interface ConversionResult {
-  output: string;
-  filteredCounts: Record<string, number>;
-  unsupported: string[];
-  isJson: boolean;
-}
-```
+#### Error Handling (`lib/errors/`)
+Custom error class hierarchy:
+- `ConverterError` - Base error with error code
+- `ParseError` - Parsing errors (invalid format, missing fields, etc.)
+- `GenerateError` - Generation errors (serialization, invalid config)
+- `UnsupportedProtocolError` - Protocol not supported for format/kernel
+- `ValidationError` - Data validation failures (Zod validation)
 
 ### Locale Detection
-- Uses `middleware.ts` for locale detection (not proxy.ts - that was old pattern)
+- Uses `middleware.ts` for locale detection
 - Detects user country from Cloudflare/Vercel headers: `cf-ipcountry`, `x-vercel-ip-country`
 - Redirects Chinese regions (CN, HK, TW, MO, SG) to `/zh`, others to `/en`
 - Stores preference in `NEXT_LOCALE` cookie (1 year expiry)
@@ -233,6 +155,7 @@ Users can choose between:
 - **Clash Meta (Mihomo)**: Supports all protocols including VLESS, Hysteria, Hysteria2
 - **Clash Premium**: Does NOT support VLESS, Hysteria, Hysteria2 (shows warning toast, filters nodes)
 - **Sing-Box**: Supports SS, VMess, VLESS, Trojan, Hysteria, Hysteria2, HTTP (no SSR/SOCKS5)
+- **Loon**: Supports SS, SSR, VMess, Trojan only (no HTTP/SOCKS5)
 
 ### CodeMirror Integration
 - Full-featured code editor with syntax highlighting
@@ -248,22 +171,35 @@ Users can choose between:
 
 ## Important Notes for Development
 
+### Type System
+- All proxy nodes use discriminated union types - NO `[key: string]: any`
+- Use type assertions for backward compatibility: `node as unknown as SpecificType`
+- Always validate input with Zod schemas before trusting data
+
 ### Adding New Protocol Support
-1. Create adapter in `lib/adapters/[protocol]-adapter.ts`
+1. Create adapter in `lib/adapters/[protocol]-adapter.ts` implementing `IProtocolAdapter`
 2. Add parser function in `lib/parsers/protocol-parsers.ts`
-3. Add to parsers array in `lib/parsers/index.ts`
-4. Add link generator in `lib/generators/txt-generator.ts`
-5. Update `ProxyType` in `lib/types.ts`
-6. Add format example in `messages/en.json` and `messages/zh.json`
-7. Update kernel compatibility checks
+3. Add Zod schema in `lib/types/validators.ts`
+4. Add protocol type to `lib/types/proxy-nodes.ts`
+5. Register adapter in `lib/core/registry.ts` (in `initializeProtocolAdapters()`)
+6. Update type guards in `lib/types/proxy-nodes.ts`
+7. Add format example in `messages/en.json` and `messages/zh.json`
 
 ### Adding New Output Format
 1. Create generator in `lib/generators/[format]-generator.ts`
-2. Implement `IFormatGenerator` interface
-3. Add to format registry in `lib/core/registry.ts`
+2. Implement `IFormatGenerator` interface (extend `BaseFormatGenerator`)
+3. Add to format registry in `lib/core/registry.ts` (in `initializeFormatRegistry()`)
 4. Update `FormatType` in `lib/core/interfaces.ts`
 5. Add UI option in converter component
 6. Add translations
+
+### Error Handling Best Practices
+- Always use custom error classes from `lib/errors/`
+- Use `ParseError` for parsing failures
+- Use `GenerateError` for generation failures
+- Use `UnsupportedProtocolError` for protocol/format incompatibility
+- Use `ValidationError` for data validation failures
+- Include error context using `detail` parameter
 
 ### Common Issues
 - **Protocol case sensitivity**: Only lowercase the protocol prefix, preserve base64 casing
@@ -271,6 +207,7 @@ Users can choose between:
 - **Hysteria types**: hysteria v1 uses `auth`, v2 uses `password`
 - **Clash Premium compatibility**: VLESS/Hysteria must be filtered with toast notification
 - **Sing-Box compatibility**: SSR/SOCKS5 must be filtered with toast notification
+- **YAML parsing**: Using yaml library - ensure valid YAML syntax
 
 ### Environment Variables
 ```bash
@@ -281,44 +218,63 @@ NEXT_PUBLIC_ENABLE_DNS_CONFIG=true          # Include DNS in Clash YAML
 ```
 
 ### Testing
-Run TypeScript check before committing:
+Run TypeScript check and tests before committing:
 ```bash
 npx tsc --noEmit
+pnpm test
+```
+
+## Project Structure (Post-Refactor)
+
+```
+lib/
+├── core/                    # Core architecture (Factory, Registry, Base Classes)
+│   ├── interfaces.ts        # IFormatParser, IFormatGenerator
+│   ├── base-generator.ts   # BaseFormatGenerator abstract class
+│   ├── factory.ts          # FormatFactory with custom errors
+│   ├── converter.ts        # Main conversion orchestrator
+│   ├── registry.ts         # Auto-initialization (formats + adapters)
+│   └── index.ts
+├── types/                  # Type definitions and validation
+│   ├── proxy-nodes.ts      # Discriminated union types (9 protocols)
+│   ├── validators.ts        # Zod schemas for runtime validation
+│   └── types.ts            # Re-exports
+├── adapters/               # Protocol adapters (Adapter Pattern)
+│   ├── protocol-adapter.ts # IProtocolAdapter interface + Registry
+│   ├── ss-adapter.ts
+│   ├── ssr-adapter.ts
+│   ├── vmess-adapter.ts
+│   ├── vless-adapter.ts
+│   ├── trojan-adapter.ts
+│   ├── hysteria-adapter.ts  # Hysteria + Hysteria2
+│   ├── http-adapter.ts
+│   └── socks5-adapter.ts
+├── generators/             # Output generators
+│   ├── link-generator.ts   # Proxy link generation using adapters
+│   ├── clash-yaml-generator.ts
+│   ├── clash-premium-generator.ts
+│   ├── singbox-json-generator.ts
+│   ├── loon-generator.ts
+│   └── txt-generator.ts
+├── parsers/                # Input parsers
+│   ├── protocol-parsers.ts # Individual protocol parsers
+│   ├── clash-yaml-parser.ts
+│   ├── singbox-json-parser.ts
+│   ├── txt-parser.ts
+│   └── index.ts
+├── errors/                 # Custom error classes
+│   └── index.ts            # ConverterError, ParseError, etc.
+├── clash/                  # Clash-specific modules
+│   ├── parser/yaml.ts      # YAML parser using yaml library
+│   └── generator/yaml.ts   # YAML generator using yaml library + adapters
+├── singbox/                # Sing-Box specific modules
+│   ├── parser.ts
+│   └── generator.ts
+└── loon/                   # Loon specific modules
+    ├── loon-generator.ts
+    └── config/
 ```
 
 ## SEO Domain
 
 Primary domain: clashconverter.com
-
-## Page-Specific Notes
-
-### Main Page (`app/[locale]/page.tsx`)
-- Uses converter component with state management
-- SEO content component with FAQ and features
-
-### About Page (`app/[locale]/about/page.tsx`)
-- Has dedicated `generateMetadata()` function
-- Uses `AboutContent` component
-- ProfilePage schema for structured data
-
-### Resources Page (`app/[locale]/resources/page.tsx`)
-- Has dedicated `generateMetadata()` function
-- Uses `ResourcesContent` component
-- CollectionPage schema for structured data
-- Links to client downloads and installation scripts
-
-## Deployment
-
-### Standard Deployment
-```bash
-pnpm build
-pnpm start
-```
-
-### Cloudflare Workers
-```bash
-pnpm build:cf
-pnpm deploy:cf
-```
-
-Uses `@opennextjs/cloudflare` for seamless deployment to Cloudflare Pages/Workers.

@@ -5,7 +5,90 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.0] - 2025-02-01
+## [1.2.0] - 2025-02-26
+
+### Added
+- **Custom Error Class Hierarchy**: Structured error handling with error codes
+  - `ConverterError` base class with `ErrorCode` enum
+  - `ParseError` for parsing failures
+  - `GenerateError` for generation failures
+  - `UnsupportedProtocolError` for protocol/format incompatibility
+  - `ValidationError` for Zod validation failures
+  - Each error includes `code`, `detail`, and optional `format` fields
+- **Discriminated Union Types**: Strong typing for all 9 proxy protocols
+  - Separate interfaces for each protocol type (SS, SSR, VMess, VLESS, Trojan, Hysteria, Hysteria2, HTTP, SOCKS5)
+  - Removed `[key: string]: any` index signature for true type safety
+  - Type guards for safe type narrowing
+- **Zod Runtime Validation**: Runtime schema validation for TypeScript types
+  - Zod schemas for all 9 proxy protocols
+  - `validateProxyNode()` function for runtime validation
+  - Integration with discriminated union types
+- **YAML Library Integration**: Replaced hand-written YAML parser with `yaml` npm package
+  - More robust YAML parsing and generation
+  - Better support for complex YAML structures
+  - Improved error messages for invalid YAML
+- **Protocol Adapter Pattern**: Clean abstraction for protocol-specific logic
+  - `IProtocolAdapter` interface with `toClashJson()`, `toSingBoxJson()`, `toLink()` methods
+  - Protocol adapter registry for dynamic adapter lookup
+  - Centralized link generation via `link-generator.ts`
+  - Eliminates code duplication across generators
+- **Module Structure Improvements**
+  - `lib/types/` directory for type definitions
+  - `lib/adapters/` directory for protocol adapters
+  - `lib/errors/` directory for error classes
+  - `lib/generators/` directory for output generators
+
+### Refactored
+- **Type System** (`lib/types/proxy-nodes.ts`)
+  - Migrated from generic `ProxyNode` interface to discriminated union types
+  - Each protocol has dedicated interface with specific fields
+  - Type assertions pattern: `node as unknown as SpecificType`
+- **Error Handling** (Project-wide)
+  - All parsers now throw `ParseError` instead of generic `Error`
+  - All generators now throw `GenerateError` or `UnsupportedProtocolError`
+  - Validators throw `ValidationError` for schema validation failures
+  - Consistent error messages with error codes and details
+- **YAML Parser** (`lib/clash/parser/yaml.ts`)
+  - Complete rewrite using `yaml` library
+  - Removed 100+ lines of hand-written parsing logic
+  - Better handling of edge cases and invalid input
+- **Generators** (Project-wide)
+  - `txt-generator.ts` now uses adapters via `link-generator.ts`
+  - `clash/generator/yaml.ts` uses adapters for Clash JSON conversion
+  - `singbox/generator.ts` uses adapters for Sing-Box JSON conversion
+  - Eliminated duplicate protocol-specific code
+- **Protocol Adapters** (`lib/adapters/`)
+  - Each protocol has dedicated adapter class
+  - Consistent interface for all format conversions
+  - Easy to extend with new protocol support
+
+### Technical
+- **Dependencies Added**
+  - `zod`: Runtime type validation
+  - `yaml`: YAML parsing and generation
+- **New Files**
+  - `lib/errors/index.ts`: Error class hierarchy
+  - `lib/types/proxy-nodes.ts`: Discriminated union types
+  - `lib/types/validators.ts`: Zod validation schemas
+  - `lib/generators/link-generator.ts`: Centralized link generation
+- **Updated Files**
+  - All generator files to use adapter pattern
+  - All parser files to use custom error classes
+  - `lib/types.ts` to re-export from new module structure
+  - `lib/core/registry.ts` to register protocol adapters
+
+### Developer Experience
+- **Type Safety**: Improved IDE autocompletion and error detection
+- **Debugging**: Structured error codes make issues easier to diagnose
+- **Extensibility**: Clear patterns for adding new protocols/formats
+- **Maintainability**: Reduced code duplication through adapter pattern
+
+### Fixed
+- Type safety issues with generic `[key: string]: any` signature
+- Error message consistency across the codebase
+- Code duplication in protocol-specific conversion logic
+
+## [1.1.0] - 2026-02-01
 
 ### Added
 - **Loon Format Support**: Convert proxy configurations to Loon .conf format
@@ -38,7 +121,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - HTTP parser conflict with Telegram SOCKS links (both start with `https://`)
 - Toast notification state management for filtered protocol counts
 
-## [1.0.0] - 2025-01-25
+## [1.0.0] - 2026-01-25
 
 ### Added
 - Footer component with copyright and contact email
@@ -75,7 +158,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Favicon assets with multiple sizes for better browser support
 - Translation text refinements for better clarity
 
-## [0.1.0] - 2024-12-XX
+## [0.1.0] - 2025-12-XX
 
 ### Added
 - Initial release of ClashConverter

@@ -3,7 +3,7 @@
 A client-side proxy configuration converter that transforms various proxy protocols into Clash YAML or Sing-Box JSON formats. Built with Next.js 16, featuring real-time preview with CodeMirror, multi-language support, and comprehensive SEO optimization.
 
 [![Clash Converter](https://img.shields.io/badge/Clash-Converter-blue)](https://clashconverter.com)
-[![Next.js](https://img.shields.io/badge/Next.js-16.1.1-black)](https://nextjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-16.1.1-black)](https://nextjs.org)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ## Features
@@ -25,8 +25,10 @@ A client-side proxy configuration converter that transforms various proxy protoc
   - **Clash Premium** - Legacy compatibility
   - **Sing-Box** - Universal proxy platform (JSON)
   - **Loon** - iOS proxy client (INI format)
+- **Strong Type System**: Discriminated union types with Zod runtime validation
 - **Bidirectional Conversion**: Convert between proxy links, Clash YAML, and Sing-Box JSON
 - **CodeMirror Editor**: Full-featured code preview with syntax highlighting for YAML/JSON
+- **Protocol Adapters**: Clean adapter pattern eliminates code duplication
 - **Protocol-specific Dialogs**: Edit individual proxy nodes with dedicated dialog UI
 - **IP-Based Locale Detection**: Automatically detects user location and redirects to appropriate language
 - **Multi-Language**: English and Simplified Chinese (简体中文)
@@ -131,14 +133,21 @@ clashconverter/
 │   │   ├── factory.ts        # Factory pattern
 │   │   ├── converter.ts      # Main converter
 │   │   └── registry.ts       # Format registry
+│   ├── types/                # Type definitions
+│   │   ├── proxy-nodes.ts    # Discriminated union types
+│   │   ├── validators.ts      # Zod schemas
+│   │   └── types.ts          # Re-exports
 │   ├── adapters/             # Protocol adapters
-│   ├── parsers/              # Input parsers
+│   │   ├── protocol-adapter.ts
 │   ├── generators/           # Output generators
+│   │   ├── link-generator.ts
+│   ├── parsers/              # Input parsers
 │   ├── clash/                # Clash-specific modules
-│   ├── singbox/              # Sing-Box specific modules
-│   └── loon/                 # Loon specific modules
+│   ├── singbox/              # Sing-Box modules
+│   ├── loon/                 # Loon modules
+│   └── errors/               # Custom error classes
 ├── messages/                 # next-intl translations
-├── middleware.ts             # Locale detection middleware
+├── middleware.ts             # Locale detection
 └── public/                   # Static assets
 ```
 
@@ -153,23 +162,37 @@ clashconverter/
 - **Internationalization**: next-intl v4
 - **Notifications**: Sonner
 - **Theme**: next-themes
+- **Validation**: Zod v4 for runtime schema validation
+- **YAML**: yaml library for YAML parsing/generation
 - **Deployment**: @opennextjs/cloudflare for Cloudflare Workers
 
 ## Architecture
 
-The converter uses a sophisticated architecture pattern:
+The converter uses a sophisticated architecture pattern with strong emphasis on type safety and maintainability:
 
 ### Core System
 - **Factory Pattern**: `FormatFactory` creates parsers and generators
-- **Registry Pattern**: Auto-initializes all supported formats
+- **Registry Pattern**: Auto-initializes all supported formats and protocol adapters
 - **Base Classes**: `BaseFormatGenerator` provides common functionality
 - **Interfaces**: Strict typing for `IFormatParser` and `IFormatGenerator`
+- **Error Handling**: Custom error classes with structured error codes
 
 ### Adapter Pattern
-Each protocol has its own adapter class for parsing and generation:
+Each protocol has its own adapter class implementing `IProtocolAdapter`:
+- `toClashJson(node)`: Convert ProxyNode to Clash JSON format
+- `toSingBoxJson(node)`: Convert ProxyNode to Sing-Box JSON format
+- `toLink(node)`: Convert ProxyNode to shareable link
+
+**Benefits:**
 - Clean abstraction layer for protocol-specific logic
 - Easy to add new protocol support
 - Centralized protocol handling
+- Eliminates code duplication
+
+### Type System
+- **Discriminated Union Types**: Strong typing for all 9 protocols (no `[key: string]: any`)
+- **Runtime Validation**: Zod schemas for all proxy types
+- **Type Guards**: Protocol-specific type guards for safe type narrowing
 
 ### Supported Formats
 | Format | Input | Output | Notes |
@@ -207,7 +230,7 @@ NEXT_PUBLIC_ENABLE_DNS_CONFIG=true
 |---------|---------------------|---------------|----------|------|
 | VLESS | ✅ | ❌ | ✅ | ❌ |
 | Hysteria | ✅ | ❌ | ✅ | ❌ |
-| Hysteria2 | ✅ | ❌ | ✅ | ❌ |
+| Hysteria2 | ✅ ❌ | ✅ | ❌ |
 | VMess | ✅ | ✅ | ✅ | ✅ |
 | Trojan | ✅ | ✅ | ✅ | ✅ |
 | SS | ✅ | ✅ | ✅ | ✅ |
@@ -215,17 +238,6 @@ NEXT_PUBLIC_ENABLE_DNS_CONFIG=true
 | HTTP | ✅ | ✅ | ✅ | ❌ |
 | HTTPS | ✅ | ✅ | ✅ | ❌ |
 | SOCKS5 | ✅ | ✅ | ❌ | ❌ |
-
-## SEO
-
-The application is optimized for search engines with:
-- Meta tags for social sharing (Open Graph, Twitter Card)
-- Structured data markup (JSON-LD) for SoftwareApplication, FAQPage, HowTo, etc.
-- Dynamic sitemap generation with locale support
-- Robots.txt configuration
-- Hreflang links for multilingual SEO
-- Optimized page titles and descriptions
-- 114+ targeted keywords for better ranking
 
 ## License
 
