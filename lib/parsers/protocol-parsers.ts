@@ -182,8 +182,8 @@ export function parseVmess(link: string): ParsedProxy | null {
         network: config.net || 'tcp',
         tls: config.tls === 'tls' || config.tls === 'true',
         udp: true,
-        // For VMess with WS or WS+TLS, default skip-cert-verify to true
-        'skip-cert-verify': config.allowInsecure === 'true' || config.allowInsecure === true || config.allowInsecure === 1 || config.net === 'ws',
+        // Default skip-cert-verify to false unless explicitly set
+        'skip-cert-verify': config.allowInsecure === 'true' || config.allowInsecure === '1' || config.allowInsecure === 1,
         servername: config.sni || config.host || '',
       } as ProxyNode,
     };
@@ -210,7 +210,9 @@ export function parseTrojan(link: string): ParsedProxy | null {
         port: parseInt(url.port, 10),
         password: decodeURIComponent(url.username),
         udp: true,
-        'skip-cert-verify': true,
+        // Trojan defaults to skip-cert-verify=true (insecure) for compatibility
+        // Set to false only if allowInsecure is explicitly 'false' or '0'
+        'skip-cert-verify': params.allowInsecure !== 'false' && params.allowInsecure !== '0',
         sni: params.sni || params.peer || '',
         network: params.type || 'tcp',
       } as ProxyNode,
@@ -329,22 +331,22 @@ export function parseVless(link: string): ParsedProxy | null {
 
     // Handle TLS
     if (params.security === 'tls' || params.security === 'reality') {
-      config.tls = true;
-      config.servername = params.sni || '';
+      (config as any).tls = true;
+      (config as any).servername = params.sni || '';
     }
 
     // Handle Reality
     if (params.security === 'reality') {
-      config['reality-opts'] = {
+      (config as any)['reality-opts'] = {
         'public-key': params.pbk || '',
         'short-id': params.sid || '',
       };
-      config['client-fingerprint'] = params.fp || 'chrome';
+      (config as any)['client-fingerprint'] = params.fp || 'chrome';
     }
 
     // WebSocket options
     if (params.type === 'ws') {
-      config['ws-opts'] = {
+      (config as any)['ws-opts'] = {
         path: params.path || '/',
         headers: params.host ? { Host: params.host } : undefined,
       };
@@ -352,7 +354,7 @@ export function parseVless(link: string): ParsedProxy | null {
 
     // gRPC options
     if (params.type === 'grpc') {
-      config['grpc-opts'] = {
+      (config as any)['grpc-opts'] = {
         'grpc-service-name': params.serviceName || params.service || '',
       };
     }
