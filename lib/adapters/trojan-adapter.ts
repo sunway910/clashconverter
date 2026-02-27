@@ -2,7 +2,7 @@
  * Trojan protocol adapter
  */
 
-import type { ProxyNode } from '../types';
+import type { ProxyNode, TrojanProxyNode } from '../types';
 import type { IProtocolAdapter } from './protocol-adapter';
 
 /**
@@ -12,32 +12,36 @@ export class TrojanAdapter implements IProtocolAdapter {
   readonly type = 'trojan';
 
   toClashJson(node: ProxyNode): Record<string, any> {
+    const trojanNode = node as unknown as TrojanProxyNode;
+
     const obj: Record<string, any> = {
       type: 'trojan',
-      name: node.name,
-      server: node.server,
-      port: node.port,
-      password: node.password,
-      udp: node.udp ?? true,
+      name: trojanNode.name,
+      server: trojanNode.server,
+      port: trojanNode.port,
+      password: trojanNode.password,
+      udp: trojanNode.udp ?? true,
     };
 
-    if (node['skip-cert-verify']) obj['skip-cert-verify'] = node['skip-cert-verify'];
-    if (node.sni) obj.sni = node.sni;
+    if (trojanNode['skip-cert-verify']) obj['skip-cert-verify'] = trojanNode['skip-cert-verify'];
+    if (trojanNode.sni) obj.sni = trojanNode.sni;
 
     return obj;
   }
 
   toSingBoxJson(node: ProxyNode): Record<string, any> {
+    const trojanNode = node as unknown as TrojanProxyNode;
+
     const obj: Record<string, any> = {
-      tag: node.name,
+      tag: trojanNode.name,
       type: 'trojan',
-      server: node.server,
-      server_port: node.port,
-      password: node.password,
+      server: trojanNode.server,
+      server_port: trojanNode.port,
+      password: trojanNode.password,
       tls: {
         enabled: true,
-        ...(node['skip-cert-verify'] !== undefined && { insecure: node['skip-cert-verify'] }),
-        ...(node.sni && { server_name: node.sni }),
+        ...(trojanNode['skip-cert-verify'] !== undefined && { insecure: trojanNode['skip-cert-verify'] }),
+        ...(trojanNode.sni && { server_name: trojanNode.sni }),
       },
     };
 
@@ -45,16 +49,18 @@ export class TrojanAdapter implements IProtocolAdapter {
   }
 
   toLink(node: ProxyNode): string {
-    let link = `trojan://${node.password}@${node.server}:${node.port}`;
+    const trojanNode = node as unknown as TrojanProxyNode;
+
+    let link = `trojan://${trojanNode.password}@${trojanNode.server}:${trojanNode.port}`;
     const params: string[] = [];
-    params.push(`type=${node.network || 'tcp'}`);
-    if (node['skip-cert-verify']) {
+    params.push(`type=${trojanNode.network || 'tcp'}`);
+    if (trojanNode['skip-cert-verify']) {
       params.push('security=tls');
       params.push('allowInsecure=1');
     }
-    if (node.sni) params.push(`sni=${encodeURIComponent(node.sni)}`);
+    if (trojanNode.sni) params.push(`sni=${encodeURIComponent(trojanNode.sni)}`);
     if (params.length) link += `?${params.join('&')}`;
-    link += `#${encodeURIComponent(node.name)}`;
+    link += `#${encodeURIComponent(trojanNode.name)}`;
     return link;
   }
 }

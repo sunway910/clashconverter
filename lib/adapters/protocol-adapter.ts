@@ -4,6 +4,7 @@
  */
 
 import type { ProxyNode } from '../types';
+import { GenerateError } from '../errors';
 
 /**
  * Interface for protocol adapters
@@ -46,11 +47,13 @@ export class ProtocolAdapterRegistry {
   /**
    * Register a protocol adapter
    * @param adapter - The adapter to register
-   * @throws Error if an adapter is already registered for this protocol type
+   * @throws GenerateError if an adapter is already registered for this protocol type
    */
   static register(adapter: IProtocolAdapter): void {
     if (this.adapters.has(adapter.type)) {
-      throw new Error(`Adapter already registered for protocol: ${adapter.type}`);
+      throw GenerateError.invalidConfig(
+        `Adapter already registered for protocol: ${adapter.type}`
+      );
     }
     this.adapters.set(adapter.type, adapter);
   }

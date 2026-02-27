@@ -2,7 +2,7 @@
  * VLESS protocol adapter
  */
 
-import type { ProxyNode } from '../types';
+import type { ProxyNode, VLESSProxyNode } from '../types';
 import type { IProtocolAdapter } from './protocol-adapter';
 
 /**
@@ -12,73 +12,79 @@ export class VLESSAdapter implements IProtocolAdapter {
   readonly type = 'vless';
 
   toClashJson(node: ProxyNode): Record<string, any> {
+    const vlessNode = node as unknown as VLESSProxyNode;
+
     const obj: Record<string, any> = {
       type: 'vless',
-      name: node.name,
-      server: node.server,
-      port: node.port,
-      uuid: node.uuid,
-      network: node.network || 'tcp',
+      name: vlessNode.name,
+      server: vlessNode.server,
+      port: vlessNode.port,
+      uuid: vlessNode.uuid,
+      network: vlessNode.network || 'tcp',
     };
 
-    if (node.tls !== undefined) obj.tls = node.tls;
-    if (node.servername) obj.servername = node.servername;
-    if (node['skip-cert-verify']) obj['skip-cert-verify'] = node['skip-cert-verify'];
-    if (node.flow) obj.flow = node.flow;
-    if (node['reality-opts']) obj['reality-opts'] = node['reality-opts'];
-    if (node['client-fingerprint']) obj['client-fingerprint'] = node['client-fingerprint'];
-    if (node['ws-opts']) obj['ws-opts'] = node['ws-opts'];
+    if (vlessNode.tls !== undefined) obj.tls = vlessNode.tls;
+    if (vlessNode.servername) obj.servername = vlessNode.servername;
+    if (vlessNode['skip-cert-verify']) obj['skip-cert-verify'] = vlessNode['skip-cert-verify'];
+    if (vlessNode.flow) obj.flow = vlessNode.flow;
+    if (vlessNode['reality-opts']) obj['reality-opts'] = vlessNode['reality-opts'];
+    if (vlessNode['client-fingerprint']) obj['client-fingerprint'] = vlessNode['client-fingerprint'];
+    if (vlessNode['ws-opts']) obj['ws-opts'] = vlessNode['ws-opts'];
 
     return obj;
   }
 
   toSingBoxJson(node: ProxyNode): Record<string, any> {
+    const vlessNode = node as unknown as VLESSProxyNode;
+
     const obj: Record<string, any> = {
-      tag: node.name,
+      tag: vlessNode.name,
       type: 'vless',
-      server: node.server,
-      server_port: node.port,
-      uuid: node.uuid,
+      server: vlessNode.server,
+      server_port: vlessNode.port,
+      uuid: vlessNode.uuid,
     };
 
-    if (node.flow) obj.flow = node.flow;
+    if (vlessNode.flow) obj.flow = vlessNode.flow;
 
-    if (node.tls || node.servername) {
+    if (vlessNode.tls || vlessNode.servername) {
       obj.tls = {
         enabled: true,
-        ...(node.servername && { server_name: node.servername }),
+        ...(vlessNode.servername && { server_name: vlessNode.servername }),
       };
     }
 
-    if (node['reality-opts']) {
+    if (vlessNode['reality-opts']) {
       if (!obj.tls) obj.tls = { enabled: true };
       obj.tls.reality = {
         enabled: true,
-        public_key: node['reality-opts']['public-key'] || '',
-        short_id: node['reality-opts']['short-id'] || '',
+        public_key: vlessNode['reality-opts']['public-key'] || '',
+        short_id: vlessNode['reality-opts']['short-id'] || '',
       };
     }
 
-    if (node['skip-cert-verify']) {
+    if (vlessNode['skip-cert-verify']) {
       if (!obj.tls) obj.tls = { enabled: true };
-      obj.tls.insecure = node['skip-cert-verify'];
+      obj.tls.insecure = vlessNode['skip-cert-verify'];
     }
 
     return obj;
   }
 
   toLink(node: ProxyNode): string {
-    let link = `vless://${node.uuid}@${node.server}:${node.port}`;
+    const vlessNode = node as unknown as VLESSProxyNode;
+
+    let link = `vless://${vlessNode.uuid}@${vlessNode.server}:${vlessNode.port}`;
     const params: string[] = [];
-    params.push(`security=${node.tls ? 'tls' : 'none'}`);
-    params.push(`type=${node.network || 'tcp'}`);
+    params.push(`security=${vlessNode.tls ? 'tls' : 'none'}`);
+    params.push(`type=${vlessNode.network || 'tcp'}`);
     params.push('encryption=none');
-    if (node.flow && node.flow !== '') params.push(`flow=${node.flow}`);
-    if (node.network === 'tcp' || !node.flow || node.flow === '') params.push('headerType=none');
-    if (node.sni) params.push(`sni=${encodeURIComponent(node.sni)}`);
-    if (node['skip-cert-verify']) params.push('allowInsecure=1');
+    if (vlessNode.flow && vlessNode.flow !== '') params.push(`flow=${vlessNode.flow}`);
+    if (vlessNode.network === 'tcp' || !vlessNode.flow || vlessNode.flow === '') params.push('headerType=none');
+    if (vlessNode.sni) params.push(`sni=${encodeURIComponent(vlessNode.sni)}`);
+    if (vlessNode['skip-cert-verify']) params.push('allowInsecure=1');
     if (params.length) link += `?${params.join('&')}`;
-    link += `#${encodeURIComponent(node.name)}`;
+    link += `#${encodeURIComponent(vlessNode.name)}`;
     return link;
   }
 }

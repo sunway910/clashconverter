@@ -2,8 +2,9 @@
  * SOCKS5 protocol adapter
  */
 
-import type { ProxyNode } from '../types';
+import type { ProxyNode, SOCKS5ProxyNode } from '../types';
 import type { IProtocolAdapter } from './protocol-adapter';
+import { UnsupportedProtocolError } from '../errors';
 
 /**
  * Adapter for SOCKS5 protocol
@@ -12,33 +13,36 @@ export class SOCKS5Adapter implements IProtocolAdapter {
   readonly type = 'socks5';
 
   toClashJson(node: ProxyNode): Record<string, any> {
+    const socksNode = node as unknown as SOCKS5ProxyNode;
+
     const obj: Record<string, any> = {
       type: 'socks5',
-      name: node.name,
-      server: node.server,
-      port: node.port,
+      name: socksNode.name,
+      server: socksNode.server,
+      port: socksNode.port,
     };
 
-    if (node.username) obj.username = node.username;
-    if (node.password) obj.password = node.password;
+    if (socksNode.username) obj.username = socksNode.username;
+    if (socksNode.password) obj.password = socksNode.password;
 
     return obj;
   }
 
   toSingBoxJson(_node: ProxyNode): Record<string, any> {
     // Sing-Box doesn't support SOCKS5 as an outbound
-    // This is a placeholder for potential future support
-    throw new Error('Sing-Box does not support SOCKS5 as an outbound protocol');
+    throw UnsupportedProtocolError.forFormat('socks5', 'sing-box');
   }
 
   toLink(node: ProxyNode): string {
+    const socksNode = node as unknown as SOCKS5ProxyNode;
+
     let link = `socks5://`;
-    if (node.username && node.password) {
-      link += `${encodeURIComponent(node.username)}:${encodeURIComponent(node.password)}@`;
+    if (socksNode.username && socksNode.password) {
+      link += `${encodeURIComponent(socksNode.username)}:${encodeURIComponent(socksNode.password)}@`;
     }
-    link += `${node.server}:${node.port}`;
-    if (!this.isDefaultName(node.name)) {
-      link += `#${encodeURIComponent(node.name)}`;
+    link += `${socksNode.server}:${socksNode.port}`;
+    if (!this.isDefaultName(socksNode.name)) {
+      link += `#${encodeURIComponent(socksNode.name)}`;
     }
     return link;
   }

@@ -2,7 +2,7 @@
  * HTTP protocol adapter
  */
 
-import type { ProxyNode } from '../types';
+import type { ProxyNode, HTTPProxyNode } from '../types';
 import type { IProtocolAdapter } from './protocol-adapter';
 
 /**
@@ -12,30 +12,35 @@ export class HTTPAdapter implements IProtocolAdapter {
   readonly type = 'http';
 
   toClashJson(node: ProxyNode): Record<string, any> {
+    // Type assertion: this adapter only handles HTTP proxy nodes
+    const httpNode = node as unknown as HTTPProxyNode;
+
     const obj: Record<string, any> = {
       type: 'http',
-      name: node.name,
-      server: node.server,
-      port: node.port,
+      name: httpNode.name,
+      server: httpNode.server,
+      port: httpNode.port,
     };
 
-    if (node.username) obj.username = node.username;
-    if (node.password) obj.password = node.password;
-    if (node.tls) obj.tls = node.tls;
+    if (httpNode.username) obj.username = httpNode.username;
+    if (httpNode.password) obj.password = httpNode.password;
+    if (httpNode.tls) obj.tls = httpNode.tls;
 
     return obj;
   }
 
   toSingBoxJson(node: ProxyNode): Record<string, any> {
+    const httpNode = node as unknown as HTTPProxyNode;
+
     return {
-      tag: node.name,
+      tag: httpNode.name,
       type: 'http',
-      server: node.server,
-      server_port: node.port,
+      server: httpNode.server,
+      server_port: httpNode.port,
       users: [
         {
-          username: node.username,
-          password: node.password,
+          username: httpNode.username,
+          password: httpNode.password,
         },
       ],
       set_system_proxy: true,
@@ -43,13 +48,15 @@ export class HTTPAdapter implements IProtocolAdapter {
   }
 
   toLink(node: ProxyNode): string {
+    const httpNode = node as unknown as HTTPProxyNode;
+
     let link = `http://`;
-    if (node.username && node.password) {
-      link += `${encodeURIComponent(node.username)}:${encodeURIComponent(node.password)}@`;
+    if (httpNode.username && httpNode.password) {
+      link += `${encodeURIComponent(httpNode.username)}:${encodeURIComponent(httpNode.password)}@`;
     }
-    link += `${node.server}:${node.port}`;
-    if (!this.isDefaultName(node.name)) {
-      link += `#${encodeURIComponent(node.name)}`;
+    link += `${httpNode.server}:${httpNode.port}`;
+    if (!this.isDefaultName(httpNode.name)) {
+      link += `#${encodeURIComponent(httpNode.name)}`;
     }
     return link;
   }

@@ -2,7 +2,7 @@
  * ShadowsocksR (SSR) protocol adapter
  */
 
-import type { ProxyNode } from '../types';
+import type { ProxyNode, SSRProxyNode } from '../types';
 import type { IProtocolAdapter } from './protocol-adapter';
 
 /**
@@ -20,55 +20,61 @@ export class SSRAdapter implements IProtocolAdapter {
   readonly type = 'ssr';
 
   toClashJson(node: ProxyNode): Record<string, any> {
+    const ssrNode = node as unknown as SSRProxyNode;
+
     const obj: Record<string, any> = {
       type: 'ssr',
-      name: node.name,
-      server: node.server,
-      port: node.port,
-      cipher: node.cipher,
-      password: node.password,
-      protocol: node.protocol,
-      obfs: node.obfs,
+      name: ssrNode.name,
+      server: ssrNode.server,
+      port: ssrNode.port,
+      cipher: ssrNode.cipher,
+      password: ssrNode.password,
+      protocol: ssrNode.protocol,
+      obfs: ssrNode.obfs,
     };
 
-    if (node.protocolparam) obj.protocolparam = node.protocolparam;
-    if (node.obfsparam) obj.obfsparam = node.obfsparam;
-    if (node.group) obj.group = node.group;
+    if (ssrNode.protocolparam) obj.protocolparam = ssrNode.protocolparam;
+    if (ssrNode.obfsparam) obj.obfsparam = ssrNode.obfsparam;
+    if (ssrNode.group) obj.group = ssrNode.group;
 
     return obj;
   }
 
   toSingBoxJson(_node: ProxyNode): Record<string, any> {
+    const ssrNode = _node as unknown as SSRProxyNode;
+
     // Sing-Box doesn't support SSR, create a basic shadowsocks fallback
     return {
-      tag: _node.name,
+      tag: ssrNode.name,
       type: 'shadowsocks',
-      server: _node.server,
-      server_port: _node.port,
-      method: _node.cipher || 'aes-128-gcm',
-      password: _node.password,
+      server: ssrNode.server,
+      server_port: ssrNode.port,
+      method: ssrNode.cipher || 'aes-128-gcm',
+      password: ssrNode.password,
     };
   }
 
   toLink(node: ProxyNode): string {
+    const ssrNode = node as unknown as SSRProxyNode;
+
     // SSR format: ssr://base64(main)/base64(params)
-    const cipher = node.cipher === 'dummy' ? 'auto' : node.cipher;
-    const passwordEncoded = btoa(node.password);
-    const plain = `${node.server}:${node.port}:${node.protocol}:${cipher}:${node.obfs}:${passwordEncoded}/`;
+    const cipher = ssrNode.cipher === 'dummy' ? 'auto' : ssrNode.cipher;
+    const passwordEncoded = btoa(ssrNode.password);
+    const plain = `${ssrNode.server}:${ssrNode.port}:${ssrNode.protocol}:${cipher}:${ssrNode.obfs}:${passwordEncoded}/`;
     let encoded = btoa(plain);
     encoded = encoded.replace(/=+$/, '');
 
     // Build params string with base64 encoded VALUES
     const paramsParts: string[] = [];
-    paramsParts.push(`remarks=${btoa(node.name)}`);
-    if (node.group) {
-      paramsParts.push(`group=${btoa(node.group)}`);
+    paramsParts.push(`remarks=${btoa(ssrNode.name)}`);
+    if (ssrNode.group) {
+      paramsParts.push(`group=${btoa(ssrNode.group)}`);
     }
-    if (node['protoparam']) {
-      paramsParts.push(`protoparam=${btoa(node['protoparam'])}`);
+    if (ssrNode.protocolparam) {
+      paramsParts.push(`protoparam=${btoa(ssrNode.protocolparam)}`);
     }
-    if (node['obfsparam']) {
-      paramsParts.push(`obfsparam=${btoa(node['obfsparam'])}`);
+    if (ssrNode.obfsparam) {
+      paramsParts.push(`obfsparam=${btoa(ssrNode.obfsparam)}`);
     }
 
     const paramsStr = paramsParts.join('&');

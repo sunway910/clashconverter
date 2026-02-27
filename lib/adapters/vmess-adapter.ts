@@ -2,7 +2,7 @@
  * VMess protocol adapter
  */
 
-import type { ProxyNode } from '../types';
+import type { ProxyNode, VMessProxyNode } from '../types';
 import type { IProtocolAdapter } from './protocol-adapter';
 
 /**
@@ -12,58 +12,64 @@ export class VMessAdapter implements IProtocolAdapter {
   readonly type = 'vmess';
 
   toClashJson(node: ProxyNode): Record<string, any> {
+    const vmessNode = node as unknown as VMessProxyNode;
+
     const obj: Record<string, any> = {
       type: 'vmess',
-      name: node.name,
-      server: node.server,
-      port: node.port,
-      uuid: node.uuid,
-      alterId: node.alterId || 0,
-      cipher: node.cipher || 'auto',
-      network: node.network || 'tcp',
+      name: vmessNode.name,
+      server: vmessNode.server,
+      port: vmessNode.port,
+      uuid: vmessNode.uuid,
+      alterId: vmessNode.alterId || 0,
+      cipher: vmessNode.cipher || 'auto',
+      network: vmessNode.network || 'tcp',
       udp: true,
     };
 
-    if (node.tls !== undefined) obj.tls = node.tls;
-    if (node['skip-cert-verify'] !== undefined) obj['skip-cert-verify'] = node['skip-cert-verify'];
-    if (node.servername) obj.servername = node.servername;
+    if (vmessNode.tls !== undefined) obj.tls = vmessNode.tls;
+    if (vmessNode['skip-cert-verify'] !== undefined) obj['skip-cert-verify'] = vmessNode['skip-cert-verify'];
+    if (vmessNode.servername) obj.servername = vmessNode.servername;
 
     return obj;
   }
 
   toSingBoxJson(node: ProxyNode): Record<string, any> {
+    const vmessNode = node as unknown as VMessProxyNode;
+
     const obj: Record<string, any> = {
-      tag: node.name,
+      tag: vmessNode.name,
       type: 'vmess',
-      server: node.server,
-      server_port: node.port,
-      uuid: node.uuid,
+      server: vmessNode.server,
+      server_port: vmessNode.port,
+      uuid: vmessNode.uuid,
       packet_encoding: 'xudp',
-      security: node.cipher || 'auto',
+      security: vmessNode.cipher || 'auto',
       alter_id: 0,
     };
 
-    if (node.network === 'ws') {
+    if (vmessNode.network === 'ws') {
       obj.transport = { type: 'ws' };
     }
 
-    if (node.tls || node.servername) {
+    if (vmessNode.tls || vmessNode.servername) {
       obj.tls = {
         enabled: true,
-        ...(node.servername && { server_name: node.servername }),
+        ...(vmessNode.servername && { server_name: vmessNode.servername }),
       };
     }
 
-    if (node['skip-cert-verify']) {
+    if (vmessNode['skip-cert-verify']) {
       if (!obj.tls) obj.tls = { enabled: true };
-      obj.tls.insecure = node['skip-cert-verify'];
+      obj.tls.insecure = vmessNode['skip-cert-verify'];
     }
 
     return obj;
   }
 
   toLink(node: ProxyNode): string {
-    const jsonStr = `{"v":"2","ps":"${node.name}","add":"${node.server}","port":${node.port},"id":"${node.uuid}","aid":${node.alterId || 0},"scy":"${node.cipher || 'auto'}","net":"${node.network || 'tcp'}","tls":"${node.tls ? 'tls' : ''}"}`;
+    const vmessNode = node as unknown as VMessProxyNode;
+
+    const jsonStr = `{"v":"2","ps":"${vmessNode.name}","add":"${vmessNode.server}","port":${vmessNode.port},"id":"${vmessNode.uuid}","aid":${vmessNode.alterId || 0},"scy":"${vmessNode.cipher || 'auto'}","net":"${vmessNode.network || 'tcp'}","tls":"${vmessNode.tls ? 'tls' : ''}"}`;
     const encoded = btoa(jsonStr);
     return `vmess://${encoded}`;
   }
