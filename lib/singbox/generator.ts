@@ -1,129 +1,35 @@
-import { ProxyNode } from '../types';
+/**
+ * Sing-Box JSON generator using protocol adapters
+ * Generates Sing-Box JSON configuration from ProxyNode array
+ */
+
+import type { ProxyNode } from '../types';
+import { ProtocolAdapterRegistry } from '../adapters/protocol-adapter';
+import { UnsupportedProtocolError } from '../errors';
 
 // Protocols supported by sing-box (SSR and SOCKS5 are NOT supported)
 export const SING_BOX_SUPPORTED_PROTOCOLS = new Set([
   'ss', 'vmess', 'vless', 'trojan', 'hysteria', 'hysteria2', 'http',
 ]);
 
-// Convert proxy node to sing-box outbound format
+/**
+ * Convert proxy node to sing-box outbound format using adapters
+ * @param proxy - ProxyNode to convert
+ * @returns Sing-Box outbound configuration
+ */
 function convertToSingBoxOutbound(proxy: ProxyNode): any {
-  const base = {
-    tag: proxy.name,
-    server: proxy.server,
-    server_port: proxy.port,
-  };
-
-  switch (proxy.type) {
-    case 'ss':
-      return {
-        ...base,
-        type: 'shadowsocks',
-        method: proxy.cipher || 'aes-128-gcm',
-        password: proxy.password,
-      };
-
-    case 'ssr':
-      // sing-box doesn't support SSR, but we'll create a basic shadowsocks fallback
-      return {
-        ...base,
-        type: 'shadowsocks',
-        method: proxy.cipher || 'aes-128-gcm',
-        password: proxy.password,
-      };
-
-    case 'vmess':
-      const vmessOut: any = {
-        ...base,
-        type: 'vmess',
-        uuid: proxy.uuid,
-        packet_encoding: 'xudp',
-        security: proxy.cipher || 'auto',
-        alter_id: 0,
-      };
-      // Only add transport if network is ws (as object with type field)
-      if (proxy.network === 'ws') {
-        vmessOut.transport = { type: 'ws' };
-      }
-      return vmessOut;
-
-    case 'vless':
-      const vlessOut: any = {
-        ...base,
-        type: 'vless',
-        uuid: proxy.uuid,
-      };
-      // Only set flow if it has a value (sing-box doesn't accept empty strings)
-      if (proxy.flow) {
-        vlessOut.flow = proxy.flow;
-      }
-
-      if (proxy.tls || proxy.servername) {
-        vlessOut.tls = {
-          enabled: true,
-        };
-      }
-
-      if (proxy['reality-opts']) {
-        if (!vlessOut.tls) vlessOut.tls = { enabled: true };
-        vlessOut.tls.reality = {
-          enabled: true,
-          public_key: proxy['reality-opts']['public-key'] || '',
-          short_id: proxy['reality-opts']['short-id'] || '',
-        };
-      }
-
-      return vlessOut;
-
-    case 'trojan':
-      return {
-        ...base,
-        type: 'trojan',
-        password: proxy.password,
-        tls: {
-          enabled: true,
-          insecure: proxy['skip-cert-verify'] || false,
-        },
-      };
-
-    case 'hysteria':
-      return {
-        ...base,
-        type: 'hysteria',
-        auth: proxy.auth_str || proxy.auth || '',
-        up_mbps: proxy.up || 10,
-        down_mbps: proxy.down || 50,
-      };
-
-    case 'hysteria2':
-      // For hysteria2, only include tls with enabled: true to match template
-      return {
-        ...base,
-        type: 'hysteria2',
-        password: proxy.password,
-        tls: {
-          enabled: true,
-        },
-      };
-
-    case 'http':
-      return {
-        ...base,
-        type: 'http',
-        users: [
-          {
-            username: proxy.username,
-            password: proxy.password,
-          },
-        ],
-        set_system_proxy: true,
-      };
-
-    default:
-      throw new Error(`Unsupported proxy type: ${proxy.type}`);
+  const adapter = ProtocolAdapterRegistry.get(proxy.type);
+  if (adapter) {
+    return adapter.toSingBoxJson(proxy);
   }
+  throw UnsupportedProtocolError.forFormat(proxy.type, 'sing-box');
 }
 
-// Generate selector outbounds for different services
+/**
+ * Generate selector outbounds for different services
+ * @param proxyNames - Array of proxy node names
+ * @returns Array of selector outbound configurations
+ */
 function generateSelectorOutbounds(proxyNames: string[]): any[] {
   const proxyWithDirect = ['direct', ...proxyNames];
   const proxyWithAuto = ['auto', ...proxyNames];
@@ -231,7 +137,10 @@ function generateSelectorOutbounds(proxyNames: string[]): any[] {
   ];
 }
 
-// Generate route rules
+/**
+ * Generate route rules
+ * @returns Array of route rule configurations
+ */
 function generateRouteRules(): any[] {
   return [
     {
@@ -324,7 +233,10 @@ function generateRouteRules(): any[] {
   ];
 }
 
-// Generate DNS configuration
+/**
+ * Generate DNS configuration
+ * @returns DNS configuration object
+ */
 function generateDnsConfig(): any {
   return {
     servers: [
@@ -378,7 +290,11 @@ function generateDnsConfig(): any {
   };
 }
 
-// Main function to generate sing-box configuration
+/**
+ * Main function to generate sing-box configuration using adapters
+ * @param proxies - Array of ProxyNode objects
+ * @returns Sing-Box JSON configuration string
+ */
 export function generateSingBoxConfig(proxies: ProxyNode[]): string {
   if (proxies.length === 0) {
     return JSON.stringify({ error: 'No proxies found' }, null, 2);

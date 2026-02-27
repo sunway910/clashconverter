@@ -5,6 +5,8 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { SingBoxJsonGenerator } from '../../generators/singbox-json-generator';
 import { parseProxyLink } from '../../parsers';
+// Initialize registry to register protocol adapters
+import '../../core/registry';
 
 describe('SingBoxJsonGenerator (lib)', () => {
   let generator: SingBoxJsonGenerator;

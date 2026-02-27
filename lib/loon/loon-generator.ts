@@ -185,13 +185,13 @@ export class LoonGenerator extends BaseFormatGenerator {
         params.push('vmess');
         params.push(proxy.server);
         params.push(String(proxy.port));
-        params.push(proxy.cipher || 'auto');
-        params.push(`"${proxy.uuid}"`);
-        params.push(`over-tls=${proxy.tls ? 'true' : 'false'}`);
-        params.push(`transport=${proxy.network || 'tcp'}`);
-        params.push(`path=${proxy['ws-opts']?.path || '/'}`);
-        params.push(`host=${proxy['ws-opts']?.headers?.Host || ''}`);
-        params.push(`skip-cert-verify=${proxy['skip-cert-verify'] ? 'true' : 'false'}`);
+        params.push((proxy as any).cipher || 'auto');
+        params.push(`"${(proxy as any).uuid}"`);
+        params.push(`over-tls=${(proxy as any).tls ? 'true' : 'false'}`);
+        params.push(`transport=${(proxy as any).network || 'tcp'}`);
+        params.push(`path=${(proxy as any)['ws-opts']?.path || '/'}`);
+        params.push(`host=${(proxy as any)['ws-opts']?.headers?.Host || ''}`);
+        params.push(`skip-cert-verify=${(proxy as any)['skip-cert-verify'] ? 'true' : 'false'}`);
         break;
 
       case 'trojan':
@@ -199,8 +199,8 @@ export class LoonGenerator extends BaseFormatGenerator {
         params.push('trojan');
         params.push(proxy.server);
         params.push(String(proxy.port));
-        params.push(`"${proxy.password}"`);
-        params.push(`skip-cert-verify=${proxy['skip-cert-verify'] ? 'true' : 'false'}`);
+        params.push(`"${(proxy as any).password}"`);
+        params.push(`skip-cert-verify=${(proxy as any)['skip-cert-verify'] ? 'true' : 'false'}`);
         break;
 
       default:

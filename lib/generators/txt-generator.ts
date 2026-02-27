@@ -5,7 +5,7 @@
 
 import type { ProxyNode } from '../types';
 import type { IFormatGenerator, FormatType } from '../core/interfaces';
-import { proxiesToLinks } from '../clash/parser/yaml';
+import { proxiesToLinks } from './link-generator';
 
 /**
  * Generator for plain text proxy link format

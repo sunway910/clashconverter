@@ -8,6 +8,7 @@
 import { parseMultipleProxies } from './parsers';
 import { parseYamlToProxies } from './clash/parser/yaml';
 import { ProxyNode } from './types';
+import { ParseError, GenerateError, ErrorCode } from './errors';
 
 export type SubscriptionContentType = 'yaml' | 'base64' | 'unknown';
 
@@ -58,13 +59,19 @@ export async function fetchSubscriptionContent(url: string): Promise<string> {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
-      throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
+      throw new ParseError(
+        ErrorCode.PARSE_FAILED,
+        errorData.error || `HTTP ${response.status}: ${response.statusText}`
+      );
     }
 
     const data = await response.json();
 
     if (!data.content) {
-      throw new Error('No content returned from subscription server');
+      throw new ParseError(
+        ErrorCode.PARSE_FAILED,
+        'No content returned from subscription server'
+      );
     }
 
     return data.content;
@@ -77,7 +84,10 @@ export async function fetchSubscriptionContent(url: string): Promise<string> {
         errorMessage.startsWith('Server error')) {
       throw error;
     }
-    throw new Error(`Failed to fetch subscription: ${errorMessage}`);
+    throw new ParseError(
+      ErrorCode.PARSE_FAILED,
+      `Failed to fetch subscription: ${errorMessage}`
+    );
   }
 }
 
@@ -192,17 +202,26 @@ export function parseSubscriptionContent(content: string, contentType: Subscript
         proxies = parseResult.proxies;
 
         if (proxies.length === 0) {
-          throw new Error('No valid proxy links found in content');
+          throw new ParseError(
+            ErrorCode.PARSE_FAILED,
+            'No valid proxy links found in content'
+          );
         }
         break;
       }
 
       default:
-        throw new Error('Unknown content type');
+        throw new ParseError(
+          ErrorCode.PARSE_INVALID_FORMAT,
+          'Unknown content type'
+        );
     }
 
     if (proxies.length === 0) {
-      throw new Error('No proxies found in subscription');
+      throw new ParseError(
+        ErrorCode.PARSE_FAILED,
+        'No proxies found in subscription'
+      );
     }
 
     // Determine suggested output format based on protocols

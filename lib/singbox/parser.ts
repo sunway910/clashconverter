@@ -81,9 +81,9 @@ export function parseSingBoxToProxies(input: string): {
  * @returns ProxyNode or null if conversion fails
  */
 function singBoxOutboundToProxyNode(outbound: any, proxyType: string): ProxyNode | null {
-  const base: ProxyNode = {
+  const base: any = {
     name: outbound.tag || outbound.name || 'unnamed',
-    type: proxyType as any,
+    type: proxyType,
     server: outbound.server || '',
     port: outbound.server_port || outbound.port || 0,
   };
@@ -98,7 +98,7 @@ function singBoxOutboundToProxyNode(outbound: any, proxyType: string): ProxyNode
         ...base,
         cipher: outbound.method || 'aes-128-gcm',
         password: outbound.password || '',
-      };
+      } as ProxyNode;
 
     case 'vmess':
       return {
@@ -115,7 +115,7 @@ function singBoxOutboundToProxyNode(outbound: any, proxyType: string): ProxyNode
           ...(outbound.tls.server_name ? { servername: outbound.tls.server_name } : {}),
           ...(outbound.tls.insecure !== undefined ? { 'skip-cert-verify': outbound.tls.insecure } : {}),
         } : {}),
-      };
+      } as ProxyNode;
 
     case 'vless':
       const vlessNode: ProxyNode = {
@@ -125,25 +125,25 @@ function singBoxOutboundToProxyNode(outbound: any, proxyType: string): ProxyNode
       };
       // Only set flow if it has a value
       if (outbound.flow) {
-        vlessNode.flow = outbound.flow;
+        (vlessNode as any).flow = outbound.flow;
       }
       // Handle TLS (in sing-box, tls can be a boolean or object)
       if (outbound.tls === true || outbound.tls?.enabled) {
-        vlessNode.tls = true;
+        (vlessNode as any).tls = true;
         // Handle servername
         if (outbound.tls?.server_name) {
-          vlessNode.servername = outbound.tls.server_name;
+          (vlessNode as any).servername = outbound.tls.server_name;
         } else if (outbound.tls?.servername) {
-          vlessNode.servername = outbound.tls.servername;
+          (vlessNode as any).servername = outbound.tls.servername;
         }
         // Handle skip-cert-verify
         if (outbound.tls?.insecure !== undefined) {
-          vlessNode['skip-cert-verify'] = outbound.tls.insecure;
+          (vlessNode as any)['skip-cert-verify'] = outbound.tls.insecure;
         }
         // Handle Reality
         if (outbound.tls?.reality?.enabled || outbound.reality?.enabled) {
           const reality = outbound.tls?.reality || outbound.reality;
-          vlessNode['reality-opts'] = {
+          (vlessNode as any)['reality-opts'] = {
             'public-key': reality.public_key || '',
             'short-id': reality.short_id || '',
           };
@@ -159,22 +159,22 @@ function singBoxOutboundToProxyNode(outbound: any, proxyType: string): ProxyNode
       };
       // Handle TLS options for trojan
       if (outbound.tls?.enabled) {
-        trojanNode.tls = true;
+        (trojanNode as any).tls = true;
         if (outbound.tls.insecure !== undefined) {
-          trojanNode['skip-cert-verify'] = outbound.tls.insecure;
+          (trojanNode as any)['skip-cert-verify'] = outbound.tls.insecure;
         }
         if (outbound.tls.server_name) {
-          trojanNode.sni = outbound.tls.server_name;
+          (trojanNode as any).sni = outbound.tls.server_name;
         } else if (outbound.tls.servername) {
-          trojanNode.sni = outbound.tls.servername;
+          (trojanNode as any).sni = outbound.tls.servername;
         }
       } else {
         // trojan always uses TLS
-        trojanNode.tls = true;
+        (trojanNode as any).tls = true;
         if (outbound.tls?.server_name) {
-          trojanNode.sni = outbound.tls.server_name;
+          (trojanNode as any).sni = outbound.tls.server_name;
         } else if (outbound.tls?.servername) {
-          trojanNode.sni = outbound.tls.servername;
+          (trojanNode as any).sni = outbound.tls.servername;
         }
       }
       return trojanNode;
@@ -188,7 +188,7 @@ function singBoxOutboundToProxyNode(outbound: any, proxyType: string): ProxyNode
         down: outbound.down_mbps?.toString() || '50',
         sni: outbound.server_name || outbound.sni || '',
         'skip-cert-verify': outbound.tls?.insecure || false,
-      };
+      } as ProxyNode;
 
     case 'hysteria2':
       const h2Node: ProxyNode = {
@@ -198,17 +198,17 @@ function singBoxOutboundToProxyNode(outbound: any, proxyType: string): ProxyNode
       // Handle TLS options for hysteria2
       if (outbound.tls) {
         if (outbound.tls.insecure !== undefined) {
-          h2Node['skip-cert-verify'] = outbound.tls.insecure;
+          (h2Node as any)['skip-cert-verify'] = outbound.tls.insecure;
         }
         if (outbound.tls.server_name) {
-          h2Node.sni = outbound.tls.server_name;
+          (h2Node as any).sni = outbound.tls.server_name;
         } else if (outbound.tls.servername) {
-          h2Node.sni = outbound.tls.servername;
+          (h2Node as any).sni = outbound.tls.servername;
         }
       }
       // hysteria2 may also have sni at top level
-      if (!h2Node.sni && outbound.server_name) {
-        h2Node.sni = outbound.server_name;
+      if (!(h2Node as any).sni && outbound.server_name) {
+        (h2Node as any).sni = outbound.server_name;
       }
       return h2Node;
 
@@ -219,7 +219,7 @@ function singBoxOutboundToProxyNode(outbound: any, proxyType: string): ProxyNode
         ...base,
         username: user.username || '',
         password: user.password || '',
-      };
+      } as ProxyNode;
 
     default:
       return null;
