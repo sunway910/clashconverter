@@ -35,6 +35,29 @@ const portSchema = z.number().int().min(1).max(65535);
 const nameSchema = z.string().min(1).max(255);
 
 // ============================================================================
+// Helper Validators
+// ============================================================================
+
+/**
+ * Optional boolean field that accepts null and converts to undefined
+ * This handles YAML null values which should be treated as "not set"
+ */
+const nullableBoolean = () =>
+  z
+    .union([z.boolean(), z.null(), z.undefined()])
+    .optional()
+    .transform((val): boolean | undefined => (val === null ? undefined : val));
+
+/**
+ * Optional string field that accepts null and converts to undefined
+ */
+const nullableString = () =>
+  z
+    .union([z.string(), z.null(), z.undefined()])
+    .optional()
+    .transform((val): string | undefined => (val === null ? undefined : val));
+
+// ============================================================================
 // Protocol-specific Schemas
 // ============================================================================
 
@@ -80,10 +103,10 @@ export const vmessProxySchema = z.object({
   alterId: z.number().int().min(0).max(65535).default(0),
   cipher: z.string().optional().default('auto'),
   network: z.enum(['tcp', 'ws', 'grpc', 'h2', 'quic']).optional().default('tcp'),
-  tls: z.boolean().optional(),
+  tls: nullableBoolean(),
   'skip-cert-verify': z.boolean().optional(),
-  servername: z.string().optional(),
-  sni: z.string().optional(),
+  servername: nullableString(),
+  sni: nullableString(),
 });
 
 /**
@@ -96,16 +119,16 @@ export const vlessProxySchema = z.object({
   port: portSchema,
   uuid: z.string().uuid().min(1),
   network: z.enum(['tcp', 'ws', 'grpc', 'h2', 'quic']).optional().default('tcp'),
-  tls: z.boolean().optional(),
-  servername: z.string().optional(),
+  tls: nullableBoolean(),
+  servername: nullableString(),
   'skip-cert-verify': z.boolean().optional(),
-  sni: z.string().optional(),
-  flow: z.string().optional(),
+  sni: nullableString(),
+  flow: nullableString(),
   'reality-opts': z.object({
     'public-key': z.string().optional(),
     'short-id': z.string().optional(),
   }).optional(),
-  'client-fingerprint': z.string().optional(),
+  'client-fingerprint': nullableString(),
   'ws-opts': z
     .object({
       path: z.string().optional(),
@@ -125,7 +148,7 @@ export const trojanProxySchema = z.object({
   password: z.string().min(1),
   udp: z.boolean().optional().default(true),
   'skip-cert-verify': z.boolean().optional(),
-  sni: z.string().optional(),
+  sni: nullableString(),
   network: z.enum(['tcp', 'ws', 'grpc']).optional().default('tcp'),
 });
 
@@ -137,11 +160,11 @@ export const hysteriaProxySchema = z.object({
   type: z.literal('hysteria'),
   server: serverSchema,
   port: portSchema,
-  auth_str: z.string().optional(),
-  auth: z.string().optional(),
+  auth_str: nullableString(),
+  auth: nullableString(),
   protocol: z.string().optional().default('udp'),
   'skip-cert-verify': z.boolean().optional(),
-  sni: z.string().optional(),
+  sni: nullableString(),
   up: z.number().optional().default(10),
   down: z.number().optional().default(50),
   alpn: z.union([z.string(), z.array(z.string())]).optional(),
@@ -157,7 +180,7 @@ export const hysteria2ProxySchema = z.object({
   port: portSchema,
   password: z.string().min(1),
   'skip-cert-verify': z.boolean().optional(),
-  sni: z.string().optional(),
+  sni: nullableString(),
 });
 
 /**

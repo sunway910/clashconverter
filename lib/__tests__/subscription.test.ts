@@ -30,7 +30,7 @@ describe('Subscription URL Parsing', () => {
       it('should parse inline YAML format with VMess proxy', () => {
         const yaml = `proxies:
   - { name: '日本节点', type: vmess, server: jp.example.com, port: 443, uuid: 4243671d-5219-389f-bb51-5301d157e0bb, alterId: 1, cipher: auto, tls: true, skip-cert-verify: false, udp: true }
-  - { name: '美国节点', type: vmess, server: us.example.com, port: 80, uuid: test-uuid-here, alterId: 0, cipher: auto, tls: false, udp: true }`;
+  - { name: '美国节点', type: vmess, server: us.example.com, port: 80, uuid: 5243671d-5219-389f-bb51-5301d157e0bc, alterId: 0, cipher: auto, tls: false, udp: true }`;
 
         const proxies = parseYamlToProxies(yaml);
         expect(proxies).toHaveLength(2);
@@ -44,14 +44,14 @@ describe('Subscription URL Parsing', () => {
 
       it('should parse inline YAML format with VLESS proxy', () => {
         const yaml = `proxies:
-  - { name: 'VLESS节点', type: vless, server: vless.example.com, port: 443, uuid: test-vless-uuid, flow: xtls-rprx-vision, udp: true }
-  - { name: 'VLESS-TCP', type: vless, server: tcp.example.com, port: 80, uuid: another-uuid, network: tcp, tls: false }`;
+  - { name: 'VLESS节点', type: vless, server: vless.example.com, port: 443, uuid: 6243671d-5219-389f-bb51-5301d157e0bd, flow: xtls-rprx-vision, udp: true }
+  - { name: 'VLESS-TCP', type: vless, server: tcp.example.com, port: 80, uuid: 7243671d-5219-389f-bb51-5301d157e0be, network: tcp, tls: false }`;
 
         const proxies = parseYamlToProxies(yaml);
         expect(proxies).toHaveLength(2);
         expect(proxies[0].type).toBe('vless');
         expect(proxies[0].server).toBe('vless.example.com');
-        expect(proxies[0].uuid).toBe('test-vless-uuid');
+        expect(proxies[0].uuid).toBe('6243671d-5219-389f-bb51-5301d157e0bd');
         expect(proxies[0].flow).toBe('xtls-rprx-vision');
       });
 
@@ -107,13 +107,14 @@ describe('Subscription URL Parsing', () => {
         const yaml = `proxies:
   - { name: 'Test1', type: ss, server: test1.com, port: 443, cipher: aes-256-gcm, password: pass123, udp: true }
   - { name: 'Test2', type: ss, server: test2.com, port: 443, cipher: aes-256-gcm, password: pass123, udp: false }
-  - { name: 'Test3', type: vmess, server: test3.com, port: 443, uuid: uuid-here, alterId: 0, cipher: auto, tls: null }`;
+  - { name: 'Test3', type: vmess, server: test3.com, port: 443, uuid: 8243671d-5219-389f-bb51-5301d157e0bf, alterId: 0, cipher: auto, tls: null }`;
 
         const proxies = parseYamlToProxies(yaml);
         expect(proxies).toHaveLength(3);
         expect(proxies[0].udp).toBe(true);
         expect(proxies[1].udp).toBe(false);
-        expect(proxies[2].tls).toBe(null);
+        // null values are converted to undefined by the validator
+        expect(proxies[2].tls).toBeUndefined();
       });
     });
 
@@ -487,11 +488,11 @@ proxies:
     it('should parse all supported protocols from inline YAML', () => {
       const yaml = `proxies:
   - { name: SS, type: ss, server: ss.example.com, port: 443, cipher: aes-256-gcm, password: test123 }
-  - { name: SSR, type: ssr, server: ssr.example.com, port: 443, cipher: aes-256-cfb, password: test123, protocol: auth_aes128_md5 }
-  - { name: VMess, type: vmess, server: vmess.example.com, port: 443, uuid: test-uuid, alterId: 0, cipher: auto }
-  - { name: VLESS, type: vless, server: vless.example.com, port: 443, uuid: test-uuid }
+  - { name: SSR, type: ssr, server: ssr.example.com, port: 443, cipher: aes-256-cfb, password: test123, protocol: auth_aes128_md5, obfs: plain }
+  - { name: VMess, type: vmess, server: vmess.example.com, port: 443, uuid: 9243671d-5219-389f-bb51-5301d157e0c0, alterId: 0, cipher: auto }
+  - { name: VLESS, type: vless, server: vless.example.com, port: 443, uuid: a243671d-5219-389f-bb51-5301d157e0c1 }
   - { name: Trojan, type: trojan, server: trojan.example.com, port: 443, password: test-password }
-  - { name: Hysteria, type: hysteria, server: hysteria.example.com, port: 443, auth: test-auth, protocol: udp }
+  - { name: Hysteria, type: hysteria, server: hysteria.example.com, port: 443, auth_str: test-auth, protocol: udp }
   - { name: Hysteria2, type: hysteria2, server: hys2.example.com, port: 443, password: test-password }
   - { name: HTTP, type: http, server: http.example.com, port: 8080, username: user, password: pass }
   - { name: SOCKS5, type: socks5, server: socks5.example.com, port: 1080, username: user, password: pass }`;
