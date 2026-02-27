@@ -1,9 +1,10 @@
 /**
  * Format registry initialization
- * Registers all parsers and generators with the FormatFactory
+ * Registers all parsers, generators, and protocol adapters
  */
 
 import { FormatFactory } from './factory';
+import { ProtocolAdapterRegistry } from '../adapters/protocol-adapter';
 
 // Import parsers
 import { TxtParser } from '../parsers/txt-parser';
@@ -18,11 +19,41 @@ import { ClashPremiumGenerator } from '../generators/clash-premium-generator';
 import { SingBoxJsonGenerator } from '../generators/singbox-json-generator';
 import { LoonGenerator } from '../loon/loon-generator';
 
+// Import protocol adapters
+import { SSAdapter } from '../adapters/ss-adapter';
+import { SSRAdapter } from '../adapters/ssr-adapter';
+import { VMessAdapter } from '../adapters/vmess-adapter';
+import { VLESSAdapter } from '../adapters/vless-adapter';
+import { TrojanAdapter } from '../adapters/trojan-adapter';
+import { HysteriaAdapter, Hysteria2Adapter } from '../adapters/hysteria-adapter';
+import { HTTPAdapter } from '../adapters/http-adapter';
+import { SOCKS5Adapter } from '../adapters/socks5-adapter';
+
+/**
+ * Initialize protocol adapters
+ * Registers all protocol adapters for link generation and format conversion
+ */
+export function initializeProtocolAdapters(): void {
+  // Register all protocol adapters
+  ProtocolAdapterRegistry.register(new SSAdapter());
+  ProtocolAdapterRegistry.register(new SSRAdapter());
+  ProtocolAdapterRegistry.register(new VMessAdapter());
+  ProtocolAdapterRegistry.register(new VLESSAdapter());
+  ProtocolAdapterRegistry.register(new TrojanAdapter());
+  ProtocolAdapterRegistry.register(new HysteriaAdapter());
+  ProtocolAdapterRegistry.register(new Hysteria2Adapter());
+  ProtocolAdapterRegistry.register(new HTTPAdapter());
+  ProtocolAdapterRegistry.register(new SOCKS5Adapter());
+}
+
 /**
  * Initialize the format registry with all parsers and generators
  * This should be called once during application initialization
  */
 export function initializeFormatRegistry(): void {
+  // Initialize protocol adapters first
+  initializeProtocolAdapters();
+
   // Register all parsers
   FormatFactory.registerParser(new TxtParser());
   FormatFactory.registerParser(new ClashYamlParser());

@@ -4,13 +4,19 @@
  */
 
 import type { IFormatParser, IFormatGenerator, FormatType } from './interfaces';
+import { GenerateError, ErrorCode } from '../errors';
 
 /**
  * Error thrown when a parser or generator is not found for a format
  */
-export class FormatNotRegisteredError extends Error {
+export class FormatNotRegisteredError extends GenerateError {
   constructor(format: FormatType, type: 'parser' | 'generator') {
-    super(`No ${type} found for format: ${format}`);
+    const detail = `No ${type} registered for format: ${format}`;
+    super(
+      ErrorCode.UNSUPPORTED_FORMAT,
+      detail,
+      format
+    );
     this.name = 'FormatNotRegisteredError';
   }
 }
@@ -29,11 +35,14 @@ export class FormatFactory {
   /**
    * Register a parser for a specific format
    * @param parser - The parser instance to register
-   * @throws Error if a parser is already registered for this format
+   * @throws GenerateError if a parser is already registered for this format
    */
   static registerParser(parser: IFormatParser): void {
     if (this.parsers.has(parser.format)) {
-      throw new Error(`Parser already registered for format: ${parser.format}`);
+      throw GenerateError.invalidConfig(
+        `Parser already registered for format: ${parser.format}`,
+        parser.format
+      );
     }
     this.parsers.set(parser.format, parser);
   }
@@ -41,11 +50,14 @@ export class FormatFactory {
   /**
    * Register a generator for a specific format
    * @param generator - The generator instance to register
-   * @throws Error if a generator is already registered for this format
+   * @throws GenerateError if a generator is already registered for this format
    */
   static registerGenerator(generator: IFormatGenerator): void {
     if (this.generators.has(generator.format)) {
-      throw new Error(`Generator already registered for format: ${generator.format}`);
+      throw GenerateError.invalidConfig(
+        `Generator already registered for format: ${generator.format}`,
+        generator.format
+      );
     }
     this.generators.set(generator.format, generator);
   }
