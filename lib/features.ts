@@ -91,7 +91,14 @@ export function isFormatEnabled(format: FormatType): boolean {
     throw new Error(`Unknown format type: ${format}`);
   }
 
-  return parseBooleanEnv(process.env[envVar]);
+  const envValue = process.env[envVar];
+
+  // Debug logging (remove in production)
+  if (typeof window !== 'undefined') {
+    console.log(`[isFormatEnabled] ${format}: envVar=${envVar}, envValue=${envValue}, parsed=${parseBooleanEnv(envValue)}`);
+  }
+
+  return parseBooleanEnv(envValue);
 }
 
 /**
@@ -111,15 +118,15 @@ export function getEnabledFormats(): FormatType[] {
 }
 
 /**
- * Constant object with enablement status for all formats
+ * Get enablement status for all formats
  *
- * This is computed at module load time and reflects the environment
- * variable state at application startup.
+ * This function computes the status fresh each time it's called,
+ * unlike the ENABLED_FORMATS constant which is computed at module load.
  *
  * @example
- * ENABLED_FORMATS['sing-box'] // true or false based on env var
+ * getEnabledFormatsMap()['sing-box'] // true or false based on current env var
  */
-export const ENABLED_FORMATS: Record<FormatType, boolean> = (() => {
+export function getEnabledFormatsMap(): Record<FormatType, boolean> {
   return ALL_FORMAT_TYPES.reduce(
     (acc, format) => {
       acc[format] = isFormatEnabled(format);
@@ -127,7 +134,18 @@ export const ENABLED_FORMATS: Record<FormatType, boolean> = (() => {
     },
     {} as Record<FormatType, boolean>
   );
-})();
+}
+
+/**
+ * Constant object with enablement status for all formats
+ *
+ * ⚠️ DEPRECATED: This is computed at module load time and may not reflect
+ * runtime environment variable changes. Use getEnabledFormatsMap() instead.
+ *
+ * @example
+ * ENABLED_FORMATS['sing-box'] // true or false based on env var at module load
+ */
+export const ENABLED_FORMATS: Record<FormatType, boolean> = getEnabledFormatsMap();
 
 /**
  * Export constants for use in other modules

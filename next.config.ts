@@ -8,6 +8,13 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
+  // Explicitly load environment variables from .env files
+  env: {
+    NEXT_PUBLIC_ENABLE_SINGBOX_TRANSFER: process.env.NEXT_PUBLIC_ENABLE_SINGBOX_TRANSFER,
+    NEXT_PUBLIC_ENABLE_LOON_TRANSFER: process.env.NEXT_PUBLIC_ENABLE_LOON_TRANSFER,
+    NEXT_PUBLIC_ENABLE_CLASH_META_TRANSFER: process.env.NEXT_PUBLIC_ENABLE_CLASH_META_TRANSFER,
+    NEXT_PUBLIC_ENABLE_CLASH_PREMIUM_TRANSFER: process.env.NEXT_PUBLIC_ENABLE_CLASH_PREMIUM_TRANSFER,
+  },
 };
 
 export default withNextIntl(nextConfig);
