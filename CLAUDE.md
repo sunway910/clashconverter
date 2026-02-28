@@ -236,6 +236,12 @@ The application supports environment variable-based feature flags to control whi
 - Default: All formats are enabled when variables are not set
 - Example: `NEXT_PUBLIC_ENABLE_SINGBOX_TRANSFER=false` hides Sing-Box conversion option
 
+**IMPORTANT - Environment Variable Loading:**
+- Next.js loads environment variables at server startup
+- After modifying `.env` file, you **MUST restart the dev server** for changes to take effect
+- Run `pnpm dev` again after changing environment variables
+- To clear cached values: `rm -rf .next && pnpm dev`
+
 ### Testing
 Run TypeScript check and tests before committing:
 ```bash
