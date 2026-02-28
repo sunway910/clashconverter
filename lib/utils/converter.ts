@@ -1,5 +1,6 @@
 import { FormatType } from '@/lib/parser';
 import type { LanguageType } from '@/components/preview/preview-editor';
+import { getEnabledFormats } from '@/lib/features';
 
 /**
  * Generate timestamp for download filename
@@ -99,25 +100,31 @@ export function getDownloadInfo(format: FormatType): { filename: string; mimeTyp
  * Get format options array for selectors
  */
 export function getInputFormatOptions(t: (key: string) => string): Array<{ value: FormatType; label: string }> {
-  return [
-    { value: 'subscribe-url', label: t('formatTypes.subscribe-url') },
-    { value: 'txt', label: t('formatTypes.txt') },
-    { value: 'clash-meta', label: t('formatTypes.clash-meta') },
-    { value: 'clash-premium', label: t('formatTypes.clash-premium') },
-    { value: 'sing-box', label: t('formatTypes.sing-box') },
-    { value: 'loon', label: t('formatTypes.loon') },
+  const enabledFormats = getEnabledFormats();
+  const allOptions = [
+    { value: 'subscribe-url' as const, label: t('formatTypes.subscribe-url') },
+    { value: 'txt' as const, label: t('formatTypes.txt') },
+    { value: 'clash-meta' as const, label: t('formatTypes.clash-meta') },
+    { value: 'clash-premium' as const, label: t('formatTypes.clash-premium') },
+    { value: 'sing-box' as const, label: t('formatTypes.sing-box') },
+    { value: 'loon' as const, label: t('formatTypes.loon') },
   ];
+
+  return allOptions.filter(option => enabledFormats.includes(option.value));
 }
 
 /**
  * Get format options array for output selectors (excludes subscribe-url)
  */
 export function getOutputFormatOptions(t: (key: string) => string): Array<{ value: FormatType; label: string }> {
-  return [
-    { value: 'txt', label: t('formatTypes.txt') },
-    { value: 'clash-meta', label: t('formatTypes.clash-meta') },
-    { value: 'clash-premium', label: t('formatTypes.clash-premium') },
-    { value: 'sing-box', label: t('formatTypes.sing-box') },
-    { value: 'loon', label: t('formatTypes.loon') },
+  const enabledFormats = getEnabledFormats();
+  const allOptions = [
+    { value: 'txt' as const, label: t('formatTypes.txt') },
+    { value: 'clash-meta' as const, label: t('formatTypes.clash-meta') },
+    { value: 'clash-premium' as const, label: t('formatTypes.clash-premium') },
+    { value: 'sing-box' as const, label: t('formatTypes.sing-box') },
+    { value: 'loon' as const, label: t('formatTypes.loon') },
   ];
+
+  return allOptions.filter(option => enabledFormats.includes(option.value));
 }

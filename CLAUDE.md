@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Key Design Principle**: Pure frontend static service - user inputs are never stored on backend servers for privacy. All processing happens client-side.
 
-**Task Hook** Execute `pnpm test && pnpm build` after each task item completed.
+**Task Hook** Execute `pnpm test && pnpm build` after each task item completed, exec `git commit` after `pnpm test && pnpm build`
 
 ## Development Commands
 
@@ -211,11 +211,30 @@ Users can choose between:
 
 ### Environment Variables
 ```bash
+# Analytics & Monetization
 NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX              # Google Analytics
 NEXT_PUBLIC_ADSENSE_ID=ca-pub-XXXXXXXX       # Google AdSense
 NEXT_PUBLIC_CONTACT_EMAIL=xxx@gmail.com     # Footer contact email
-NEXT_PUBLIC_ENABLE_DNS_CONFIG=true          # Include DNS in Clash YAML
+
+# Feature Flags
+NEXT_PUBLIC_ENABLE_DNS_CONFIG=true          # Include DNS in Clash YAML (default: true)
+NEXT_PUBLIC_ENABLE_CLASH_PREMIUM_TRANSFER=true   # Show Clash Premium output option (default: true)
+NEXT_PUBLIC_ENABLE_CLASH_META_TRANSFER=true      # Show Clash Meta output option (default: true)
+NEXT_PUBLIC_ENABLE_SINGBOX_TRANSFER=true         # Show Sing-Box output option (default: true)
+NEXT_PUBLIC_ENABLE_LOON_TRANSFER=true            # Show Loon output option (default: true)
 ```
+
+### Feature Flags (`lib/features.ts`)
+The application supports environment variable-based feature flags to control which conversion formats are displayed in the UI:
+
+- `isFormatEnabled(format)` - Check if a specific format is enabled
+- `getEnabledFormats()` - Get list of all enabled formats
+- `ENABLED_FORMATS` - Constant object with enablement status
+
+**Usage:**
+- Set environment variable to `false` to hide the format option from UI
+- Default: All formats are enabled when variables are not set
+- Example: `NEXT_PUBLIC_ENABLE_SINGBOX_TRANSFER=false` hides Sing-Box conversion option
 
 ### Testing
 Run TypeScript check and tests before committing:
