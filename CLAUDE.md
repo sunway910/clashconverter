@@ -242,6 +242,17 @@ The application supports environment variable-based feature flags to control whi
 - Run `pnpm dev` again after changing environment variables
 - To clear cached values: `rm -rf .next && pnpm dev`
 
+**Turbopack Issue (Next.js 16):**
+- Turbopack may not properly load `.env` files in development mode
+- **Solution**: Use `.env.local` file instead (higher priority, always loaded)
+- Create `.env.local` with your overrides:
+  ```bash
+  # .env.local
+  NEXT_PUBLIC_ENABLE_SINGBOX_TRANSFER=false
+  NEXT_PUBLIC_ENABLE_LOON_TRANSFER=false
+  ```
+- `.env.local` is automatically gitignored and takes precedence over `.env`
+
 ### Testing
 Run TypeScript check and tests before committing:
 ```bash
