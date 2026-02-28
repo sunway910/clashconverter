@@ -1,5 +1,31 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from 'next-intl/plugin';
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
+
+// Load .env file manually to work around Turbopack environment variable loading issue
+function loadEnvFile() {
+  try {
+    const envPath = resolve(process.cwd(), '.env');
+    const envContent = readFileSync(envPath, 'utf-8');
+
+    envContent.split('\n').forEach(line => {
+      const trimmedLine = line.trim();
+      if (trimmedLine && !trimmedLine.startsWith('#') && trimmedLine.includes('=')) {
+        const [key, ...valueParts] = trimmedLine.split('=');
+        const value = valueParts.join('=').trim();
+        if (key.startsWith('NEXT_PUBLIC_')) {
+          process.env[key] = value;
+        }
+      }
+    });
+  } catch (error) {
+    // .env file doesn't exist, that's ok
+    }
+}
+
+// Load .env file at config evaluation time
+loadEnvFile();
 
 const withNextIntl = createNextIntlPlugin('./i18n.ts');
 
@@ -8,12 +34,12 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
-  // Explicitly load environment variables from .env files
+  // Explicitly load environment variables
   env: {
-    NEXT_PUBLIC_ENABLE_SINGBOX_TRANSFER: process.env.NEXT_PUBLIC_ENABLE_SINGBOX_TRANSFER,
-    NEXT_PUBLIC_ENABLE_LOON_TRANSFER: process.env.NEXT_PUBLIC_ENABLE_LOON_TRANSFER,
-    NEXT_PUBLIC_ENABLE_CLASH_META_TRANSFER: process.env.NEXT_PUBLIC_ENABLE_CLASH_META_TRANSFER,
-    NEXT_PUBLIC_ENABLE_CLASH_PREMIUM_TRANSFER: process.env.NEXT_PUBLIC_ENABLE_CLASH_PREMIUM_TRANSFER,
+    NEXT_PUBLIC_ENABLE_SINGBOX_TRANSFER: process.env.NEXT_PUBLIC_ENABLE_SINGBOX_TRANSFER ?? 'true',
+    NEXT_PUBLIC_ENABLE_LOON_TRANSFER: process.env.NEXT_PUBLIC_ENABLE_LOON_TRANSFER ?? 'true',
+    NEXT_PUBLIC_ENABLE_CLASH_META_TRANSFER: process.env.NEXT_PUBLIC_ENABLE_CLASH_META_TRANSFER ?? 'true',
+    NEXT_PUBLIC_ENABLE_CLASH_PREMIUM_TRANSFER: process.env.NEXT_PUBLIC_ENABLE_CLASH_PREMIUM_TRANSFER ?? 'true',
   },
 };
 
