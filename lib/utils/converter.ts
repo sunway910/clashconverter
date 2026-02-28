@@ -1,6 +1,6 @@
 import { FormatType } from '@/lib/parser';
 import type { LanguageType } from '@/components/preview/preview-editor';
-import { getEnabledFormats } from '@/lib/features';
+import { getEnabledFormats, ALL_FORMAT_TYPES } from '@/lib/features';
 
 /**
  * Generate timestamp for download filename
@@ -98,33 +98,32 @@ export function getDownloadInfo(format: FormatType): { filename: string; mimeTyp
 
 /**
  * Get format options array for selectors
+ * @param t - Translation function
+ * @returns Array of format options filtered by enabled status
  */
 export function getInputFormatOptions(t: (key: string) => string): Array<{ value: FormatType; label: string }> {
   const enabledFormats = getEnabledFormats();
-  const allOptions = [
-    { value: 'subscribe-url' as const, label: t('formatTypes.subscribe-url') },
-    { value: 'txt' as const, label: t('formatTypes.txt') },
-    { value: 'clash-meta' as const, label: t('formatTypes.clash-meta') },
-    { value: 'clash-premium' as const, label: t('formatTypes.clash-premium') },
-    { value: 'sing-box' as const, label: t('formatTypes.sing-box') },
-    { value: 'loon' as const, label: t('formatTypes.loon') },
-  ];
 
-  return allOptions.filter(option => enabledFormats.includes(option.value));
+  return ALL_FORMAT_TYPES
+    .filter(format => enabledFormats.includes(format))
+    .map(format => ({
+      value: format,
+      label: t(`formatTypes.${format}`),
+    }));
 }
 
 /**
  * Get format options array for output selectors (excludes subscribe-url)
+ * @param t - Translation function
+ * @returns Array of format options filtered by enabled status, excluding subscribe-url
  */
 export function getOutputFormatOptions(t: (key: string) => string): Array<{ value: FormatType; label: string }> {
   const enabledFormats = getEnabledFormats();
-  const allOptions = [
-    { value: 'txt' as const, label: t('formatTypes.txt') },
-    { value: 'clash-meta' as const, label: t('formatTypes.clash-meta') },
-    { value: 'clash-premium' as const, label: t('formatTypes.clash-premium') },
-    { value: 'sing-box' as const, label: t('formatTypes.sing-box') },
-    { value: 'loon' as const, label: t('formatTypes.loon') },
-  ];
 
-  return allOptions.filter(option => enabledFormats.includes(option.value));
+  return ALL_FORMAT_TYPES
+    .filter(format => format !== 'subscribe-url' && enabledFormats.includes(format))
+    .map(format => ({
+      value: format,
+      label: t(`formatTypes.${format}`),
+    }));
 }
