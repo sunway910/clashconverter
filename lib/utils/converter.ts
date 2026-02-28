@@ -1,6 +1,7 @@
 import { FormatType } from '@/lib/parser';
 import type { LanguageType } from '@/components/preview/preview-editor';
-import { getEnabledFormats, ALL_FORMAT_TYPES } from '@/lib/features';
+import { getEnabledFormats } from '@/lib/features';
+import { ALL_FORMAT_TYPES } from '@/lib/features';
 
 /**
  * Generate timestamp for download filename

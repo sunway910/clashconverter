@@ -9,6 +9,8 @@ function loadEnvFile() {
     const envPath = resolve(process.cwd(), '.env');
     const envContent = readFileSync(envPath, 'utf-8');
 
+    console.log('[loadEnvFile] Loading .env file from:', envPath);
+
     envContent.split('\n').forEach(line => {
       const trimmedLine = line.trim();
       if (trimmedLine && !trimmedLine.startsWith('#') && trimmedLine.includes('=')) {
@@ -16,12 +18,18 @@ function loadEnvFile() {
         const value = valueParts.join('=').trim();
         if (key.startsWith('NEXT_PUBLIC_')) {
           process.env[key] = value;
+          console.log(`[loadEnvFile] Loaded: ${key}=${value}`);
         }
       }
     });
+
+    console.log('[loadEnvFile] Final env values:', {
+      NEXT_PUBLIC_ENABLE_SINGBOX_TRANSFER: process.env.NEXT_PUBLIC_ENABLE_SINGBOX_TRANSFER,
+      NEXT_PUBLIC_ENABLE_LOON_TRANSFER: process.env.NEXT_PUBLIC_ENABLE_LOON_TRANSFER,
+    });
   } catch (error) {
-    // .env file doesn't exist, that's ok
-    }
+    console.log('[loadEnvFile] Error loading .env:', error);
+  }
 }
 
 // Load .env file at config evaluation time

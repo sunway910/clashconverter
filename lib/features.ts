@@ -91,14 +91,7 @@ export function isFormatEnabled(format: FormatType): boolean {
     throw new Error(`Unknown format type: ${format}`);
   }
 
-  const envValue = process.env[envVar];
-
-  // Debug logging (remove in production)
-  if (typeof window !== 'undefined') {
-    console.log(`[isFormatEnabled] ${format}: envVar=${envVar}, envValue=${envValue}, parsed=${parseBooleanEnv(envValue)}`);
-  }
-
-  return parseBooleanEnv(envValue);
+  return parseBooleanEnv(process.env[envVar]);
 }
 
 /**
