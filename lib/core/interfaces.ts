@@ -69,4 +69,10 @@ export interface IFormatGenerator {
    * @returns Set of supported protocol types (e.g., 'ss', 'vmess', etc.)
    */
   getSupportedProtocols(): Set<string>;
+  /**
+   * Filter proxies to only include supported protocols for this format
+   * @param proxies - All proxy nodes
+   * @returns Filtered proxy nodes that are supported by this format
+   */
+  filterProxies(proxies: ProxyNode[]): ProxyNode[];
 }

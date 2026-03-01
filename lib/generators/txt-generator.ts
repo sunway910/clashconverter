@@ -29,4 +29,13 @@ export class TxtGenerator implements IFormatGenerator {
   getSupportedProtocols(): Set<string> {
     return new Set(['ss', 'ssr', 'vmess', 'trojan', 'hysteria', 'hysteria2', 'vless', 'http', 'socks5']);
   }
+
+  /**
+   * Filter proxies (TXT supports all protocols)
+   * @param proxies - All proxy nodes
+   * @returns All proxies (no filtering needed)
+   */
+  filterProxies(proxies: ProxyNode[]): ProxyNode[] {
+    return proxies;
+  }
 }

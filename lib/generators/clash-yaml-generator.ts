@@ -46,7 +46,7 @@ export class ClashYamlGenerator extends BaseFormatGenerator {
    * @param proxies - All proxy nodes
    * @returns All proxies (no filtering needed)
    */
-  protected filterProxies(proxies: ProxyNode[]): ProxyNode[] {
+  public filterProxies(proxies: ProxyNode[]): ProxyNode[] {
     return proxies;
   }
 

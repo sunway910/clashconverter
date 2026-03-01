@@ -57,10 +57,13 @@ export abstract class BaseFormatGenerator implements IFormatGenerator {
 
   /**
    * Filter proxies to only include supported protocols
+   * Subclasses can override this method to provide custom filtering logic
    * @param proxies - All proxy nodes
    * @returns Filtered proxy nodes
    */
-  protected abstract filterProxies(proxies: ProxyNode[]): ProxyNode[];
+  public filterProxies(proxies: ProxyNode[]): ProxyNode[] {
+    return proxies;
+  }
 
   /**
    * Assemble the final output from header, body, and footer

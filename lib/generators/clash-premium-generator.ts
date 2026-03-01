@@ -25,7 +25,7 @@ export class ClashPremiumGenerator extends ClashYamlGenerator {
    * @param proxies - All proxy nodes
    * @returns Filtered proxy nodes (excluding VLESS, Hysteria, Hysteria2)
    */
-  protected filterProxies(proxies: ProxyNode[]): ProxyNode[] {
+  public filterProxies(proxies: ProxyNode[]): ProxyNode[] {
     return proxies.filter(p => !ClashPremiumGenerator.UNSUPPORTED_PROTOCOLS.has(p.type));
   }
 

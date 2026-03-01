@@ -134,7 +134,7 @@ export class LoonGenerator extends BaseFormatGenerator {
    * @param proxies - All proxy nodes
    * @returns Filtered proxy nodes
    */
-  protected filterProxies(proxies: ProxyNode[]): ProxyNode[] {
+  public filterProxies(proxies: ProxyNode[]): ProxyNode[] {
     const supportedProtocols = new Set(['ss', 'ssr', 'vmess', 'trojan']);
     return proxies.filter((p) => supportedProtocols.has(p.type));
   }

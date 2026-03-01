@@ -47,7 +47,7 @@ export class SingBoxJsonGenerator extends BaseFormatGenerator {
    * @param proxies - All proxy nodes
    * @returns Filtered proxy nodes (excluding SSR, SOCKS5)
    */
-  protected filterProxies(proxies: ProxyNode[]): ProxyNode[] {
+  public filterProxies(proxies: ProxyNode[]): ProxyNode[] {
     const unsupported = new Set(['ssr', 'socks5']);
     return proxies.filter(p => !unsupported.has(p.type));
   }
