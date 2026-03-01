@@ -47,7 +47,15 @@
       "Bash(git ls-tree:*)",
       "Bash(pnpm run build:*)",
       "Bash(pnpm test:*)",
-      "Bash(ss:*)"
+      "Bash(ss:*)",
+      "Bash(openssl:*)",
+      "Skill(plan)",
+      "Bash(NEXT_PUBLIC_ENABLE_SINGBOX_TRANSFER=false pnpm test:*)",
+      "mcp__cloudflare-docs__search_cloudflare_documentation",
+      "Bash(NEXT_PUBLIC_ENABLE_SINGBOX_TRANSFER=false NEXT_PUBLIC_ENABLE_LOON_TRANSFER=false pnpm test:*)",
+      "Bash(# First, stop all node processes and clean up taskkill /F /IM node.exe || true sleep 2 # Remove .next cache to ensure fresh build rm -rf .next # Start dev server in background pnpm dev 2>&1 & sleep 15 # Check the rendered HTML for feature flag values curl -s http://localhost:3000/zh 2>&1)",
+      "Bash(git diff HEAD -- lib/features.ts lib/features.test.ts next.config.ts vitest.config.mjs app/[locale]/debug-env/page.tsx app/api/test-env/route.ts test/clash/input.txt test/clash/expect.yaml test/sing-box/input.txt test/sing-box/current.json test/loon/expect.conf test/loon/current.conf)",
+      "Bash(git diff HEAD -- app/[locale]/debug-env/page.tsx)"
     ],
     "defaultMode": "acceptEdits",
     "additionalDirectories": [
