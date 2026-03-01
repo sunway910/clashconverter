@@ -33,11 +33,6 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return {
     icons: {
       icon: [
-        {url: "/favicon-16x16.png", sizes: "16x16", type: "image/png"},
-        {url: "/favicon-32x32.png", sizes: "32x32", type: "image/png"},
-        {url: "/favicon-64x64.png", sizes: "64x64", type: "image/png"},
-        {url: "/favicon-128x128.png", sizes: "128x128", type: "image/png"},
-        {url: "/favicon-256x256.png", sizes: "256x256", type: "image/png"},
         {url: "/favicon-512x512.png", sizes: "512x512", type: "image/png"},
       ],
       apple: [{url: "/favicon-512x512.png", sizes: "180x180", type: "image/png"}],
