@@ -91,7 +91,20 @@ export function isFormatEnabled(format: FormatType): boolean {
     throw new Error(`Unknown format type: ${format}`);
   }
 
-  return parseBooleanEnv(process.env[envVar]);
+  // Use direct environment variable access for proper Next.js build-time injection
+  // Dynamic access (process.env[envVar]) may not work correctly in client components
+  switch (envVar) {
+    case 'NEXT_PUBLIC_ENABLE_CLASH_META_TRANSFER':
+      return parseBooleanEnv(process.env.NEXT_PUBLIC_ENABLE_CLASH_META_TRANSFER);
+    case 'NEXT_PUBLIC_ENABLE_CLASH_PREMIUM_TRANSFER':
+      return parseBooleanEnv(process.env.NEXT_PUBLIC_ENABLE_CLASH_PREMIUM_TRANSFER);
+    case 'NEXT_PUBLIC_ENABLE_SINGBOX_TRANSFER':
+      return parseBooleanEnv(process.env.NEXT_PUBLIC_ENABLE_SINGBOX_TRANSFER);
+    case 'NEXT_PUBLIC_ENABLE_LOON_TRANSFER':
+      return parseBooleanEnv(process.env.NEXT_PUBLIC_ENABLE_LOON_TRANSFER);
+    default:
+      return true;
+  }
 }
 
 /**
