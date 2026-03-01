@@ -293,17 +293,17 @@
     },
     {
       "tag": "v2rayse_test_1",
+      "type": "shadowsocks",
       "server": "198.57.27.218",
       "server_port": 5004,
-      "type": "shadowsocks",
       "method": "aes-256-gcm",
       "password": "g5MeD6Ft3CWlJId"
     },
     {
       "tag": "v2rayse_test_2",
+      "type": "vmess",
       "server": "154.23.190.162",
       "server_port": 443,
-      "type": "vmess",
       "uuid": "b9984674-f771-4e67-a198-c7e60720ba2c",
       "packet_encoding": "xudp",
       "security": "auto",
@@ -314,9 +314,9 @@
     },
     {
       "tag": "v2rayse_test_3",
+      "type": "trojan",
       "server": "ca-trojan.bonds.id",
       "server_port": 443,
-      "type": "trojan",
       "password": "bc7593fe-0604-4fbe-a70bYWVzLTI1Ni1nY206Q1VuZFNabllzUEtjdTaclWNFc1RmRBNk5NQU5KSnga3fa58ac5a3ef0-b4ab-11eb-b65e-1239d0255272",
       "tls": {
         "enabled": true,
@@ -325,9 +325,9 @@
     },
     {
       "tag": "defaultName_2",
+      "type": "http",
       "server": "124.15.12.24",
       "server_port": 251,
-      "type": "http",
       "users": [
         {
           "username": "username",
@@ -338,18 +338,19 @@
     },
     {
       "tag": "Hys-1.2.3.4",
+      "type": "hysteria",
       "server": "1.2.3.4",
       "server_port": 12854,
-      "type": "hysteria",
       "auth": "pekopeko",
       "up_mbps": 50,
-      "down_mbps": 250
+      "down_mbps": 250,
+      "server_name": "wechat.com"
     },
     {
       "tag": "test",
+      "type": "vless",
       "server": "1.2.3.4",
       "server_port": 7777,
-      "type": "vless",
       "uuid": "abc-def-ghi-fge-zsx",
       "tls": {
         "enabled": true
