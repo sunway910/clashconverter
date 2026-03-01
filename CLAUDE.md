@@ -134,7 +134,17 @@ type ProxyNode =
 - **Text Generator**: Uses adapters for proxy link generation
 - **Loon Generator**: INI format for iOS client
 
-All generators now use protocol adapters via `ProtocolAdapterRegistry` for format conversion.
+All generators use protocol adapters via `ProtocolAdapterRegistry` for format conversion.
+
+**IFormatGenerator Interface:**
+```typescript
+interface IFormatGenerator {
+  readonly format: FormatType;
+  generate(proxies: ProxyNode[]): string;
+  getSupportedProtocols(): Set<string>;
+  filterProxies(proxies: ProxyNode[]): ProxyNode[]; // Public for testing
+}
+```
 
 #### Error Handling (`lib/errors/`)
 Custom error class hierarchy:
@@ -224,34 +234,18 @@ NEXT_PUBLIC_ENABLE_SINGBOX_TRANSFER=true         # Show Sing-Box output option (
 NEXT_PUBLIC_ENABLE_LOON_TRANSFER=true            # Show Loon output option (default: true)
 ```
 
-### Feature Flags (`lib/features.ts`)
-The application supports environment variable-based feature flags to control which conversion formats are displayed in the UI:
+### Environment Variables Loading
 
-- `isFormatEnabled(format)` - Check if a specific format is enabled
-- `getEnabledFormats()` - Get list of all enabled formats
-- `ENABLED_FORMATS` - Constant object with enablement status
+**IMPORTANT**: Next.js automatically loads `.env`, `.env.development`, and `.env.local` files.
 
-**Usage:**
-- Set environment variable to `false` to hide the format option from UI
-- Default: All formats are enabled when variables are not set
-- Example: `NEXT_PUBLIC_ENABLE_SINGBOX_TRANSFER=false` hides Sing-Box conversion option
+- `.env.local` has highest priority and is gitignored
+- No custom `loadEnvFile()` implementation needed
+- `NEXT_PUBLIC_*` variables are automatically injected to client code
+- `lib/features.ts` reads `process.env.*` directly (works without config)
 
-**IMPORTANT - Environment Variable Loading:**
-- Next.js loads environment variables at server startup
-- After modifying `.env` file, you **MUST restart the dev server** for changes to take effect
-- Run `pnpm dev` again after changing environment variables
-- To clear cached values: `rm -rf .next && pnpm dev`
-
-**Turbopack Issue (Next.js 16):**
-- Turbopack may not properly load `.env` files in development mode
-- **Solution**: Use `.env.local` file instead (higher priority, always loaded)
-- Create `.env.local` with your overrides:
-  ```bash
-  # .env.local
-  NEXT_PUBLIC_ENABLE_SINGBOX_TRANSFER=false
-  NEXT_PUBLIC_ENABLE_LOON_TRANSFER=false
-  ```
-- `.env.local` is automatically gitignored and takes precedence over `.env`
+**Turbopack Note:**
+- Turbopack in Next.js 16 may have issues with `.env` file loading
+- **Solution**: Use `.env.local` file (always loaded with highest priority)
 
 ### Testing
 Run TypeScript check and tests before committing:
@@ -260,55 +254,90 @@ npx tsc --noEmit
 pnpm test
 ```
 
+**Test Structure:**
+- **Unit Tests**: `lib/**/__tests__/**/*.test.ts` - Unit tests for utilities, parsers, generators
+- **Integration Tests**: `test/integration/**/*.test.ts` - End-to-end format conversion tests
+- **Test Fixtures**: `test/{format}/` - Input/expected output files for each format
+
+**Running Tests:**
+```bash
+# Run all tests
+pnpm test
+
+# Run specific test file
+pnpm test lib/__tests__/features.test.ts
+
+# Run integration tests
+pnpm test test/integration/clash-meta.integration.test.ts
+```
+
 ## Project Structure (Post-Refactor)
 
 ```
-lib/
-├── core/                    # Core architecture (Factory, Registry, Base Classes)
-│   ├── interfaces.ts        # IFormatParser, IFormatGenerator
-│   ├── base-generator.ts   # BaseFormatGenerator abstract class
-│   ├── factory.ts          # FormatFactory with custom errors
-│   ├── converter.ts        # Main conversion orchestrator
-│   ├── registry.ts         # Auto-initialization (formats + adapters)
-│   └── index.ts
-├── types/                  # Type definitions and validation
-│   ├── proxy-nodes.ts      # Discriminated union types (9 protocols)
-│   ├── validators.ts        # Zod schemas for runtime validation
-│   └── types.ts            # Re-exports
-├── adapters/               # Protocol adapters (Adapter Pattern)
-│   ├── protocol-adapter.ts # IProtocolAdapter interface + Registry
-│   ├── ss-adapter.ts
-│   ├── ssr-adapter.ts
-│   ├── vmess-adapter.ts
-│   ├── vless-adapter.ts
-│   ├── trojan-adapter.ts
-│   ├── hysteria-adapter.ts  # Hysteria + Hysteria2
-│   ├── http-adapter.ts
-│   └── socks5-adapter.ts
-├── generators/             # Output generators
-│   ├── link-generator.ts   # Proxy link generation using adapters
-│   ├── clash-yaml-generator.ts
-│   ├── clash-premium-generator.ts
-│   ├── singbox-json-generator.ts
-│   ├── loon-generator.ts
-│   └── txt-generator.ts
-├── parsers/                # Input parsers
-│   ├── protocol-parsers.ts # Individual protocol parsers
-│   ├── clash-yaml-parser.ts
-│   ├── singbox-json-parser.ts
-│   ├── txt-parser.ts
-│   └── index.ts
-├── errors/                 # Custom error classes
-│   └── index.ts            # ConverterError, ParseError, etc.
-├── clash/                  # Clash-specific modules
-│   ├── parser/yaml.ts      # YAML parser using yaml library
-│   └── generator/yaml.ts   # YAML generator using yaml library + adapters
-├── singbox/                # Sing-Box specific modules
-│   ├── parser.ts
-│   └── generator.ts
-└── loon/                   # Loon specific modules
-    ├── loon-generator.ts
-    └── config/
+clashconverter/
+├── lib/
+│   ├── core/                    # Core architecture (Factory, Registry, Base Classes)
+│   │   ├── interfaces.ts        # IFormatParser, IFormatGenerator
+│   │   ├── base-generator.ts   # BaseFormatGenerator abstract class
+│   │   ├── factory.ts          # FormatFactory with custom errors
+│   │   ├── converter.ts        # Main conversion orchestrator
+│   │   ├── registry.ts         # Auto-initialization (formats + adapters)
+│   │   └── index.ts
+│   ├── types/                  # Type definitions and validation
+│   │   ├── proxy-nodes.ts      # Discriminated union types (9 protocols)
+│   │   ├── validators.ts        # Zod schemas for runtime validation
+│   │   └── types.ts            # Re-exports
+│   ├── adapters/               # Protocol adapters (Adapter Pattern)
+│   │   ├── protocol-adapter.ts # IProtocolAdapter interface + Registry
+│   │   ├── ss-adapter.ts
+│   │   ├── ssr-adapter.ts
+│   │   ├── vmess-adapter.ts
+│   │   ├── vless-adapter.ts
+│   │   ├── trojan-adapter.ts
+│   │   ├── hysteria-adapter.ts  # Hysteria + Hysteria2
+│   │   ├── http-adapter.ts
+│   │   └── socks5-adapter.ts
+│   ├── generators/             # Output generators
+│   │   ├── link-generator.ts   # Proxy link generation using adapters
+│   │   ├── clash-yaml-generator.ts
+│   │   ├── clash-premium-generator.ts
+│   │   ├── singbox-json-generator.ts
+│   │   ├── loon-generator.ts
+│   │   └── txt-generator.ts
+│   ├── parsers/                # Input parsers
+│   │   ├── protocol-parsers.ts # Individual protocol parsers
+│   │   ├── clash-yaml-parser.ts
+│   │   ├── singbox-json-parser.ts
+│   │   ├── txt-parser.ts
+│   │   └── index.ts
+│   ├── errors/                 # Custom error classes
+│   │   └── index.ts            # ConverterError, ParseError, etc.
+│   ├── __tests__/              # Unit tests
+│   │   ├── features.test.ts    # Feature flags unit tests
+│   │   ├── features-runtime.test.ts
+│   │   ├── generators/         # Generator unit tests
+│   │   └── parsers/            # Parser unit tests
+│   ├── clash/                  # Clash-specific modules
+│   │   ├── parser/yaml.ts      # YAML parser using yaml library
+│   │   └── generator/yaml.ts   # YAML generator using yaml library + adapters
+│   ├── singbox/                # Sing-Box specific modules
+│   │   ├── parser.ts
+│   │   └── generator.ts
+│   └── loon/                   # Loon specific modules
+│       ├── loon-generator.ts
+│       └── config/
+├── test/
+│   ├── integration/            # Integration tests
+│   │   ├── clash-meta.integration.test.ts
+│   │   ├── clash-premium.integration.test.ts
+│   │   ├── sing-box.integration.test.ts
+│   │   ├── loon.integration.test.ts
+│   │   └── helpers/            # Test helpers
+│   ├── clash-meta/             # Clash Meta test fixtures
+│   ├── clash-premium/          # Clash Premium test fixtures
+│   ├── sing-box/               # Sing-Box test fixtures
+│   └── loon/                   # Loon test fixtures
+└── ...
 ```
 
 ## SEO Domain

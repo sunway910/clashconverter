@@ -222,7 +222,32 @@ NEXT_PUBLIC_CONTACT_EMAIL=your-email@gmail.com
 # DNS Configuration (optional, defaults to true)
 # Set to 'false' to disable DNS section in generated Clash YAML
 NEXT_PUBLIC_ENABLE_DNS_CONFIG=true
+
+# Feature Flags - Control output format visibility (optional, default: true)
+# Set any of these to 'false' to hide the corresponding format option from UI
+NEXT_PUBLIC_ENABLE_CLASH_META_TRANSFER=true
+NEXT_PUBLIC_ENABLE_CLASH_PREMIUM_TRANSFER=true
+NEXT_PUBLIC_ENABLE_SINGBOX_TRANSFER=true
+NEXT_PUBLIC_ENABLE_LOON_TRANSFER=true
 ```
+
+### Feature Flags
+
+The application supports environment variable-based feature flags to control which conversion formats are displayed in the UI:
+
+| Environment Variable | Format | Default |
+|---------------------|--------|---------|
+| `NEXT_PUBLIC_ENABLE_CLASH_META_TRANSFER` | Clash Meta (Mihomo) | `true` |
+| `NEXT_PUBLIC_ENABLE_CLASH_PREMIUM_TRANSFER` | Clash Premium | `true` |
+| `NEXT_PUBLIC_ENABLE_SINGBOX_TRANSFER` | Sing-Box | `true` |
+| `NEXT_PUBLIC_ENABLE_LOON_TRANSFER` | Loon | `true` |
+
+**Usage:**
+- Set environment variable to `'false'` to hide the format option from UI
+- Default: All formats are enabled when variables are not set
+- Example: `NEXT_PUBLIC_ENABLE_SINGBOX_TRANSFER=false` hides Sing-Box conversion option
+
+**Note:** Next.js automatically loads `.env`, `.env.development`, and `.env.local` files. `.env.local` has the highest priority and is not committed to git.
 
 ### Kernel Compatibility
 

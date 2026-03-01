@@ -5,6 +5,58 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1] - 2026-03-01
+
+### Added
+- **Feature Flags System**: Environment variable control for output format visibility
+  - `isFormatEnabled()` function to check format enablement status
+  - `getEnabledFormats()` and `getEnabledFormatsMap()` utility functions
+  - Unit tests with comprehensive coverage for all scenarios
+- **Integration Tests**: End-to-end tests for all output formats
+  - Clash Meta integration tests
+  - Clash Premium integration tests
+  - Sing-Box integration tests
+  - Loon integration tests
+  - Test helpers for fixture loading and YAML/JSON comparison
+- **Test Infrastructure**
+  - Vitest configuration with path alias support
+  - Test fixture directories for each format
+  - Comparison utilities for order-insensitive YAML/JSON validation
+
+### Refactored
+- **Generator Interface**: Added `filterProxies()` method to `IFormatGenerator`
+  - Enables external filtering of proxy nodes by format
+  - Supports testing of format-specific protocol filtering
+  - Changed visibility from `protected` to `public` in all generators
+- **next.config.ts**: Simplified configuration
+  - Removed redundant `loadEnvFile()` function
+  - Next.js now auto-loads `.env` files natively
+  - Reduced configuration by 40+ lines
+
+### Removed
+- **Debug Utilities**
+  - Removed `/debug-env` page (no longer needed)
+  - Removed `/api/test-env` route (no longer needed)
+- **Old Test Fixtures**
+  - Removed `test/clash/` directory (reorganized to format-specific directories)
+
+### Fixed
+- Removed Turbopack workaround that was no longer necessary
+- Next.js native `.env` loading works correctly without custom implementation
+
+### Technical
+- **New Directories**
+  - `test/integration/` - Integration test suite
+  - `test/clash-meta/` - Clash Meta test fixtures
+  - `test/clash-premium/` - Clash Premium test fixtures
+  - `test/sing-box/` - Sing-Box test fixtures
+  - `test/loon/` - Loon test fixtures
+- **New Files**
+  - `lib/__tests__/features.test.ts` - Feature flags unit tests
+  - `lib/__tests__/features-runtime.test.ts` - Runtime behavior tests
+  - `test/integration/helpers/` - Test helper utilities
+- **Dependencies**: No new dependencies added
+
 ## [1.2.0] - 2025-02-26
 
 ### Added
