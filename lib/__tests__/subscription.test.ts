@@ -94,8 +94,8 @@ describe('Subscription URL Parsing', () => {
 
       it('should handle inline YAML with Chinese characters in name', () => {
         const yaml = `proxies:
-  - { name: '🇭🇰香港01 家宽（推荐）', type: ss, server: v1a001.78787878.top, port: 31001, cipher: chacha20-ietf-poly1305, password: 70e2832a-048c-4c72-886f-ceba936897b9, udp: true }
-  - { name: '🇯🇵日本Premium01｜x2.5', type: ss, server: v3s01.78787878.top, port: 33013, cipher: chacha20-ietf-poly1305, password: 70e2832a-048c-4c72-886f-ceba936897b9, udp: true }`;
+  - { name: '🇭🇰香港01 家宽（推荐）', type: ss, server: hk.example.com, port: 31001, cipher: chacha20-ietf-poly1305, password: test-password-123, udp: true }
+  - { name: '🇯🇵日本Premium01｜x2.5', type: ss, server: jp.example.com, port: 33013, cipher: chacha20-ietf-poly1305, password: test-password-123, udp: true }`;
 
         const proxies = parseYamlToProxies(yaml);
         expect(proxies).toHaveLength(2);
@@ -460,10 +460,10 @@ log-level: info
 dns:
   enable: true
 proxies:
-    - { name: '剩余流量：141.11 GB', type: ss, server: v1a01.78787878.top, port: 31001, cipher: chacha20-ietf-poly1305, password: 70e2832a-048c-4c72-886f-ceba936897b9, udp: true }
-    - { name: '距离下次重置剩余：25 天', type: ss, server: v1a01.78787878.top, port: 31001, cipher: chacha20-ietf-poly1305, password: 70e2832a-048c-4c72-886f-ceba936897b9, udp: true }
-    - { name: '🇭🇰香港01 家宽（推荐）', type: ss, server: v1a001.78787878.top, port: 31001, cipher: chacha20-ietf-poly1305, password: 70e2832a-048c-4c72-886f-ceba936897b9, udp: true }
-    - { name: '🇸🇬新加坡01', type: ss, server: v1a001.78787878.top, port: 32001, cipher: chacha20-ietf-poly1305, password: 70e2832a-048c-4c72-886f-ceba936897b9, udp: true }`;
+    - { name: '剩余流量：141.11 GB', type: ss, server: test1.example.com, port: 31001, cipher: chacha20-ietf-poly1305, password: test-password-123, udp: true }
+    - { name: '距离下次重置剩余：25 天', type: ss, server: test1.example.com, port: 31001, cipher: chacha20-ietf-poly1305, password: test-password-123, udp: true }
+    - { name: '🇭🇰香港01 家宽（推荐）', type: ss, server: hk.example.com, port: 31001, cipher: chacha20-ietf-poly1305, password: test-password-123, udp: true }
+    - { name: '🇸🇬新加坡01', type: ss, server: hk.example.com, port: 32001, cipher: chacha20-ietf-poly1305, password: test-password-123, udp: true }`;
 
         const proxies = parseYamlToProxies(yaml);
         expect(proxies.length).toBeGreaterThan(0);
