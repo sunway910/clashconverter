@@ -7,9 +7,9 @@ import type { ProxyNode } from '../types';
 import { ProtocolAdapterRegistry } from '../adapters/protocol-adapter';
 import { UnsupportedProtocolError } from '../errors';
 
-// Protocols supported by sing-box (SSR and SOCKS5 are NOT supported)
+// Protocols supported by sing-box (all protocols are now supported)
 export const SING_BOX_SUPPORTED_PROTOCOLS = new Set([
-  'ss', 'vmess', 'vless', 'trojan', 'hysteria', 'hysteria2', 'http',
+  'ss', 'ssr', 'vmess', 'vless', 'trojan', 'hysteria', 'hysteria2', 'http', 'socks5',
 ]);
 
 /**

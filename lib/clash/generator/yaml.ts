@@ -67,7 +67,7 @@ function generateProxyGroups(proxyNames: string[]): string {
 function generateDnsConfig(): string {
   // Check if DNS config is enabled via environment variable
   const enabled = process.env.NEXT_PUBLIC_ENABLE_DNS_CONFIG !== 'false';
-  return enabled ? '\n' + DNS_CONFIG.join('\n') : '';
+  return enabled ? DNS_CONFIG.join('\n') : '';
 }
 
 /**

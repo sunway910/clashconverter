@@ -29,8 +29,20 @@ export class SOCKS5Adapter implements IProtocolAdapter {
   }
 
   toSingBoxJson(_node: ProxyNode): Record<string, any> {
-    // Sing-Box doesn't support SOCKS5 as an outbound
-    throw UnsupportedProtocolError.forFormat('socks5', 'sing-box');
+    const socksNode = _node as unknown as SOCKS5ProxyNode;
+
+    const obj: Record<string, any> = {
+      tag: socksNode.name,
+      type: 'socks',
+      server: socksNode.server,
+      server_port: socksNode.port,
+      version: '5',
+    };
+
+    if (socksNode.username) obj.username = socksNode.username;
+    if (socksNode.password) obj.password = socksNode.password;
+
+    return obj;
   }
 
   toLink(node: ProxyNode): string {

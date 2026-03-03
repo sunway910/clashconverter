@@ -109,70 +109,13 @@ proxy-groups:
 
 dns:
   enabled: true
-  listen: 0.0.0.0:1053
   ipv6: true
-  enhanced-mode: fake-ip
-  fake-ip-range: 198.18.0.1/16
-  fake-ip-filter:
-    - '*.lan'
-    - '*.linksys.com'
-    - '*.linksyssmartwifi.com'
-    - swscan.apple.com
-    - mesu.apple.com
-    - '*.msftconnecttest.com'
-    - '*.msftncsi.com'
-    - time.*.com
-    - time.*.gov
-    - time.*.edu.cn
-    - time.*.apple.com
-    - time1.*.com
-    - time2.*.com
-    - time3.*.com
-    - time4.*.com
-    - time5.*.com
-    - time6.*.com
-    - time7.*.com
-    - ntp.*.com
-    - ntp1.*.com
-    - ntp2.*.com
-    - ntp3.*.com
-    - ntp4.*.com
-    - ntp5.*.com
-    - ntp6.*.com
-    - ntp7.*.com
-    - '*.time.edu.cn'
-    - '*.ntp.org.cn'
-    - +.pool.ntp.org
-    - time1.cloud.tencent.com
-    - +.music.163.com
-    - '*.126.net'
-    - musicapi.taihe.com
-    - music.taihe.com
-    - songsearch.kugou.com
-    - trackercdn.kugou.com
-    - '*.kuwo.cn'
-    - api-jooxtt.sanook.com
-    - api.joox.com
-    - joox.com
-    - +.y.qq.com
-    - +.music.tc.qq.com
-    - aqqmusic.tc.qq.com
-    - +.stream.qqmusic.qq.com
-    - '*.xiami.com'
-    - +.music.migu.cn
-    - +.srv.nintendo.net
-    - +.stun.playstation.net
-    - xbox.*.microsoft.com
-    - +.xboxlive.com
-    - localhost.ptlogin2.qq.com
-    - proxy.golang.org
-    - stun.*.*
-    - stun.*.*.*
-    - '*.mcdn.bilivideo.cn'
   default-nameserver:
     - 223.5.5.5
-    - 223.6.6.6
     - 119.29.29.29
+    - 1.1.1.1
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
   nameserver:
     - https://dns.alidns.com/dns-query
     - https://doh.pub/dns-query
@@ -181,13 +124,9 @@ dns:
     - https://dns.google/dns-query
   fallback-filter:
     geoip: true
-    geoip-code: CN
     ipcidr:
       - 240.0.0.0/4
-  nameserver-policy:
-    'geosite:cn':
-      - https://dns.alidns.com/dns-query
-      - https://doh.pub/dns-query
+      - 0.0.0.0/32
 
 rules:
   - DOMAIN,app.biliapi.net,🌏 爱奇艺&哔哩哔哩

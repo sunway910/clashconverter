@@ -374,7 +374,7 @@
         { "q": "为什么应该使用这个 Clash 转换器？", "a": "我们的 Clash 转换器提供最全面的协议支持，完全在浏览器中工作以保护隐私，没有限制或注册要求，并定期更新以支持最新的代理协议。" },
         { "q": "这适用于 Clash Verge 和其他客户端吗？", "a": "是的！YAML 输出与所有基于 Clash 的客户端兼容，包括 Clash Verge、Clash Nyanpasu、Clash for Android、Clash for Windows 以及其他使用 Clash Meta (Mihomo) 或 Clash Premium 内核的客户端。Sing-Box 输出可用于所有平台的 Sing-Box 客户端。" },
         { "q": "什么是 Sing-Box，为什么要使用它？", "a": "Sing-Box 是一个支持多种协议和平台的通用代理平台。它积极维护，支持 Android、iOS、Windows、macOS 和 Linux。Sing-Box 支持 SS、VMess、VLESS、Trojan、Hysteria、Hysteria2 和 HTTP 协议。如果您需要跨平台兼容性或喜欢 JSON 配置格式，可以使用 Sing-Box。" },
-        { "q": "Sing-Box 输出支持哪些协议？", "a": "Sing-Box 输出支持 SS、VMess、VLESS、Trojan、Hysteria、Hysteria2 和 HTTP 协议。不支持 SSR 和 SOCKS5 - 如果您的输入中包含这些协议，它们将被过滤并提示。" },
+        { "q": "Sing-Box 输出支持哪些协议？", "a": "Sing-Box 输出支持所有 9 种协议：SS、SSR、VMess、VLESS、Trojan、Hysteria、Hysteria2、HTTP 和 SOCKS5。SSR 节点会自动转换为 Shadowsocks 格式以确保兼容性。" },
         { "q": "为什么无法在 ShadowRocket 中探测 Hy2 节点的延迟", "a": "请在 App 中修改配置: 设置 – 延迟测试方法 - CONNNECT" }
       ]
     },
