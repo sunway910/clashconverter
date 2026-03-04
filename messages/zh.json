@@ -104,6 +104,11 @@
         "name": "Clash Meta for Android",
         "description": "Clash Meta (Mihomo) 内核的官方 Android 客户端。支持所有现代代理协议。",
         "url": "https://github.com/MetaCubeX/ClashMetaForAndroid/releases"
+      },
+      "clashmi": {
+        "name": "ClashMi",
+        "description": "基于 Clash 内核的轻量级客户端。支持 Windows、macOS 和 Linux。",
+        "url": "https://github.com/KaringX/clashmi/releases"
       }
     }
   },

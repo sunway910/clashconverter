@@ -50,6 +50,10 @@ const clients = [
     id: 'clash-meta-android',
     icon: '🤖',
   },
+  {
+    id: 'clashmi',
+    icon: '🌟',
+  },
 ] as const;
 
 const proxyScripts = [

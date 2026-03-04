@@ -104,6 +104,11 @@
         "name": "Clash Meta for Android",
         "description": "Official Android client for Clash Meta (Mihomo) kernel. Supports all modern proxy protocols.",
         "url": "https://github.com/MetaCubeX/ClashMetaForAndroid/releases"
+      },
+      "clashmi": {
+        "name": "ClashMi",
+        "description": "Lightweight Clash-based client. Supports Windows, macOS, and Linux.",
+        "url": "https://github.com/KaringX/clashmi/releases"
       }
     }
   },
