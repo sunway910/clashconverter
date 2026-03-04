@@ -1,6 +1,8 @@
 /**
  * Sing-Box JSON generator using protocol adapters
  * Generates Sing-Box JSON configuration from ProxyNode array
+ *
+ * Refactored to match template structure in test/sing-box/sing-box.json
  */
 
 import type { ProxyNode } from '../types';
@@ -26,272 +28,219 @@ function convertToSingBoxOutbound(proxy: ProxyNode): any {
 }
 
 /**
- * Generate selector outbounds for different services
- * @param proxyNames - Array of proxy node names
- * @returns Array of selector outbound configurations
- */
-function generateSelectorOutbounds(proxyNames: string[]): any[] {
-  const proxyWithDirect = ['direct', ...proxyNames];
-  const proxyWithAuto = ['auto', ...proxyNames];
-
-  return [
-    // Main selector
-    {
-      tag: 'select',
-      type: 'selector',
-      outbounds: proxyWithAuto,
-    },
-    // URL test (auto)
-    {
-      tag: 'auto',
-      type: 'urltest',
-      outbounds: proxyNames,
-      url: 'https://www.gstatic.com/generate_204',
-      interval: '1m',
-      tolerance: 50,
-    },
-    // Service-specific selectors
-    {
-      tag: '🤖 OpenAI',
-      type: 'selector',
-      outbounds: proxyWithDirect,
-    },
-    {
-      tag: '🌌 Google',
-      type: 'selector',
-      outbounds: proxyNames,
-    },
-    {
-      tag: '📟 Telegram',
-      type: 'selector',
-      outbounds: proxyNames,
-    },
-    {
-      tag: '🐦 Twitter',
-      type: 'selector',
-      outbounds: proxyNames,
-    },
-    {
-      tag: '👤 Facebook',
-      type: 'selector',
-      outbounds: proxyNames,
-    },
-    {
-      tag: '🛍️ Amazon',
-      type: 'selector',
-      outbounds: proxyWithDirect,
-    },
-    {
-      tag: '🍎 Apple',
-      type: 'selector',
-      outbounds: proxyWithDirect,
-    },
-    {
-      tag: '🧩 Microsoft',
-      type: 'selector',
-      outbounds: proxyWithDirect,
-    },
-    {
-      tag: '🎮 Game',
-      type: 'selector',
-      outbounds: proxyWithDirect,
-    },
-    {
-      tag: '📺 Bilibili',
-      type: 'selector',
-      outbounds: ['direct'],
-    },
-    {
-      tag: '🎬 MediaVideo',
-      type: 'selector',
-      outbounds: proxyWithDirect,
-    },
-    {
-      tag: '🌏 !cn',
-      type: 'selector',
-      outbounds: proxyWithDirect,
-    },
-    {
-      tag: '🌏 cn',
-      type: 'selector',
-      outbounds: ['direct', 'select'],
-    },
-    {
-      tag: '🛑 AdBlock',
-      type: 'selector',
-      outbounds: ['block', 'direct'],
-    },
-    // System outbounds
-    {
-      tag: 'direct',
-      type: 'direct',
-    },
-    {
-      tag: 'block',
-      type: 'block',
-    },
-    {
-      tag: 'dns-out',
-      type: 'dns',
-    },
-  ];
-}
-
-/**
- * Generate route rules
- * @returns Array of route rule configurations
- */
-function generateRouteRules(): any[] {
-  return [
-    {
-      protocol: 'dns',
-      outbound: 'dns-out',
-    },
-    {
-      network: 'udp',
-      port: 443,
-      outbound: 'block',
-    },
-    {
-      clash_mode: 'direct',
-      outbound: 'direct',
-    },
-    {
-      clash_mode: 'global',
-      outbound: 'select',
-    },
-    {
-      domain: ['v2rayse.com', 'cfmem.com', 'vpnse.org', 'cff.pw', 'tt.vg'],
-      outbound: 'select',
-    },
-    {
-      domain: ['clash.razord.top', 'yacd.metacubex.one', 'yacd.haishan.me', 'd.metacubex.one'],
-      outbound: 'direct',
-    },
-    {
-      geosite: ['openai'],
-      outbound: '🤖 OpenAI',
-    },
-    {
-      geosite: ['google', 'github'],
-      geoip: ['google'],
-      outbound: '🌌 Google',
-    },
-    {
-      geosite: ['telegram'],
-      geoip: ['telegram'],
-      outbound: '📟 Telegram',
-    },
-    {
-      geosite: ['twitter'],
-      geoip: ['twitter'],
-      outbound: '🐦 Twitter',
-    },
-    {
-      geosite: ['facebook', 'instagram'],
-      geoip: ['facebook'],
-      outbound: '👤 Facebook',
-    },
-    {
-      geosite: ['amazon'],
-      outbound: '🛍️ Amazon',
-    },
-    {
-      geosite: ['apple-cn', 'apple'],
-      outbound: '🍎 Apple',
-    },
-    {
-      geosite: ['microsoft'],
-      outbound: '🧩 Microsoft',
-    },
-    {
-      geosite: ['category-games'],
-      outbound: '🎮 Game',
-    },
-    {
-      geosite: ['bilibili'],
-      outbound: '📺 Bilibili',
-    },
-    {
-      geosite: ['tiktok', 'netflix', 'hbo', 'disney', 'primevideo'],
-      geoip: ['netflix'],
-      outbound: '🎬 MediaVideo',
-    },
-    {
-      geosite: ['geolocation-!cn'],
-      outbound: '🌏 !cn',
-    },
-    {
-      geosite: ['cn'],
-      geoip: ['private', 'cn'],
-      outbound: '🌏 cn',
-    },
-    {
-      geosite: ['category-ads-all'],
-      outbound: '🛑 AdBlock',
-    },
-  ];
-}
-
-/**
- * Generate DNS configuration
+ * Phase 1: Generate DNS configuration with remote/local/block servers
  * @returns DNS configuration object
  */
-function generateDnsConfig(): any {
+export function generateDnsConfig(): any {
   return {
     servers: [
       {
-        tag: 'proxyDns',
-        address: '8.8.8.8',
-        detour: 'select',
+        tag: 'remote',
+        address: '1.1.1.1',
+        detour: '节点选择',
       },
       {
-        tag: 'localDns',
+        tag: 'local',
         address: 'https://223.5.5.5/dns-query',
         detour: 'direct',
       },
       {
         tag: 'block',
-        address: 'rcode://success',
+        address: 'rcode://refused',
       },
     ],
     rules: [
       {
-        domain: ['ghproxy.com', 'cdn.jsdelivr.net', 'testingcf.jsdelivr.net'],
-        server: 'localDns',
+        outbound: ['any'],
+        server: 'local',
       },
       {
-        geosite: ['category-ads-all'],
+        clash_mode: '全局代理',
+        server: 'remote',
+      },
+      {
+        clash_mode: '关闭代理',
+        server: 'local',
+      },
+      {
+        rule_set: ['geosite-cn'],
+        server: 'local',
+      },
+      {
+        rule_set: ['category-ads-all'],
         server: 'block',
       },
-      {
-        server: 'localDns',
-        outbound: 'any',
-        disable_cache: true,
-      },
-      {
-        geosite: ['cn'],
-        server: 'localDns',
-      },
-      {
-        server: 'localDns',
-        clash_mode: 'direct',
-      },
-      {
-        server: 'proxyDns',
-        clash_mode: 'global',
-      },
-      {
-        geosite: ['geolocation-!cn'],
-        server: 'proxyDns',
-      },
     ],
+    final: 'remote',
+    disable_cache: false,
     strategy: 'ipv4_only',
   };
 }
 
 /**
- * Main function to generate sing-box configuration using adapters
+ * Phase 2: Generate Experimental configuration with clash_api
+ * @returns Experimental configuration object
+ */
+export function generateExperimental(): any {
+  return {
+    clash_api: {
+      default_mode: '海外代理',
+      external_controller: '127.0.0.1:9090',
+      secret: '',
+    },
+    cache_file: {
+      enabled: true,
+    },
+  };
+}
+
+/**
+ * Phase 3: Generate Inbounds configuration (TUN, SOCKS, Mixed)
+ * @returns Array of inbound configurations
+ */
+export function generateInbounds(): any[] {
+  return [
+    // TUN inbound
+    {
+      type: 'tun',
+      auto_route: true,
+      domain_strategy: 'prefer_ipv4',
+      endpoint_independent_nat: true,
+      address: [
+        '172.19.0.1/30',
+        '2001:0470:f9da:fdfa::1/64',
+      ],
+      mtu: 9000,
+      sniff_override_destination: true,
+      stack: 'system',
+      strict_route: true,
+    },
+    // SOCKS inbound
+    {
+      type: 'socks',
+      tag: 'socks-in',
+      listen: '127.0.0.1',
+      listen_port: 2333,
+      sniff: true,
+      sniff_override_destination: true,
+      domain_strategy: 'prefer_ipv4',
+      users: [],
+    },
+    // Mixed inbound
+    {
+      type: 'mixed',
+      tag: 'mixed-in',
+      listen: '127.0.0.1',
+      listen_port: 2334,
+      sniff: true,
+      sniff_override_destination: true,
+      domain_strategy: 'prefer_ipv4',
+      users: [],
+    },
+  ];
+}
+
+/**
+ * Phase 4: Generate Outbounds configuration (simplified - only 3 base outbounds)
+ * @param proxyNames - Array of proxy node names
+ * @param proxyOutbounds - Array of converted proxy outbound configurations
+ * @returns Array of outbound configurations
+ */
+export function generateOutbounds(proxyNames: string[], proxyOutbounds: any[]): any[] {
+  // Build outbounds list for selector (includes 自动选择 and all proxies)
+  const selectorOutbounds = ['自动选择', ...proxyNames];
+
+  return [
+    // Selector outbound (节点选择)
+    {
+      type: 'selector',
+      tag: '节点选择',
+      outbounds: selectorOutbounds,
+    },
+    // URL test outbound (自动选择)
+    {
+      type: 'urltest',
+      tag: '自动选择',
+      outbounds: proxyNames,
+    },
+    // Direct outbound
+    {
+      type: 'direct',
+      tag: 'direct',
+    },
+    // Actual proxy outbounds
+    ...proxyOutbounds,
+  ];
+}
+
+/**
+ * Phase 5: Generate Route rules (using action field and rule_set references)
+ * @returns Array of route rule configurations
+ */
+export function generateRouteRules(): any[] {
+  return [
+    {
+      action: 'sniff',
+    },
+    {
+      protocol: 'dns',
+      action: 'hijack-dns',
+    },
+    {
+      clash_mode: '关闭代理',
+      outbound: 'direct',
+    },
+    {
+      clash_mode: '全局代理',
+      outbound: '节点选择',
+    },
+    {
+      rule_set: ['geosite-cn', 'geoip-cn'],
+      outbound: 'direct',
+    },
+    {
+      ip_is_private: true,
+      outbound: 'direct',
+    },
+    {
+      rule_set: ['category-ads-all'],
+      action: 'reject',
+    },
+  ];
+}
+
+/**
+ * Phase 6: Generate Rule Set configurations
+ * @returns Array of rule set configurations
+ */
+export function generateRuleSets(): any[] {
+  return [
+    {
+      tag: 'geosite-cn',
+      type: 'remote',
+      format: 'binary',
+      url: 'https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-cn.srs',
+      download_detour: '节点选择',
+    },
+    {
+      tag: 'category-ads-all',
+      type: 'remote',
+      format: 'binary',
+      url: 'https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-category-ads-all.srs',
+      download_detour: '节点选择',
+    },
+    {
+      tag: 'geoip-cn',
+      type: 'remote',
+      format: 'binary',
+      url: 'https://raw.githubusercontent.com/Loyalsoldier/geoip/release/srs/cn.srs',
+      download_detour: '节点选择',
+    },
+  ];
+}
+
+/**
+ * Phase 7: Main function to generate sing-box configuration
  * @param proxies - Array of ProxyNode objects
  * @returns Sing-Box JSON configuration string
  */
@@ -304,58 +253,14 @@ export function generateSingBoxConfig(proxies: ProxyNode[]): string {
   const proxyOutbounds = proxies.map(convertToSingBoxOutbound);
 
   const config = {
-    log: {
-      disabled: false,
-      level: 'info',
-      timestamp: true,
-    },
     dns: generateDnsConfig(),
-    inbounds: [
-      {
-        sniff: true,
-        type: 'mixed',
-        listen: '127.0.0.1',
-        listen_port: 1081,
-      },
-      {
-        stack: 'system',
-        auto_route: true,
-        inet4_address: '172.19.0.1/30',
-        mtu: 9000,
-        sniff: true,
-        strict_route: true,
-        type: 'tun',
-        platform: {
-          http_proxy: {
-            enabled: true,
-            server: '127.0.0.1',
-            server_port: 1081,
-          },
-        },
-      },
-    ],
-    outbounds: [
-      ...generateSelectorOutbounds(proxyNames),
-      ...proxyOutbounds,
-    ],
+    experimental: generateExperimental(),
+    inbounds: generateInbounds(),
+    outbounds: generateOutbounds(proxyNames, proxyOutbounds),
     route: {
-      geoip: {
-        download_url: 'https://github.com/soffchen/sing-geoip/releases/latest/download/geoip.db',
-        download_detour: 'select',
-      },
-      geosite: {
-        download_url: 'https://github.com/soffchen/sing-geosite/releases/latest/download/geosite.db',
-        download_detour: 'select',
-      },
-      rules: generateRouteRules(),
       auto_detect_interface: true,
-      final: 'select',
-    },
-    experimental: {
-      cache_file: {
-        enabled: true,
-        path: 'cache.db',
-      },
+      rules: generateRouteRules(),
+      rule_set: generateRuleSets(),
     },
   };
 

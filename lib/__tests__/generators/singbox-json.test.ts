@@ -167,9 +167,9 @@ describe('SingBoxJsonGenerator (lib)', () => {
       expect(() => JSON.parse(result)).not.toThrow();
       const parsed = JSON.parse(result);
 
-      // Verify basic structure
-      expect(parsed).toHaveProperty('log');
+      // Verify basic structure (refactored to match template)
       expect(parsed).toHaveProperty('dns');
+      expect(parsed).toHaveProperty('experimental');
       expect(parsed).toHaveProperty('inbounds');
       expect(parsed).toHaveProperty('outbounds');
       expect(parsed).toHaveProperty('route');
@@ -183,6 +183,10 @@ describe('SingBoxJsonGenerator (lib)', () => {
 
       expect(parsed.dns).toHaveProperty('servers');
       expect(parsed.dns.servers).toBeInstanceOf(Array);
+      // Verify new DNS structure with remote/local/block tags
+      expect(parsed.dns.servers.some((s: any) => s.tag === 'remote')).toBe(true);
+      expect(parsed.dns.servers.some((s: any) => s.tag === 'local')).toBe(true);
+      expect(parsed.dns.servers.some((s: any) => s.tag === 'block')).toBe(true);
     });
 
     it('should generate outbounds configuration', () => {
@@ -200,6 +204,9 @@ describe('SingBoxJsonGenerator (lib)', () => {
 
       expect(parsed.outbounds).toBeInstanceOf(Array);
       expect(parsed.outbounds.length).toBeGreaterThan(0);
+      // Verify simplified outbounds structure (节点选择，自动选择)
+      expect(parsed.outbounds.some((o: any) => o.tag === '节点选择')).toBe(true);
+      expect(parsed.outbounds.some((o: any) => o.tag === '自动选择')).toBe(true);
     });
   });
 });
