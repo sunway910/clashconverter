@@ -5,6 +5,38 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.2] - 2026-03-05
+
+### Added
+- **ClashMi Client**: Added ClashMi client to resources page
+  - Download URL: https://github.com/KaringX/clashmi/releases
+  - Chinese and English translations included
+- **SVG Favicon**: Custom SVG favicon for better browser support
+- **Site Description**: Updated metadata description for SEO
+
+### Changed
+- **About Page Content**: Streamlined and updated project information
+  - Moved content to translation files for better maintainability
+  - Reduced component complexity by 140+ lines
+- **Sing-Box Generator**: Refactored to match official template format
+  - DNS config: Updated to use remote/local/block tags with final and disable_cache
+  - Experimental: Added clash_api configuration
+  - Inbounds: Added SOCKS inbound (port 2333), updated TUN and Mixed config
+  - Outbounds: Simplified to 节点选择，自动选择，direct only
+  - Route: Updated to action format, added ip_is_private rule
+  - Rule sets: Added remote rule_set for geosite-cn, category-ads-all, geoip-cn
+- **Test Fixtures**: Updated Sing-Box test JSON files
+
+### Fixed
+- **Sensitive Data**: Removed real proxy node credentials from test files
+  - Replaced server addresses with example.com domains
+  - Replaced UUIDs with test passwords
+- **Git Ignore**: Added test fixture with sensitive data to .gitignore
+
+### Technical
+- **Test Coverage**: Added 27 unit tests for Sing-Box generator
+- **TDD Workflow**: Followed test-driven development for Sing-Box refactoring
+
 ## [1.2.1] - 2026-03-01
 
 ### Added

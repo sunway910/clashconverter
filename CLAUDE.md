@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Key Design Principle**: Pure frontend static service - user inputs are never stored on backend servers for privacy. All processing happens client-side.
 
-**Task Hook** Execute `pnpm test && pnpm build` after each task item completed, exec `git commit` after `pnpm test && pnpm build`
+**Task Hook** Execute `pnpm test && pnpm build` after each task item completed, exec `git commit` with `Co-Authored-By: Claude <noreply@anthropic.com>` after `pnpm test && pnpm build`
 
 ## Development Commands
 
