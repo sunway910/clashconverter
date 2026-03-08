@@ -67,7 +67,10 @@
       "Bash(pnpm vitest:*)",
       "Bash(pnpm exec:*)",
       "Bash(git diff:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(pnpm next build:*)"
     ],
     "defaultMode": "acceptEdits",
     "additionalDirectories": [
