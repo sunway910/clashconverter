@@ -23,6 +23,8 @@ const ALL_FORMAT_TYPES: readonly FormatType[] = [
   'clash-premium',
   'sing-box',
   'loon',
+  'quantumultx',
+  'surfboard',
   'subscribe-url',
 ] as const;
 
@@ -35,6 +37,8 @@ const CONFIGURABLE_FORMATS: readonly FormatType[] = [
   'clash-premium',
   'sing-box',
   'loon',
+  'quantumultx',
+  'surfboard',
 ] as const;
 
 /**
@@ -46,6 +50,8 @@ const FORMAT_ENV_VARS: Readonly<Partial<Record<FormatType, string>>> = {
   'clash-premium': 'NEXT_PUBLIC_ENABLE_CLASH_PREMIUM_TRANSFER',
   'sing-box': 'NEXT_PUBLIC_ENABLE_SINGBOX_TRANSFER',
   'loon': 'NEXT_PUBLIC_ENABLE_LOON_TRANSFER',
+  'quantumultx': 'NEXT_PUBLIC_ENABLE_QUANTUMULTX_TRANSFER',
+  'surfboard': 'NEXT_PUBLIC_ENABLE_SURFBOARD_TRANSFER',
 } as const;
 
 /**
@@ -102,6 +108,10 @@ export function isFormatEnabled(format: FormatType): boolean {
       return parseBooleanEnv(process.env.NEXT_PUBLIC_ENABLE_SINGBOX_TRANSFER);
     case 'NEXT_PUBLIC_ENABLE_LOON_TRANSFER':
       return parseBooleanEnv(process.env.NEXT_PUBLIC_ENABLE_LOON_TRANSFER);
+    case 'NEXT_PUBLIC_ENABLE_QUANTUMULTX_TRANSFER':
+      return parseBooleanEnv(process.env.NEXT_PUBLIC_ENABLE_QUANTUMULTX_TRANSFER);
+    case 'NEXT_PUBLIC_ENABLE_SURFBOARD_TRANSFER':
+      return parseBooleanEnv(process.env.NEXT_PUBLIC_ENABLE_SURFBOARD_TRANSFER);
     default:
       return true;
   }

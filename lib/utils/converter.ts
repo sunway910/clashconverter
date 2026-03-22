@@ -60,6 +60,10 @@ export function getOutputPlaceholder(format: FormatType, t: (key: string) => str
       return t('outputPlaceholder.sing-box');
     case 'loon':
       return '# Your Loon configuration will appear here';
+    case 'quantumultx':
+      return '# Your QuantumultX configuration will appear here';
+    case 'surfboard':
+      return '# Your Surfboard configuration will appear here';
     default:
       return t('outputPlaceholder.clash');
   }
@@ -85,6 +89,16 @@ export function getDownloadInfo(format: FormatType): { filename: string; mimeTyp
     case 'loon':
       return {
         filename: `loon-${timestamp}.conf`,
+        mimeType: 'text/plain',
+      };
+    case 'quantumultx':
+      return {
+        filename: `quantumultx-${timestamp}.conf`,
+        mimeType: 'text/plain',
+      };
+    case 'surfboard':
+      return {
+        filename: `surfboard-${timestamp}.conf`,
         mimeType: 'text/plain',
       };
     case 'clash-meta':

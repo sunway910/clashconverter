@@ -70,7 +70,8 @@
       "Bash(git checkout:*)",
       "Bash(git log:*)",
       "Bash(git show:*)",
-      "Bash(pnpm next build:*)"
+      "Bash(pnpm next build:*)",
+      "Bash(npx vitest run:*)"
     ],
     "defaultMode": "acceptEdits",
     "additionalDirectories": [

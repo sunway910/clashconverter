@@ -209,7 +209,9 @@
     "clash-meta": "Clash Meta",
     "clash-premium": "Clash Premium",
     "sing-box": "Sing-Box",
-    "loon": "Loon"
+    "loon": "Loon",
+    "quantumultx": "QuantumultX",
+    "surfboard": "Surfboard"
   },
   "inputPlaceholder": {
     "subscribe-url": "在此粘贴订阅链接\n\n支持的订阅类型：\n\n类型 1：直接下载 YAML 文件\nhttps://example.com/link/...?clash=3\n\n类型 2：Base64 编码的代理链接\nhttps://example.com/api/v1/client/subscribe?token=xxx\n\n💡 我们将自动获取并转换订阅内容",
@@ -221,7 +223,9 @@
     "txt": "# 您的代理链接将显示在这里",
     "clash": "# 您的 Clash 配置将显示在这里",
     "sing-box": "# 您的 sing-box 配置将显示在这里",
-    "loon": "# 您的 Loon 配置将显示在这里"
+    "loon": "# 您的 Loon 配置将显示在这里",
+    "quantumultx": "# 您的 QuantumultX 配置将显示在这里",
+    "surfboard": "# 您的 Surfboard 配置将显示在这里"
   },
   "itemsFound": "找到 {count} 个项目",
   "clear": "清除",
@@ -248,7 +252,9 @@
     "clash-meta": "Clash Meta (Mihomo)",
     "clash-premium": "Clash Premium",
     "sing-box": "Sing-Box",
-    "loon": "Loon"
+    "loon": "Loon",
+    "quantumultx": "QuantumultX",
+    "surfboard": "Surfboard"
   },
   "kernelDescriptions": {
     "txt": {
@@ -299,6 +305,26 @@
         "不支持 VLESS、Hysteria、Hysteria2、HTTP、HTTPS、SOCKS5",
         "iOS 专属，支持丰富的脚本功能",
         "INI 风格配置格式，内置 ACL4SSR 规则集"
+      ]
+    },
+    "quantumultx": {
+      "title": "QuantumultX",
+      "description": "流行的 iOS 代理客户端，支持强大的规则过滤和重写功能。支持 SS、SSR、VMess、Trojan、HTTP、SOCKS5 协议。",
+      "features": [
+        "支持 SS、SSR、VMess、Trojan、HTTP、SOCKS5 协议",
+        "不支持 VLESS、Hysteria、Hysteria2",
+        "iOS 专属，支持高级规则自定义",
+        "INI 风格配置，支持策略组和过滤器"
+      ]
+    },
+    "surfboard": {
+      "title": "Surfboard",
+      "description": "专业的 iOS 代理客户端，基于 Surge 格式。支持 SS、VMess、Trojan、HTTP、SOCKS5、Hysteria2 协议。",
+      "features": [
+        "支持 SS、VMess、Trojan、HTTP、SOCKS5、Hysteria2 协议",
+        "不支持 SSR、VLESS、Hysteria (v1)",
+        "iOS 专属，Surge 兼容格式",
+        "简洁的配置风格，支持基于规则的路由"
       ]
     }
   },

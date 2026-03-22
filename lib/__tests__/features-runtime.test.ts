@@ -15,6 +15,8 @@ describe('Feature Flags - Runtime Behavior', () => {
     originalEnv['NEXT_PUBLIC_ENABLE_LOON_TRANSFER'] = process.env.NEXT_PUBLIC_ENABLE_LOON_TRANSFER;
     originalEnv['NEXT_PUBLIC_ENABLE_CLASH_META_TRANSFER'] = process.env.NEXT_PUBLIC_ENABLE_CLASH_META_TRANSFER;
     originalEnv['NEXT_PUBLIC_ENABLE_CLASH_PREMIUM_TRANSFER'] = process.env.NEXT_PUBLIC_ENABLE_CLASH_PREMIUM_TRANSFER;
+    originalEnv['NEXT_PUBLIC_ENABLE_QUANTUMULTX_TRANSFER'] = process.env.NEXT_PUBLIC_ENABLE_QUANTUMULTX_TRANSFER;
+    originalEnv['NEXT_PUBLIC_ENABLE_SURFBOARD_TRANSFER'] = process.env.NEXT_PUBLIC_ENABLE_SURFBOARD_TRANSFER;
   });
 
   afterEach(() => {
@@ -45,6 +47,8 @@ describe('Feature Flags - Runtime Behavior', () => {
     it('should return correct enabled formats when sing-box and loon are disabled', () => {
       process.env.NEXT_PUBLIC_ENABLE_SINGBOX_TRANSFER = 'false';
       process.env.NEXT_PUBLIC_ENABLE_LOON_TRANSFER = 'false';
+      process.env.NEXT_PUBLIC_ENABLE_QUANTUMULTX_TRANSFER = 'false';
+      process.env.NEXT_PUBLIC_ENABLE_SURFBOARD_TRANSFER = 'false';
       delete process.env.NEXT_PUBLIC_ENABLE_CLASH_META_TRANSFER;
       delete process.env.NEXT_PUBLIC_ENABLE_CLASH_PREMIUM_TRANSFER;
 
@@ -52,6 +56,8 @@ describe('Feature Flags - Runtime Behavior', () => {
 
       expect(formats).not.toContain('sing-box');
       expect(formats).not.toContain('loon');
+      expect(formats).not.toContain('quantumultx');
+      expect(formats).not.toContain('surfboard');
       expect(formats).toContain('txt');
       expect(formats).toContain('clash-meta');
       expect(formats).toContain('clash-premium');
@@ -62,6 +68,8 @@ describe('Feature Flags - Runtime Behavior', () => {
     it('should return correct enabled formats map when some formats are disabled', () => {
       process.env.NEXT_PUBLIC_ENABLE_SINGBOX_TRANSFER = 'false';
       process.env.NEXT_PUBLIC_ENABLE_LOON_TRANSFER = 'false';
+      process.env.NEXT_PUBLIC_ENABLE_QUANTUMULTX_TRANSFER = 'false';
+      process.env.NEXT_PUBLIC_ENABLE_SURFBOARD_TRANSFER = 'false';
       delete process.env.NEXT_PUBLIC_ENABLE_CLASH_META_TRANSFER;
       delete process.env.NEXT_PUBLIC_ENABLE_CLASH_PREMIUM_TRANSFER;
 
@@ -69,6 +77,8 @@ describe('Feature Flags - Runtime Behavior', () => {
 
       expect(map['sing-box']).toBe(false);
       expect(map['loon']).toBe(false);
+      expect(map['quantumultx']).toBe(false);
+      expect(map['surfboard']).toBe(false);
       expect(map['clash-meta']).toBe(true);
       expect(map['clash-premium']).toBe(true);
       expect(map['txt']).toBe(true);

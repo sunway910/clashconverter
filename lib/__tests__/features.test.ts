@@ -131,6 +131,8 @@ describe('Feature Flags', () => {
       delete process.env.NEXT_PUBLIC_ENABLE_LOON_TRANSFER;
       delete process.env.NEXT_PUBLIC_ENABLE_CLASH_META_TRANSFER;
       delete process.env.NEXT_PUBLIC_ENABLE_CLASH_PREMIUM_TRANSFER;
+      delete process.env.NEXT_PUBLIC_ENABLE_QUANTUMULTX_TRANSFER;
+      delete process.env.NEXT_PUBLIC_ENABLE_SURFBOARD_TRANSFER;
 
       const formats = features.getEnabledFormats();
 
@@ -139,8 +141,10 @@ describe('Feature Flags', () => {
       expect(formats).toContain('clash-premium');
       expect(formats).toContain('sing-box');
       expect(formats).toContain('loon');
+      expect(formats).toContain('quantumultx');
+      expect(formats).toContain('surfboard');
       expect(formats).toContain('subscribe-url');
-      expect(formats.length).toBe(6);
+      expect(formats.length).toBe(8);
     });
 
     it('should exclude "sing-box" when disabled', () => {
@@ -148,13 +152,15 @@ describe('Feature Flags', () => {
       delete process.env.NEXT_PUBLIC_ENABLE_LOON_TRANSFER;
       delete process.env.NEXT_PUBLIC_ENABLE_CLASH_META_TRANSFER;
       delete process.env.NEXT_PUBLIC_ENABLE_CLASH_PREMIUM_TRANSFER;
+      delete process.env.NEXT_PUBLIC_ENABLE_QUANTUMULTX_TRANSFER;
+      delete process.env.NEXT_PUBLIC_ENABLE_SURFBOARD_TRANSFER;
 
       const formats = features.getEnabledFormats();
 
       expect(formats).not.toContain('sing-box');
       expect(formats).toContain('txt');
       expect(formats).toContain('loon');
-      expect(formats.length).toBe(5);
+      expect(formats.length).toBe(7);
     });
 
     it('should exclude "loon" when disabled', () => {
@@ -162,12 +168,14 @@ describe('Feature Flags', () => {
       process.env.NEXT_PUBLIC_ENABLE_LOON_TRANSFER = 'false';
       delete process.env.NEXT_PUBLIC_ENABLE_CLASH_META_TRANSFER;
       delete process.env.NEXT_PUBLIC_ENABLE_CLASH_PREMIUM_TRANSFER;
+      delete process.env.NEXT_PUBLIC_ENABLE_QUANTUMULTX_TRANSFER;
+      delete process.env.NEXT_PUBLIC_ENABLE_SURFBOARD_TRANSFER;
 
       const formats = features.getEnabledFormats();
 
       expect(formats).toContain('sing-box');
       expect(formats).not.toContain('loon');
-      expect(formats.length).toBe(5);
+      expect(formats.length).toBe(7);
     });
 
     it('should exclude multiple formats when multiple are disabled', () => {
@@ -175,6 +183,8 @@ describe('Feature Flags', () => {
       process.env.NEXT_PUBLIC_ENABLE_LOON_TRANSFER = 'false';
       process.env.NEXT_PUBLIC_ENABLE_CLASH_META_TRANSFER = 'false';
       delete process.env.NEXT_PUBLIC_ENABLE_CLASH_PREMIUM_TRANSFER;
+      delete process.env.NEXT_PUBLIC_ENABLE_QUANTUMULTX_TRANSFER;
+      delete process.env.NEXT_PUBLIC_ENABLE_SURFBOARD_TRANSFER;
 
       const formats = features.getEnabledFormats();
 
@@ -184,7 +194,7 @@ describe('Feature Flags', () => {
       expect(formats).toContain('txt');
       expect(formats).toContain('clash-premium');
       expect(formats).toContain('subscribe-url');
-      expect(formats.length).toBe(3);
+      expect(formats.length).toBe(5);
     });
 
     it('should always include "txt" and "subscribe-url" even if env var is "false"', () => {
@@ -257,6 +267,8 @@ describe('Feature Flags', () => {
         'clash-premium',
         'sing-box',
         'loon',
+        'quantumultx',
+        'surfboard',
         'subscribe-url',
       ]);
     });
@@ -267,6 +279,8 @@ describe('Feature Flags', () => {
         'clash-premium',
         'sing-box',
         'loon',
+        'quantumultx',
+        'surfboard',
       ]);
     });
 
@@ -275,6 +289,8 @@ describe('Feature Flags', () => {
       expect(features.FORMAT_ENV_VARS['clash-premium']).toBe('NEXT_PUBLIC_ENABLE_CLASH_PREMIUM_TRANSFER');
       expect(features.FORMAT_ENV_VARS['sing-box']).toBe('NEXT_PUBLIC_ENABLE_SINGBOX_TRANSFER');
       expect(features.FORMAT_ENV_VARS['loon']).toBe('NEXT_PUBLIC_ENABLE_LOON_TRANSFER');
+      expect(features.FORMAT_ENV_VARS['quantumultx']).toBe('NEXT_PUBLIC_ENABLE_QUANTUMULTX_TRANSFER');
+      expect(features.FORMAT_ENV_VARS['surfboard']).toBe('NEXT_PUBLIC_ENABLE_SURFBOARD_TRANSFER');
     });
   });
 });
@@ -287,6 +303,8 @@ describe('Converter Utils - Format Options', () => {
     originalEnv['NEXT_PUBLIC_ENABLE_LOON_TRANSFER'] = process.env.NEXT_PUBLIC_ENABLE_LOON_TRANSFER;
     originalEnv['NEXT_PUBLIC_ENABLE_CLASH_META_TRANSFER'] = process.env.NEXT_PUBLIC_ENABLE_CLASH_META_TRANSFER;
     originalEnv['NEXT_PUBLIC_ENABLE_CLASH_PREMIUM_TRANSFER'] = process.env.NEXT_PUBLIC_ENABLE_CLASH_PREMIUM_TRANSFER;
+    originalEnv['NEXT_PUBLIC_ENABLE_QUANTUMULTX_TRANSFER'] = process.env.NEXT_PUBLIC_ENABLE_QUANTUMULTX_TRANSFER;
+    originalEnv['NEXT_PUBLIC_ENABLE_SURFBOARD_TRANSFER'] = process.env.NEXT_PUBLIC_ENABLE_SURFBOARD_TRANSFER;
   });
 
   afterEach(() => {
@@ -305,18 +323,22 @@ describe('Converter Utils - Format Options', () => {
       delete process.env.NEXT_PUBLIC_ENABLE_LOON_TRANSFER;
       delete process.env.NEXT_PUBLIC_ENABLE_CLASH_META_TRANSFER;
       delete process.env.NEXT_PUBLIC_ENABLE_CLASH_PREMIUM_TRANSFER;
+      delete process.env.NEXT_PUBLIC_ENABLE_QUANTUMULTX_TRANSFER;
+      delete process.env.NEXT_PUBLIC_ENABLE_SURFBOARD_TRANSFER;
 
       // Mock translation function
       const mockT = vi.fn((key: string) => key);
       const options = getInputFormatOptions(mockT);
 
-      expect(options.length).toBe(6);
+      expect(options.length).toBe(8);
       expect(options.map(o => o.value)).toEqual([
         'txt',
         'clash-meta',
         'clash-premium',
         'sing-box',
         'loon',
+        'quantumultx',
+        'surfboard',
         'subscribe-url',
       ]);
     });
@@ -324,6 +346,8 @@ describe('Converter Utils - Format Options', () => {
     it('should exclude disabled formats', () => {
       process.env.NEXT_PUBLIC_ENABLE_SINGBOX_TRANSFER = 'false';
       process.env.NEXT_PUBLIC_ENABLE_LOON_TRANSFER = 'false';
+      process.env.NEXT_PUBLIC_ENABLE_QUANTUMULTX_TRANSFER = 'false';
+      process.env.NEXT_PUBLIC_ENABLE_SURFBOARD_TRANSFER = 'false';
       delete process.env.NEXT_PUBLIC_ENABLE_CLASH_META_TRANSFER;
       delete process.env.NEXT_PUBLIC_ENABLE_CLASH_PREMIUM_TRANSFER;
 
@@ -346,24 +370,30 @@ describe('Converter Utils - Format Options', () => {
       delete process.env.NEXT_PUBLIC_ENABLE_LOON_TRANSFER;
       delete process.env.NEXT_PUBLIC_ENABLE_CLASH_META_TRANSFER;
       delete process.env.NEXT_PUBLIC_ENABLE_CLASH_PREMIUM_TRANSFER;
+      delete process.env.NEXT_PUBLIC_ENABLE_QUANTUMULTX_TRANSFER;
+      delete process.env.NEXT_PUBLIC_ENABLE_SURFBOARD_TRANSFER;
 
       const mockT = vi.fn((key: string) => key);
       const options = getOutputFormatOptions(mockT);
 
-      // Should be 5 (all except subscribe-url)
-      expect(options.length).toBe(5);
+      // Should be 7 (all except subscribe-url)
+      expect(options.length).toBe(7);
       expect(options.map(o => o.value)).toEqual([
         'txt',
         'clash-meta',
         'clash-premium',
         'sing-box',
         'loon',
+        'quantumultx',
+        'surfboard',
       ]);
     });
 
     it('should exclude disabled formats and subscribe-url', () => {
       process.env.NEXT_PUBLIC_ENABLE_SINGBOX_TRANSFER = 'false';
       process.env.NEXT_PUBLIC_ENABLE_LOON_TRANSFER = 'false';
+      process.env.NEXT_PUBLIC_ENABLE_QUANTUMULTX_TRANSFER = 'false';
+      process.env.NEXT_PUBLIC_ENABLE_SURFBOARD_TRANSFER = 'false';
       delete process.env.NEXT_PUBLIC_ENABLE_CLASH_META_TRANSFER;
       delete process.env.NEXT_PUBLIC_ENABLE_CLASH_PREMIUM_TRANSFER;
 
