@@ -11,39 +11,16 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Simplified Lavender-based palette (inspired by clash-converter-stitch)
-        lavender: {
-          50: "#f8f7ff",
-          100: "#f0eeff",
-          200: "#e1dbff",
-          300: "#c9beff",
-          400: "#aba4ff",
-          500: "#8b7fff",
-          600: "#755fff",
-        },
-        // Simplified neutrals
-        slate: {
-          50: "#f8fafc",
-          100: "#f1f5f9",
-          200: "#e2e8f0",
-          300: "#cbd5e1",
-          400: "#94a3b8",
-          500: "#64748b",
-          600: "#475569",
-          700: "#334155",
-          800: "#1e293b",
-          900: "#0f172a",
-        },
-        // Legacy clay colors kept for backward compatibility
+        // Claymorphism Design System Colors - Candy Shop Palette
         clay: {
-          canvas: "#f8f7ff",
-          foreground: "#334155",
-          muted: "#64748b",
-          accent: "#8b7fff",
-          accentAlt: "#a855f7",
-          accentTertiary: "#06b6d4",
-          success: "#10b981",
-          warning: "#f59e0b",
+          canvas: "#F4F1FA",
+          foreground: "#332F3A",
+          muted: "#635F69",
+          accent: "#7C3AED",
+          accentAlt: "#DB2777",
+          accentTertiary: "#0EA5E9",
+          success: "#10B981",
+          warning: "#F59E0B",
         },
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
@@ -90,26 +67,18 @@ const config: Config = {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
-        // Simplified border radius - stitch inspired
-        neo: {
-          sm: "1rem",
-          md: "1.5rem",
-          lg: "2rem",
-          xl: "2.5rem", // 40px - stitch card radius
-          "2xl": "3rem",
-        },
+        // Claymorphism super-rounded corners
+        "clay-sm": "12px",
+        "clay-md": "16px",
+        "clay-lg": "20px",
+        "clay-xl": "24px",
+        "clay-2xl": "32px",
+        "clay-3xl": "40px",
+        "clay-4xl": "48px",
+        "clay-5xl": "60px",
       },
       boxShadow: {
-        // Simplified 2-layer neumorphic shadows (stitch-inspired)
-        "neo": "8px 8px 16px #d1d1d1, -8px -8px 16px #ffffff",
-        "neo-sm": "4px 4px 8px #d1d1d1, -4px -4px 8px #ffffff",
-        "neo-lg": "20px 20px 60px #bebebe, -20px -20px 60px #ffffff",
-        "neo-inner": "inset 4px 4px 8px #d1d1d1, inset -4px -4px 8px #ffffff",
-        "neo-button": "8px 8px 16px #d1d1d1, -8px -8px 16px #ffffff",
-        "neo-button-active": "inset 4px 4px 8px rgba(166, 171, 189, 0.4), inset -4px -4px 8px rgba(255, 255, 255, 0.8)",
-        "neo-card": "20px 20px 60px #bebebe, -20px -20px 60px #ffffff",
-        "neo-input": "inset 4px 4px 8px rgba(166, 171, 189, 0.3), inset -4px -4px 8px rgba(255, 255, 255, 0.7)",
-        // Legacy clay shadows kept for backward compatibility
+        // Claymorphism 4-layer shadow system
         "clay-surface": `
           30px 30px 60px #cdc6d9,
           -30px -30px 60px #ffffff,
@@ -122,15 +91,31 @@ const config: Config = {
           inset 6px 6px 12px rgba(139, 92, 246, 0.03),
           inset -6px -6px 12px rgba(255, 255, 255, 1)
         `,
+        "clay-card-hover": `
+          20px 20px 40px rgba(160, 150, 180, 0.25),
+          -12px -12px 28px rgba(255, 255, 255, 0.9),
+          inset 6px 6px 12px rgba(139, 92, 246, 0.03),
+          inset -6px -6px 12px rgba(255, 255, 255, 1)
+        `,
         "clay-button": `
           12px 12px 24px rgba(139, 92, 246, 0.3),
           -8px -8px 16px rgba(255, 255, 255, 0.4),
           inset 4px 4px 8px rgba(255, 255, 255, 0.4),
           inset -4px -4px 8px rgba(0, 0, 0, 0.1)
         `,
+        "clay-button-hover": `
+          16px 16px 32px rgba(139, 92, 246, 0.4),
+          -10px -10px 20px rgba(255, 255, 255, 0.5),
+          inset 4px 4px 8px rgba(255, 255, 255, 0.4),
+          inset -4px -4px 8px rgba(0, 0, 0, 0.1)
+        `,
         "clay-pressed": `
           inset 10px 10px 20px #d9d4e3,
           inset -10px -10px 20px #ffffff
+        `,
+        "clay-input": `
+          inset 8px 8px 16px rgba(166, 171, 189, 0.3),
+          inset -8px -8px 16px rgba(255, 255, 255, 0.8)
         `,
       },
       animation: {
@@ -175,7 +160,6 @@ const config: Config = {
       fontFamily: {
         nunito: ["Nunito", "sans-serif"],
         "dm-sans": ["DM Sans", "sans-serif"],
-        sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
       },
       transitionDuration: {
         "400": "400ms",
@@ -183,7 +167,6 @@ const config: Config = {
       },
       scale: {
         "92": "0.92",
-        "95": "0.95",
       },
     },
   },
