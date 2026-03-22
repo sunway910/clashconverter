@@ -344,3 +344,54 @@ clashconverter/
 ## SEO Domain
 
 Primary domain: clashconverter.com
+
+## Design System
+
+**High-Fidelity Claymorphism Design System** - See `DESIGN.md` for complete specifications.
+
+### Key Design Tokens
+
+**Colors:**
+- Canvas: `#F4F1FA` (light mode), `#0d0e15` (dark mode footer/page background)
+- Cards: `bg-white/70` (light), `dark:bg-[#1a1b26]/80` (dark)
+- Buttons: `bg-white` (light), `dark:bg-[#24283b]` (dark)
+- Accent: `#7C3AED` (Vivid Violet), `#DB2777` (Hot Pink), `#0EA5E9` (Sky Blue)
+
+**Typography:**
+- Headings: Nunito (700/800/900 weight)
+- Body: DM Sans (400/500/700 weight)
+
+**Border Radii:**
+- Large containers: `rounded-[48px]` to `rounded-[60px]`
+- Standard cards: `rounded-[32px]`
+- Buttons/Inputs: `rounded-[20px]` or `rounded-full`
+
+**Shadow Utilities (defined in `app/globals.css`):**
+- `.clay-surface` / `.dark .clay-surface` - Deep surface shadows
+- `.clay-card` / `.dark:clay-card-dark` - Floating card shadows
+- `.clay-card-hover` / `.dark:clay-card-hover-dark` - Hover state enhancement
+- `.clay-button` / `.dark:clay-button` - Button convexity shadows
+- `.clay-button-hover` / `.dark:clay-button-hover` - Button hover state
+- `.clay-pressed` / `.dark:clay-pressed-dark` - Recessed input shadows
+
+### Component Patterns
+
+**Standard Card Structure:**
+```tsx
+<div className="clay-card dark:clay-card-dark relative overflow-hidden rounded-[32px] bg-white/70 dark:bg-[#1a1b26]/80 backdrop-blur-xl border-white/30 dark:border-white/10 transition-all duration-500">
+  {/* Decorative gradient orbs */}
+  <div className="absolute -top-20 -right-20 w-40 h-40 rounded-full bg-gradient-to-br from-clay-accent/20 to-clay-accent-alt/20 blur-3xl pointer-events-none dark:from-clay-accent/25 dark:to-clay-accent-alt/25" />
+  {/* Content */}
+</div>
+```
+
+**Standard Button Structure:**
+```tsx
+<button className="clay-button dark:clay-button px-6 py-3 rounded-full bg-white dark:bg-[#24283b] text-clay-foreground dark:text-[#e0e0e0] font-semibold transition-all duration-300 hover:-translate-y-1 hover:clay-button-hover">
+```
+
+**Dark Mode Strategy:**
+- All components must support dark mode using `dark:` variants
+- Dark backgrounds use `#0d0e15` (page), `#1a1b26` (cards), `#24283b` (buttons)
+- Text colors: `text-clay-muted` (light), `dark:text-[#808080]` (dark)
+- Decorative elements increase opacity in dark mode (`/20` → `/25`)
