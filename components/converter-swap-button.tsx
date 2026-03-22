@@ -14,13 +14,13 @@ export function SwapButton({ onClick, disabled, variant = 'desktop', label }: Sw
       <div className="mt-4 md:mt-6 md:hidden">
         <Button
           variant="outline"
-          className="w-full h-12 rounded-full bg-lavender-50 text-slate-700 font-bold border-white/60 neo-button transition-all duration-300 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full h-14 rounded-2xl bg-white dark:bg-[#242636] text-clay-foreground dark:text-[#e0e0e0] font-bold border-white/20 dark:border-white/10 clay-button dark:clay-button transition-all duration-300 hover:-translate-y-1 hover:clay-button-hover dark:hover:clay-button-hover disabled:opacity-50 disabled:cursor-not-allowed"
           onClick={onClick}
           disabled={disabled}
           size="default"
           title={disabled ? 'Add content to swap formats' : 'Swap input and output formats'}
         >
-          <ArrowRightLeft className="w-4 h-4 mr-2 shrink-0" />
+          <ArrowRightLeft className="w-5 h-5 mr-2 shrink-0" />
           {label}
         </Button>
       </div>
@@ -31,13 +31,13 @@ export function SwapButton({ onClick, disabled, variant = 'desktop', label }: Sw
     <Button
       size="default"
       variant="outline"
-      className="group relative w-14 h-14 rounded-full bg-lavender-50 text-lavender-600 border-white/60 neo-button transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+      className="group relative w-16 h-16 rounded-full bg-white/90 dark:bg-[#242636] text-clay-accent dark:text-[#a78bfa] border-white/20 dark:border-white/10 clay-button dark:clay-button transition-all duration-300 hover:-translate-y-2 hover:clay-button-hover dark:hover:clay-button-hover active:scale-92 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
       onClick={onClick}
       title={disabled ? 'Add content to swap formats' : 'Swap input and output formats'}
       disabled={disabled}
       aria-label="Swap formats"
     >
-      <ArrowRightLeft className="w-5 h-5 transition-transform duration-300 group-hover:rotate-180" />
+      <ArrowRightLeft className="w-6 h-6 transition-transform duration-300 group-hover:rotate-180" />
     </Button>
   );
 }

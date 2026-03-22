@@ -12,7 +12,7 @@ export function ItemCount({ count, onClear, clearLabel, countLabel }: ItemCountP
   return (
     <div className="mt-4 md:mt-6 flex items-center justify-between gap-2 text-xs md:text-sm">
       <span
-        className="truncate flex-1 min-w-0 font-medium text-slate-500"
+        className="truncate flex-1 min-w-0 font-medium text-clay-muted"
         style={{ fontFamily: 'DM Sans, sans-serif' }}
       >
         {countLabel.replace('{count}', String(count))}
@@ -22,7 +22,7 @@ export function ItemCount({ count, onClear, clearLabel, countLabel }: ItemCountP
           variant="ghost"
           size="sm"
           onClick={onClear}
-          className="text-xs shrink-0 h-8 px-3 rounded-full bg-lavender-50 hover:bg-red-50 hover:text-red-500 text-slate-500 font-semibold transition-all duration-300 border border-white/60 neo-button"
+          className="text-xs shrink-0 h-8 px-3 rounded-full bg-white/60 hover:bg-red-50 hover:text-red-500 text-clay-muted font-semibold transition-all duration-300 border border-white/20"
           title="Clear all items"
           type="button"
         >

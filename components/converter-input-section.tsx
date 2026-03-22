@@ -10,7 +10,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { FileText, Info } from 'lucide-react';
+import { FileText, Info, Lightbulb } from 'lucide-react';
 import { PreviewEditor, type LanguageType } from '@/components/preview/preview-editor';
 import { FormatSelector } from './converter-format-selector';
 import { ItemCount } from './converter-item-count';
@@ -56,37 +56,30 @@ export const InputSection = memo(({
       <Button
         variant="ghost"
         size="sm"
-        className="h-8 w-8 p-0 rounded-full hover:bg-accent/20 hover:text-accent transition-all duration-300"
+        className="h-7 w-7 p-0 rounded-full hover:bg-clay-accent/10 hover:text-clay-accent transition-all duration-300"
       >
-        <Info className="w-4 h-4" />
+        <Info className="w-3.5 h-3.5" />
       </Button>
     </DialogTrigger>
   );
 
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-      <Card className="neo-card relative overflow-hidden rounded-[2.5rem] bg-card border-border transition-all duration-300 hover:neo-card-hover h-[470px] flex flex-col">
-        <CardHeader className="relative z-10 pb-4">
+      <Card className="clay-card dark:clay-card-dark relative overflow-hidden rounded-[32px] bg-white dark:bg-[#1a1b26] border-white/20 dark:border-white/10 transition-all duration-500 hover:-translate-y-1 hover:clay-card-hover dark:hover:clay-card-hover-dark h-[560px] flex flex-col">
+        {/* Decorative gradient orb */}
+        <div className="absolute -top-20 -right-20 w-40 h-40 rounded-full bg-gradient-to-br from-clay-accent/15 to-clay-accent-alt/15 blur-3xl pointer-events-none dark:from-clay-accent/20 dark:to-clay-accent-alt/20" />
+
+        <CardHeader className="relative z-10 pb-2">
           <div className="flex items-center justify-between">
             <CardTitle
-              className="flex items-center gap-2 cursor-pointer group select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-[2.5rem] px-2 py-1"
+              className="flex items-center gap-2 cursor-pointer group select-none"
               onClick={() => setDialogOpen(true)}
               role="button"
               tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  setDialogOpen(true);
-                }
-              }}
               title="Click to view supported protocols"
-              aria-label={`View supported protocols for ${labels.inputLabel}`}
             >
-              <div className="flex items-center justify-center w-10 h-10 rounded-2xl bg-gradient-to-br from-primary to-primary/80 neo-button transition-all duration-300 group-hover:scale-105">
-                <FileText className="w-5 h-5 text-primary-foreground" />
-              </div>
               <span
-                className="text-lg md:text-xl font-bold text-foreground group-hover:text-primary transition-colors duration-300"
+                className="text-2xl font-black text-[#1a1a1a] dark:text-[#e0e0e0]"
                 style={{ fontFamily: 'Nunito, sans-serif' }}
               >
                 {labels.inputLabel}
@@ -100,34 +93,41 @@ export const InputSection = memo(({
             />
           </div>
         </CardHeader>
-        <CardContent className="relative z-10 flex-1 flex flex-col">
-          <PreviewEditor
-            value={input}
-            language={inputLanguage}
-            height="300px"
-            placeholder={inputPlaceholder}
-            onChange={onInputChange}
-            className="flex-1"
-          />
-          <div className="mt-2">
-            <ItemCount
-              count={itemCount}
-              onClear={onClear}
-              clearLabel={labels.clear}
-              countLabel={labels.itemsFound}
+        <CardContent className="relative z-10 flex-1 flex flex-col px-6 pb-6">
+          {/* Editor Area with inset shadow */}
+          <div className="flex-1 clay-pressed dark:clay-pressed-dark rounded-2xl p-4 bg-[#F8F7FF] dark:bg-[#242636] border border-white/40 dark:border-white/10">
+            <PreviewEditor
+              value={input}
+              language={inputLanguage}
+              height="100%"
+              placeholder={inputPlaceholder}
+              onChange={onInputChange}
             />
+          </div>
+          {/* Tip Section */}
+          <div className="mt-4 flex items-center gap-2 text-xs text-clay-muted dark:text-[#808080]">
+            <Lightbulb className="w-3.5 h-3.5 text-amber-400" />
+            <span style={{ fontFamily: 'DM Sans, sans-serif' }}>
+              Tip · Paste your proxy links here - one per line
+            </span>
+          </div>
+          {/* Item Count */}
+          <div className="mt-3 text-right">
+            <span className="text-sm font-medium text-clay-muted dark:text-[#808080]">
+              {labels.itemsFound}
+            </span>
           </div>
         </CardContent>
       </Card>
-      <DialogContent className="max-w-md rounded-[2.5rem] border-border bg-card neo-card">
+      <DialogContent className="max-w-md rounded-[32px] border-white/20 bg-white/90 dark:bg-[#1a1b26]/95 backdrop-blur-xl clay-card dark:clay-card-dark">
         <DialogHeader>
           <DialogTitle
-            className="text-xl font-black text-foreground"
+            className="text-2xl font-black text-[#1a1a1a] dark:text-[#e0e0e0]"
             style={{ fontFamily: 'Nunito, sans-serif' }}
           >
             {t('dialog.protocolsTitle')}
           </DialogTitle>
-          <DialogDescription className="text-muted-foreground">
+          <DialogDescription className="text-clay-muted dark:text-[#808080]">
             {t('dialog.protocolsDescription')}
           </DialogDescription>
         </DialogHeader>
