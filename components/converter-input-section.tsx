@@ -53,7 +53,11 @@ export const InputSection = memo(({
 
   const infoButton = (
     <DialogTrigger asChild>
-      <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+      <Button
+        variant="ghost"
+        size="sm"
+        className="h-8 w-8 p-0 rounded-full hover:bg-[#8B5CF6]/10 hover:text-[#7C3AED] transition-all duration-300"
+      >
         <Info className="w-4 h-4" />
       </Button>
     </DialogTrigger>
@@ -61,8 +65,11 @@ export const InputSection = memo(({
 
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-      <Card>
-        <CardHeader>
+      <Card className="relative overflow-hidden rounded-[32px] bg-white/60 backdrop-blur-xl border-white/20 shadow-clay-card transition-all duration-500 hover:-translate-y-1 hover:shadow-clay-card-hover">
+        {/* Decorative gradient orb */}
+        <div className="absolute -top-20 -right-20 w-40 h-40 rounded-full bg-gradient-to-br from-[#A78BFA]/10 to-[#7C3AED]/10 blur-2xl pointer-events-none" />
+
+        <CardHeader className="relative z-10 pb-4">
           <div className="flex items-center justify-between">
             <CardTitle
               className="flex items-center gap-2 cursor-pointer group select-none"
@@ -77,8 +84,13 @@ export const InputSection = memo(({
               }}
               title="Click to view supported protocols"
             >
-              <FileText className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
-              <span className="group-hover:underline group-focus-visible:underline decoration-muted-foreground underline-offset-4 transition-all">
+              <div className="flex items-center justify-center w-10 h-10 rounded-2xl bg-gradient-to-br from-[#A78BFA] to-[#7C3AED] shadow-clay-button transition-all duration-300 group-hover:scale-105 group-hover:shadow-clay-button-hover">
+                <FileText className="w-5 h-5 text-white" />
+              </div>
+              <span
+                className="text-lg md:text-xl font-bold text-[#332F3A] group-hover:text-[#7C3AED] transition-colors duration-300"
+                style={{ fontFamily: 'Nunito, sans-serif' }}
+              >
                 {labels.inputLabel}
               </span>
             </CardTitle>
@@ -90,7 +102,7 @@ export const InputSection = memo(({
             />
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="relative z-10 space-y-4">
           <PreviewEditor
             value={input}
             language={inputLanguage}
@@ -106,10 +118,17 @@ export const InputSection = memo(({
           />
         </CardContent>
       </Card>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md rounded-[32px] border-white/20 bg-white/80 backdrop-blur-xl shadow-clay-card">
         <DialogHeader>
-          <DialogTitle>{t('dialog.protocolsTitle')}</DialogTitle>
-          <DialogDescription>{t('dialog.protocolsDescription')}</DialogDescription>
+          <DialogTitle
+            className="text-xl font-black text-[#332F3A]"
+            style={{ fontFamily: 'Nunito, sans-serif' }}
+          >
+            {t('dialog.protocolsTitle')}
+          </DialogTitle>
+          <DialogDescription className="text-[#635F69]">
+            {t('dialog.protocolsDescription')}
+          </DialogDescription>
         </DialogHeader>
         <ProtocolCards />
       </DialogContent>

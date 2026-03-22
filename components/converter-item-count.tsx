@@ -10,14 +10,19 @@ interface ItemCountProps {
 
 export function ItemCount({ count, onClear, clearLabel, countLabel }: ItemCountProps) {
   return (
-    <div className="mt-3 md:mt-4 flex items-center justify-between gap-2 text-xs md:text-sm text-muted-foreground">
-      <span className="truncate flex-1 min-w-0">{countLabel.replace('{count}', String(count))}</span>
+    <div className="mt-4 md:mt-6 flex items-center justify-between gap-2 text-xs md:text-sm">
+      <span
+        className="truncate flex-1 min-w-0 font-medium text-[#635F69]"
+        style={{ fontFamily: 'DM Sans, sans-serif' }}
+      >
+        {countLabel.replace('{count}', String(count))}
+      </span>
       {count > 0 && (
         <Button
           variant="ghost"
           size="sm"
           onClick={onClear}
-          className="text-xs shrink-0 h-7 px-2 hover:bg-destructive/10 hover:text-destructive transition-colors"
+          className="text-xs shrink-0 h-8 px-3 rounded-full bg-white/60 hover:bg-[#EF4444]/10 hover:text-[#EF4444] text-[#635F69] font-semibold transition-all duration-300 border border-white/20"
           title="Clear all items"
           type="button"
         >

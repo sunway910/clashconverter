@@ -11,10 +11,10 @@ interface SwapButtonProps {
 export function SwapButton({ onClick, disabled, variant = 'desktop', label }: SwapButtonProps) {
   if (variant === 'mobile') {
     return (
-      <div className="mt-3 md:mt-4 md:hidden">
+      <div className="mt-4 md:mt-6 md:hidden">
         <Button
           variant="outline"
-          className="w-full min-h-11"
+          className="w-full h-12 rounded-[20px] bg-white/80 text-[#332F3A] font-bold border-white/20 shadow-clay-button transition-all duration-300 hover:-translate-y-1 hover:shadow-clay-button-hover disabled:opacity-50 disabled:cursor-not-allowed"
           onClick={onClick}
           disabled={disabled}
           size="default"
@@ -28,18 +28,16 @@ export function SwapButton({ onClick, disabled, variant = 'desktop', label }: Sw
   }
 
   return (
-    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:block z-10">
-      <Button
-        size="default"
-        variant="outline"
-        className="rounded-full shadow-lg bg-background min-h-10 min-w-10 hover:shadow-xl transition-shadow"
-        onClick={onClick}
-        title={disabled ? 'Add content to swap formats' : 'Swap input and output formats'}
-        disabled={disabled}
-        aria-label="Swap formats"
-      >
-        <ArrowRightLeft className="w-4 h-4 transition-transform group-hover:rotate-180" />
-      </Button>
-    </div>
+    <Button
+      size="default"
+      variant="outline"
+      className="group relative w-14 h-14 rounded-full bg-white/90 text-[#7C3AED] border-white/20 shadow-clay-button transition-all duration-300 hover:-translate-y-1 hover:shadow-clay-button-hover active:scale-92 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-clay-button"
+      onClick={onClick}
+      title={disabled ? 'Add content to swap formats' : 'Swap input and output formats'}
+      disabled={disabled}
+      aria-label="Swap formats"
+    >
+      <ArrowRightLeft className="w-5 h-5 transition-transform duration-300 group-hover:rotate-180" />
+    </Button>
   );
 }
