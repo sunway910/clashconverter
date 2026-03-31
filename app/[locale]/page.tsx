@@ -20,57 +20,58 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
   const t = await getTranslations();
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-background">
-      {/* Simplified Background - Stitch-inspired radial gradients */}
-      <div className="pointer-events-none fixed inset-0 -z-10">
-        <div className="blob w-[500px] h-[500px] bg-primary/10 top-[-100px] left-[-100px]" />
-        <div className="blob w-[400px] h-[400px] bg-primary/10 bottom-[10%] right-[10%]" />
-        <div className="blob w-[300px] h-[300px] bg-primary/10 top-[40%] left-[20%]" />
-      </div>
+    <div className="relative min-h-screen bg-neo-canvas dark:bg-neo-canvasDark">
+      {/* Structural Grid Background - subtle, functional */}
+      <div className="fixed inset-0 -z-10 neo-grid-lines opacity-30 dark:opacity-20" />
 
-      {/* Simplified Header - neo-card style */}
-      <header className="sticky top-0 z-50 w-full neo-card border-0 bg-card/80 backdrop-blur-xl">
-        <div className="mx-auto flex h-16 items-center justify-between px-4 md:px-8 lg:max-w-6xl">
-          <div className="flex items-center gap-2">
-            <Image
-              src="/clash_converter_linear.svg"
-              alt="ClashConverter"
-              width={180}
-              height={60}
-              className="max-w-[140px] md:max-w-none hover:opacity-80 transition-opacity duration-300"
-            />
+      {/* Header - Clean, sharp, functional */}
+      <header className="sticky top-0 z-50 w-full border-b border-neo-border dark:border-neo-borderDark bg-neo-card/95 dark:bg-neo-cardDark/95 backdrop-blur-sm">
+        <div className="mx-auto flex h-14 items-center justify-between px-4 md:px-8 lg:max-w-6xl">
+          {/* Logo - sharper hover */}
+          <div className="flex items-center gap-3">
+            <span className="neo-label text-neo-muted dark:text-neo-mutedLight hidden sm:inline">
+              CLASH CONVERTER
+            </span>
           </div>
-          <nav className="flex items-center gap-2 md:gap-3" aria-label="Main navigation">
+
+          {/* Navigation - Clean buttons, no rounded excess */}
+          <nav className="flex items-center gap-1 md:gap-2" aria-label="Main navigation">
             <Link href="/resources">
               <button
-                className="neo-button group flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-all duration-300 min-h-[44px] rounded-full"
+                className="group flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-neo-muted dark:text-neo-mutedLight hover:text-neo-foreground dark:hover:text-white transition-colors duration-200 border border-transparent hover:border-neo-border dark:hover:border-neo-borderDark rounded-neoMd"
                 aria-label={t('resources.menuTitle')}
               >
-                <Download className="w-4 h-4 transition-transform group-hover:scale-110" />
+                <Download className="w-4 h-4" />
                 <span className="hidden sm:inline">{t('resources.menuTitle')}</span>
               </button>
             </Link>
             <Link href="/about">
               <button
-                className="neo-button group flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-all duration-300 min-h-[44px] rounded-full"
+                className="group flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-neo-muted dark:text-neo-mutedLight hover:text-neo-foreground dark:hover:text-white transition-colors duration-200 border border-transparent hover:border-neo-border dark:hover:border-neo-borderDark rounded-neoMd"
                 aria-label={t('about')}
               >
-                <Info className="w-4 h-4 transition-transform group-hover:scale-110" />
+                <Info className="w-4 h-4" />
                 <span className="hidden sm:inline">{t('about')}</span>
               </button>
             </Link>
-            <div className="w-px h-5 bg-border mx-1 hidden sm:block" aria-hidden="true" />
+
+            {/* Separator - sharp line */}
+            <div className="w-px h-4 bg-neo-border dark:bg-neo-borderDark mx-1 hidden sm:block" aria-hidden="true" />
+
             <LanguageToggle />
             <ThemeToggle />
           </nav>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="relative z-0">
+      {/* Main Content - Entrance animation */}
+      <main className="relative z-0 animate-neo-enter">
         <Converter />
         <JSONLDStructuredData locale={locale} type="all" pageType="home" />
       </main>
+
+      {/* Footer Accent Line - structural element */}
+      <footer className="fixed bottom-0 left-0 right-0 h-px bg-neo-border dark:bg-neo-borderDark" />
     </div>
   );
 }
