@@ -15,8 +15,10 @@ export type {
   HTTPProxyNode,
   SOCKS5ProxyNode,
   LegacyProxyNode,
-  ProxyNode,
 } from './types/proxy-nodes';
+
+// Re-export ProxyNode type (used in ParsedProxy interface)
+export type { ProxyNode } from './types/proxy-nodes';
 
 // Re-export validators (used in clash parser)
 export { safeValidateProxyNode } from './types/validators';
