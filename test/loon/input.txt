@@ -5,5 +5,8 @@ trojan://bc7593fe-0604-4fbe-a70bYWVzLTI1Ni1nY206Q1VuZFNabllzUEtjdTaclWNFc1RmRBNk
 http://username:password@124.15.12.24:251
 socks5://124.15.12.24:2312
 hysteria://1.2.3.4:12854?protocol=udp&auth=pekopeko&peer=wechat.com&insecure=1&upmbps=50&downmbps=250&alpn=h3#Hys-1.2.3.4
+hysteria2://45cf663d-cd77-4674-b1c0-7c2f29ac5d2f@1.123.132.101:30336/?insecure=1&sni=bing.com#sgp-optimize-Hysteria2
 vless://abc-def-ghi-fge-zsx@1.2.3.4:7777?encryption=none&security=tls&type=tcp&headerType=none#test
+vless://79aa8a21-77c9-41c0-ae83-39436b81d658@1.321.89.128:35448?encryption=none&flow=xtls-rprx-vision&security=reality&sni=www.amazon.com&fp=chrome&pbk=P0psdi3mjAxl3I-Ymu_55Ai389VGzf1gLGVWstnlIxI&sid=88&type=tcp&headerType=none#sgp-normal-reality
+ss://YWVzLTEyOC1nY206YzBkNjc3YzMtYzc0ZS00ZmRlLWJkYmUtZDM5MDkwOGE3ODQz@1.321.89.128:51443#sgp-ss-normal
 https://t.me/socks?server=1.2.3.4&port=123&user=username&pass=password

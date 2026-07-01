@@ -224,7 +224,11 @@
       "server_port": 7777,
       "uuid": "abc-def-ghi-fge-zsx",
       "tls": {
-        "enabled": true
+        "enabled": true,
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        }
       }
     },
     {
@@ -241,6 +245,10 @@
           "enabled": true,
           "public_key": "P0psdi3mjAxl3I-Ymu_55Ai389VGzf1gLGVWstnlIxI",
           "short_id": "88"
+        },
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
         }
       }
     },
