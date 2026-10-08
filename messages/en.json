@@ -8,6 +8,207 @@
     "contact": "Contact",
     "connect": "Connect"
   },
+  "footerNav": {
+    "siteTitle": "Site",
+    "tool": "Converter",
+    "resources": "Resources",
+    "about": "About",
+    "contact": "Contact",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "connectTitle": "Connect",
+    "tagline": "Free client-side converter for proxy links and Clash, Sing-Box, Loon configs. Your data never leaves your browser."
+  },
+  "privacyPage": {
+    "title": "Privacy Policy",
+    "updated": "Last updated: October 9, 2026",
+    "intro": "This Privacy Policy explains how ClashConverter (\"we\", \"us\", or the \"Site\", available at https://clashconverter.com) handles information when you visit the Site or use our conversion tools. The short version: the proxy links and configuration files you convert never leave your browser. We deliberately collect as little data as possible — but like most websites, we use cookies and third-party services for analytics and advertising, and we believe you deserve a clear, honest explanation of what that involves.",
+    "sections": [
+      {
+        "heading": "1. Who We Are",
+        "paragraphs": [
+          "ClashConverter is a free, open-source, client-side web tool for converting between proxy share links (SS, SSR, VMess, VLESS, Trojan, Hysteria, Hysteria2, HTTP, SOCKS5) and proxy client configuration formats such as Clash Meta (Mihomo), Clash Premium, Sing-Box, Loon, QuantumultX, and Surfboard. The project source code is publicly available on GitHub, and any question about this policy can be sent to us through the channels listed in the \"Contact Us\" section below."
+        ]
+      },
+      {
+        "heading": "2. Your Configuration Data Never Leaves Your Browser",
+        "paragraphs": [
+          "This is the most important section of this policy. All parsing, validation, and conversion performed by ClashConverter happens entirely inside your web browser, using JavaScript running on your own device.",
+          "Your proxy share links, server addresses, ports, UUIDs, passwords, subscription URLs, and the configuration files you generate are never transmitted to, stored on, or logged by our servers. There is no upload step and no server-side processing. When you close the browser tab, everything you entered is gone. This is not just a policy promise — it is a verifiable technical property of how the tool is built, and our source code is open for anyone to confirm."
+        ]
+      },
+      {
+        "heading": "3. Information We Collect",
+        "paragraphs": [
+          "We do not operate user accounts, and we do not ask for your name, email address, or payment details. The only information that reaches us or our service providers falls into these categories:"
+        ],
+        "items": [
+          "Locale preference. We store a single cookie named NEXT_LOCALE (with a one-year expiry) that remembers whether you prefer the English or Chinese version of the Site. It contains no personal data.",
+          "Usage analytics. We use Google Analytics to collect aggregated, anonymous statistics such as which pages are visited, approximately how long visits last, browser and device type, and approximate geographic region derived from IP address. These reports never include the content of anything you paste into the converter.",
+          "Advertising data. When ads are displayed, Google and its advertising partners may collect information as described in Section 5."
+        ]
+      },
+      {
+        "heading": "4. Cookies",
+        "paragraphs": [
+          "Cookies are small text files that websites store on your device. We use one first-party cookie (NEXT_LOCALE, described above) to remember your language choice.",
+          "Third parties that serve content on the Site — including Google (for Analytics and AdSense) — may also set their own cookies when your browser communicates with their servers. These cookies are governed by the respective third parties' own privacy policies, and Section 9 explains how you can control or delete them."
+        ]
+      },
+      {
+        "heading": "5. Advertising and Google AdSense",
+        "paragraphs": [
+          "Third-party vendors, including Google, use cookies to serve ads on this Site. Google's use of advertising cookies enables it and its partners to serve ads to you based on your visit to this Site and/or other sites on the Internet.",
+          "This may involve the use of the DoubleClick DART cookie and similar advertising identifiers. These identifiers are pseudonymous: they are associated with your browser, not with your name, email address, or other directly identifying information. We never send your proxy configuration data to advertising networks.",
+          "You may opt out of personalized advertising by visiting Google's Ads Settings (https://adssettings.google.com), and you can opt out of third-party vendor cookies for personalized advertising at https://www.aboutads.info/choices. For visitors in the European Economic Area, the United Kingdom, and Switzerland, a consent message compliant with Google's EU user consent policy is presented before personalized ads are served, and you can change or withdraw your choice through that message at any time.",
+          "Where required by law, we also recognize Global Privacy Control (GPC) signals as a valid opt-out."
+        ]
+      },
+      {
+        "heading": "6. Analytics",
+        "paragraphs": [
+          "We use Google Analytics to understand how the Site is used — for example, which pages are most visited and where visitors encounter problems. Google Analytics uses cookies to collect this information, and the data is reported to us in aggregated form. You can review Google's privacy practices at https://policies.google.com/privacy, and you may prevent Google's collection of data generated by Google Analytics by installing the official browser add-on at https://tools.google.com/dlpage/gaoptout."
+        ]
+      },
+      {
+        "heading": "7. Information We Do Not Collect",
+        "paragraphs": [
+          "To be absolutely clear, we never do any of the following:"
+        ],
+        "items": [
+          "We do not receive, store, or process your proxy links, subscription URLs, or configuration files on any server.",
+          "We do not send personal information (such as email addresses or account credentials) to advertising or analytics providers.",
+          "We do not collect precise location data and we do not request browser location permission.",
+          "We do not sell personal information to anyone.",
+          "We do not knowingly collect personal information from children under 13 (or under 16 in the EEA/UK)."
+        ]
+      },
+      {
+        "heading": "8. Visitors from the EEA, the United Kingdom, and Switzerland",
+        "paragraphs": [
+          "If you visit the Site from these regions, you have additional rights under the GDPR and equivalent laws, including the right to access, correct, or delete personal data, to object to or restrict certain processing, and to lodge a complaint with your local data protection authority. Because our analytics and advertising providers process data on the basis of your consent, you can withdraw that consent at any time — for advertising, through the consent message described in Section 5; for analytics, through the tools listed in Section 6. Withdrawing consent does not affect the lawfulness of processing carried out before withdrawal. Our lawful bases for the limited processing described in this policy are consent (for non-essential cookies) and legitimate interest (for the strictly necessary locale cookie)."
+        ]
+      },
+      {
+        "heading": "9. Your Choices",
+        "paragraphs": [
+          "You remain in control of cookies and identifiers at all times:"
+        ],
+        "items": [
+          "Personalized ads: opt out at https://adssettings.google.com or https://www.aboutads.info/choices.",
+          "Google Analytics: install the official opt-out add-on at https://tools.google.com/dlpage/gaoptout.",
+          "All cookies: you can clear or block cookies in your browser settings. Blocking the NEXT_LOCALE cookie only means the Site will not remember your language preference."
+        ]
+      },
+      {
+        "heading": "10. Data Security",
+        "paragraphs": [
+          "The Site is served exclusively over HTTPS. Because configuration conversion happens client-side, your most sensitive data (proxy credentials) never enters transit to us at all — which is the strongest form of data protection available: non-collection. No method of transmission over the Internet is 100% secure, but the architecture of this tool minimizes what could ever be exposed."
+        ]
+      },
+      {
+        "heading": "11. Changes to This Policy",
+        "paragraphs": [
+          "We may update this Privacy Policy from time to time to reflect changes in the Site or in applicable law. Material changes will be reflected in the \"Last updated\" date at the top of this page. Continued use of the Site after an update constitutes acceptance of the revised policy."
+        ]
+      },
+      {
+        "heading": "12. Contact Us",
+        "paragraphs": [
+          "If you have questions, requests, or complaints about this policy or how the Site handles information, contact us at clashconverter@gmail.com or open an issue at https://github.com/sunway910/clashconverter/issues. We aim to respond to privacy-related requests within 30 days."
+        ]
+      }
+    ]
+  },
+  "termsPage": {
+    "title": "Terms of Service",
+    "updated": "Last updated: October 9, 2026",
+    "intro": "These Terms of Service (\"Terms\") govern your use of ClashConverter at https://clashconverter.com (the \"Site\"). By using the Site, you agree to these Terms. If you do not agree, please do not use the Site.",
+    "sections": [
+      {
+        "heading": "1. What the Site Does",
+        "paragraphs": [
+          "ClashConverter is a free, client-side utility that converts proxy share links and configuration files between different formats — for example, proxy links to Clash Meta YAML, or Clash YAML back to proxy links. All processing happens in your browser. We do not provide proxy services, servers, or network access of any kind, and we are not affiliated with any proxy client project mentioned on the Site."
+        ]
+      },
+      {
+        "heading": "2. No Warranty",
+        "paragraphs": [
+          "The Site is provided \"as is\" and \"as available\", without warranties of any kind, express or implied. While we test the converter carefully, we do not warrant that generated configurations will be error-free, complete, or compatible with every client or kernel version, nor that the Site will be available without interruption. You are responsible for reviewing any generated configuration and for keeping backups of your original files before converting."
+        ]
+      },
+      {
+        "heading": "3. Acceptable Use",
+        "paragraphs": [
+          "You agree to use the Site only for lawful purposes. You must not use the Site to convert or distribute content in connection with any activity that violates applicable law or the terms of service of any network or provider. We provide a format-conversion tool only; how you use the configurations you generate is solely your responsibility."
+        ]
+      },
+      {
+        "heading": "4. Intellectual Property",
+        "paragraphs": [
+          "The Site's source code is open source and published under its license in the public GitHub repository. \"Clash\", \"Clash Meta\", \"Mihomo\", \"Sing-Box\", \"Loon\", \"QuantumultX\", \"Surfboard\", \"Shadowrocket\", and other product names mentioned on the Site are trademarks or project names of their respective owners. References are for identification and interoperability purposes only and do not imply endorsement or affiliation."
+        ]
+      },
+      {
+        "heading": "5. Third-Party Links and Downloads",
+        "paragraphs": [
+          "The Resources page links to third-party clients and tools hosted on GitHub, the App Store, and elsewhere. These links are provided for convenience only. We do not control, endorse, or take responsibility for third-party software, its safety, its licensing, or its availability. Always download software from the official source and review what you install."
+        ]
+      },
+      {
+        "heading": "6. Limitation of Liability",
+        "paragraphs": [
+          "To the maximum extent permitted by law, ClashConverter and its maintainers shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of data, profits, or connectivity, arising from your use of or inability to use the Site or any configuration it generates — even if we have been advised of the possibility of such damages."
+        ]
+      },
+      {
+        "heading": "7. Advertising",
+        "paragraphs": [
+          "The Site may display third-party advertisements, including ads served by Google AdSense. Advertising content is the responsibility of the advertiser, and the presence of an advertisement does not imply our endorsement of the advertised product or service. See our Privacy Policy for how advertising cookies work and how to opt out."
+        ]
+      },
+      {
+        "heading": "8. Changes to the Site and These Terms",
+        "paragraphs": [
+          "We may modify or discontinue any part of the Site at any time, and we may update these Terms from time to time. The \"Last updated\" date at the top reflects the current version. Material changes will be posted on this page; continued use of the Site after changes take effect constitutes acceptance of the updated Terms."
+        ]
+      },
+      {
+        "heading": "9. Contact",
+        "paragraphs": [
+          "Questions about these Terms can be sent to clashconverter@gmail.com or raised as an issue at https://github.com/sunway910/clashconverter/issues."
+        ]
+      }
+    ]
+  },
+  "contactPage": {
+    "title": "Contact Us",
+    "intro": "Questions, bug reports, feature requests, or privacy inquiries — we want to hear them. ClashConverter is an open-source project maintained in public, and there are two fast ways to reach the maintainers.",
+    "channels": [
+      {
+        "name": "Email",
+        "desc": "clashconverter@gmail.com",
+        "note": "Best for privacy requests, abuse reports, and anything you would rather not discuss publicly.",
+        "href": "mailto:clashconverter@gmail.com",
+        "cta": "Send Email"
+      },
+      {
+        "name": "GitHub Issues",
+        "desc": "github.com/sunway910/clashconverter/issues",
+        "note": "Best for bug reports, protocol support requests, and feature ideas. Issues are public, which also helps other users with the same question.",
+        "href": "https://github.com/sunway910/clashconverter/issues",
+        "cta": "Open an Issue"
+      }
+    ],
+    "beforeTitle": "Before You Write",
+    "beforeItems": [
+      "Conversion questions: check the FAQ on the homepage first — most questions about filtered nodes, kernel differences, and import steps are answered there.",
+      "Client download problems: the download buttons on the Resources page point to each project's official repository or store listing; for installation issues, the client's own issue tracker is the fastest route.",
+      "Privacy requests: mention \"Privacy\" in the subject line so your message is routed quickly. We aim to respond within 30 days."
+    ],
+    "responseTitle": "Response Time",
+    "response": "ClashConverter is an open-source project maintained in our spare time, so we cannot promise instant replies — most messages get a response within a few days, and privacy requests within 30 days at the latest."
+  },
   "resources": {
     "menuTitle": "Resources",
     "title": "Resources & Downloads",

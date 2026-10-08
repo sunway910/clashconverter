@@ -60,23 +60,25 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
     return (
-        <>
-            <PerformancePreconnects/>
-            <HreflangLinks locale={locale}/>
-            <div className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-                <GoogleAnalytics gaId={GA_ID || ''}/>
-                <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-                    <NextIntlClientProvider messages={messages}>
-                        <div className="flex min-h-screen flex-col">
-                            <div className="flex-1">
-                                {children}
+        <html lang={locale === 'zh' ? 'zh-CN' : 'en'} suppressHydrationWarning>
+            <body suppressHydrationWarning>
+                <PerformancePreconnects/>
+                <HreflangLinks locale={locale}/>
+                <div className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+                    <GoogleAnalytics gaId={GA_ID || ''}/>
+                    <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+                        <NextIntlClientProvider messages={messages}>
+                            <div className="flex min-h-screen flex-col">
+                                <div className="flex-1">
+                                    {children}
+                                </div>
+                                <Footer/>
                             </div>
-                            <Footer/>
-                        </div>
-                        <Toaster richColors position="top-center"/>
-                    </NextIntlClientProvider>
-                </ThemeProvider>
-            </div>
-        </>
+                            <Toaster richColors position="top-center"/>
+                        </NextIntlClientProvider>
+                    </ThemeProvider>
+                </div>
+            </body>
+        </html>
     );
 }

@@ -8,6 +8,207 @@
     "contact": "联系",
     "connect": "联系我们"
   },
+  "footerNav": {
+    "siteTitle": "站内导航",
+    "tool": "转换工具",
+    "resources": "资源下载",
+    "about": "关于",
+    "contact": "联系我们",
+    "privacy": "隐私政策",
+    "terms": "服务条款",
+    "connectTitle": "保持联系",
+    "tagline": "免费、纯前端的代理链接与 Clash / Sing-Box / Loon 配置转换工具，数据永不上传。"
+  },
+  "privacyPage": {
+    "title": "隐私政策",
+    "updated": "最后更新：2026 年 10 月 9 日",
+    "intro": "本隐私政策说明 ClashConverter（「我们」，即 https://clashconverter.com，下称「本网站」）在你访问本站或使用转换工具时如何处理信息。简单来说：你转换的代理链接和配置文件永远不会离开你的浏览器。我们有意识地只收集尽可能少的数据——但和绝大多数网站一样，本站使用了 Cookie 以及用于统计与广告的第三方服务，我们希望就此向你作出清晰、坦诚的说明。",
+    "sections": [
+      {
+        "heading": "1. 我们是谁",
+        "paragraphs": [
+          "ClashConverter 是一个免费、开源的纯前端网络工具，用于在代理分享链接（SS、SSR、VMess、VLESS、Trojan、Hysteria、Hysteria2、HTTP、SOCKS5）与各类客户端配置格式（Clash Meta (Mihomo)、Clash Premium、Sing-Box、Loon、QuantumultX、Surfboard）之间相互转换。项目源代码在 GitHub 上公开，如对本政策有任何疑问，可通过下方「联系我们」一节列出的渠道与我们取得联系。"
+        ]
+      },
+      {
+        "heading": "2. 你的配置数据永远不会离开你的浏览器",
+        "paragraphs": [
+          "这是本政策最重要的部分。ClashConverter 的全部解析、校验与转换都完全在你的浏览器内、由运行在你自己设备上的 JavaScript 完成。",
+          "你输入的代理链接、服务器地址、端口、UUID、密码、订阅链接以及生成的配置文件，不会被传输、存储或记录到我们的任何服务器。整个过程没有上传环节，也没有服务端处理。关闭浏览器标签页后，你输入的一切即被清除。这不仅是政策层面的承诺，更是这个工具本身可验证的技术特性——我们的源代码完全开放，任何人都可以核实。"
+        ]
+      },
+      {
+        "heading": "3. 我们收集的信息",
+        "paragraphs": [
+          "我们不提供用户账号系统，也不会索取你的姓名、电子邮箱或支付信息。会到达我们或我们服务商的信息只有以下几类："
+        ],
+        "items": [
+          "语言偏好。我们会存储一个名为 NEXT_LOCALE 的 Cookie（有效期一年），用于记住你偏好中文版还是英文版。它不包含任何个人数据。",
+          "访问统计。我们使用 Google Analytics 收集汇总的匿名统计信息，例如访问了哪些页面、访问时长、浏览器与设备类型，以及由 IP 地址推断的大致地理区域。这些报告中绝不包含你粘贴进转换器的任何内容。",
+          "广告相关数据。当页面展示广告时，Google 及其广告合作方可能会按第 5 节所述收集相关信息。"
+        ]
+      },
+      {
+        "heading": "4. Cookie",
+        "paragraphs": [
+          "Cookie 是网站存储在你设备上的小型文本文件。本站使用一个第一方 Cookie（NEXT_LOCALE，如上所述）来记住你的语言选择。",
+          "在本站提供内容的第三方——包括 Google（用于 Analytics 与 AdSense）——在其服务器与你的浏览器通信时，也可能设置它们自己的 Cookie。这些 Cookie 受相应第三方自身隐私政策的约束，第 9 节说明了你如何控制或删除它们。"
+        ]
+      },
+      {
+        "heading": "5. 广告与 Google AdSense",
+        "paragraphs": [
+          "包括 Google 在内的第三方广告服务商会使用 Cookie 在本站投放广告。Google 借助广告 Cookie，能够根据你对本站及互联网上其他站点的访问记录向你展示广告。",
+          "这一过程可能涉及 DoubleClick DART Cookie 及类似的广告标识符。这些标识符是假名化的：它们与你的浏览器关联，而与你的姓名、电子邮箱或其他可直接识别身份的信息无关。我们绝不会向广告网络发送你的代理配置数据。",
+          "你可以访问 Google 广告设置页面（https://adssettings.google.com）关闭个性化广告，也可以在 https://www.aboutads.info/choices 选择退出第三方服务商用于个性化广告的 Cookie。对于来自欧洲经济区、英国和瑞士的访客，在投放个性化广告之前，我们会展示符合 Google 欧盟用户同意政策要求的同意提示，你可以随时通过该提示更改或撤回选择。",
+          "在法律有要求的地区，我们同样认可全局隐私控制（Global Privacy Control, GPC）信号作为有效的退出方式。"
+        ]
+      },
+      {
+        "heading": "6. 访问统计（Analytics）",
+        "paragraphs": [
+          "我们使用 Google Analytics 了解本站的使用情况——例如哪些页面访问最多、访客在哪里遇到问题。Google Analytics 使用 Cookie 收集这些信息，并以汇总形式向我们报告。你可以查阅 Google 的隐私实践说明（https://policies.google.com/privacy），也可以通过安装官方浏览器插件（https://tools.google.com/dlpage/gaoptout）阻止 Google Analytics 收集你的数据。"
+        ]
+      },
+      {
+        "heading": "7. 我们不收集的信息",
+        "paragraphs": [
+          "明确起见，我们绝不会做以下任何事情："
+        ],
+        "items": [
+          "不会在任何服务器上接收、存储或处理你的代理链接、订阅地址或配置文件。",
+          "不会向广告或统计服务商发送个人信息（如电子邮箱或账号凭据）。",
+          "不收集精确定位数据，也不会请求浏览器的定位权限。",
+          "不向任何人出售个人信息。",
+          "不会有意收集 13 周岁以下（欧洲经济区/英国为 16 周岁以下）儿童的个人信息。"
+        ]
+      },
+      {
+        "heading": "8. 欧洲经济区、英国及瑞士访客",
+        "paragraphs": [
+          "如果你来自上述地区，依据《通用数据保护条例》（GDPR）及同等法律，你享有更多权利，包括访问、更正、删除个人数据，反对或限制某些处理活动，以及向当地数据保护机构投诉。由于我们的统计与广告服务商基于你的同意进行处理，你可以随时撤回同意——广告方面使用第 5 节所述的同意提示，统计方面使用第 6 节列出的工具。撤回同意不影响撤回前已完成处理的合法性。就本政策所述的有限处理而言，我们的合法性基础分别是：同意（用于非必要 Cookie）与合法利益（用于必要的语言偏好 Cookie）。"
+        ]
+      },
+      {
+        "heading": "9. 你的选择",
+        "paragraphs": [
+          "你始终可以掌控 Cookie 与广告标识符："
+        ],
+        "items": [
+          "个性化广告：访问 https://adssettings.google.com 或 https://www.aboutads.info/choices 退出。",
+          "Google Analytics：安装官方退出插件 https://tools.google.com/dlpage/gaoptout。",
+          "全部 Cookie：你可以在浏览器设置中清除或阻止 Cookie。阻止 NEXT_LOCALE 唯一的影响是本站无法记住你的语言偏好。"
+        ]
+      },
+      {
+        "heading": "10. 数据安全",
+        "paragraphs": [
+          "本站全程通过 HTTPS 提供。由于配置转换在客户端完成，你最敏感的数据（代理凭据）根本不会进入向我们传输的过程——这是最强大的数据保护方式：不收集。任何互联网传输方式都无法做到 100% 安全，但本工具的架构把可能暴露的数据降到了最低。"
+        ]
+      },
+      {
+        "heading": "11. 政策变更",
+        "paragraphs": [
+          "随着本站或适用法律的变化，我们可能不时更新本隐私政策。重大变更会体现在本页顶部的「最后更新」日期中。更新后继续使用本站即表示你接受修订后的政策。"
+        ]
+      },
+      {
+        "heading": "12. 联系我们",
+        "paragraphs": [
+          "如果你对本政策或本站的信息处理方式有任何疑问、请求或投诉，请发送邮件至 clashconverter@gmail.com，或在 https://github.com/sunway910/clashconverter/issues 提交 issue。我们的目标是在 30 天内回复与隐私相关的请求。"
+        ]
+      }
+    ]
+  },
+  "termsPage": {
+    "title": "服务条款",
+    "updated": "最后更新：2026 年 10 月 9 日",
+    "intro": "本服务条款（下称「条款」）适用于你对 ClashConverter（https://clashconverter.com，下称「本网站」）的使用。使用本网站即表示你同意本条款；如不同意，请勿使用本网站。",
+    "sections": [
+      {
+        "heading": "1. 本网站提供什么",
+        "paragraphs": [
+          "ClashConverter 是一个免费的纯前端工具，用于在代理分享链接与配置文件的不同格式之间相互转换——例如将代理链接转换为 Clash Meta YAML，或将 Clash YAML 转回代理链接。所有处理均在你的浏览器内完成。我们不提供任何代理服务、服务器或网络接入，也与本站提及的任何代理客户端项目无隶属关系。"
+        ]
+      },
+      {
+        "heading": "2. 不作担保",
+        "paragraphs": [
+          "本网站按「现状」和「现有」基础提供，不附带任何明示或默示的保证。虽然我们对转换器进行了仔细测试，但不保证生成的配置没有错误、完整无缺，或与所有客户端及内核版本兼容，也不保证本网站服务不中断。你有责任在使用前检查生成的配置，并在转换前妥善备份原始文件。"
+        ]
+      },
+      {
+        "heading": "3. 合理使用",
+        "paragraphs": [
+          "你同意仅将本网站用于合法目的。不得将本网站用于转换或分发与任何违反适用法律、或违反任何网络或服务提供方服务条款之活动相关的内容。我们仅提供格式转换工具；你如何使用生成的配置，由你自行承担责任。"
+        ]
+      },
+      {
+        "heading": "4. 知识产权",
+        "paragraphs": [
+          "本网站的源代码以开源方式发布在公开的 GitHub 仓库中，遵循其附带许可证。「Clash」「Clash Meta」「Mihomo」「Sing-Box」「Loon」「QuantumultX」「Surfboard」「Shadowrocket」以及本站提及的其他产品名称，均为其各自所有者的商标或项目名称。相关引用仅用于标识与互操作性说明，不构成任何背书或隶属关系的声明。"
+        ]
+      },
+      {
+        "heading": "5. 第三方链接与下载",
+        "paragraphs": [
+          "资源页面提供了指向 GitHub、App Store 及其他平台上第三方客户端和工具的链接。这些链接仅为方便而提供。我们不对第三方软件及其安全性、许可或可用性进行控制、背书或承担责任。请始终从官方渠道下载软件，并在安装前对软件进行审阅。"
+        ]
+      },
+      {
+        "heading": "6. 责任限制",
+        "paragraphs": [
+          "在法律允许的最大范围内，ClashConverter 及其维护者不对因使用或无法使用本网站、或使用其生成的任何配置而产生的任何间接、附带、特殊、后果性或惩罚性损害，以及任何数据、利润或连接性损失承担责任——即使我们已被告知此类损害发生的可能性。"
+        ]
+      },
+      {
+        "heading": "7. 广告",
+        "paragraphs": [
+          "本网站可能展示第三方广告，包括由 Google AdSense 投放的广告。广告内容的责任主体是广告主；广告的出现不代表我们对该产品或服务的背书。关于广告 Cookie 的工作方式及退出方法，请参阅我们的隐私政策。"
+        ]
+      },
+      {
+        "heading": "8. 网站与条款变更",
+        "paragraphs": [
+          "我们可能随时修改或暂停本网站的任何部分，并可能不时更新本条款。页面顶部的「最后更新」日期反映当前版本。重大变更将在本页面公布；变更生效后继续使用本网站即表示你接受更新后的条款。"
+        ]
+      },
+      {
+        "heading": "9. 联系方式",
+        "paragraphs": [
+          "如对本条款有疑问，可发送邮件至 clashconverter@gmail.com，或在 https://github.com/sunway910/clashconverter/issues 提交 issue。"
+        ]
+      }
+    ]
+  },
+  "contactPage": {
+    "title": "联系我们",
+    "intro": "疑问、缺陷报告、功能建议或隐私相关的请求——我们都愿意听取。ClashConverter 是一个公开维护的开源项目，你可以通过以下两种快速方式与维护者取得联系。",
+    "channels": [
+      {
+        "name": "电子邮箱",
+        "desc": "clashconverter@gmail.com",
+        "note": "适合隐私相关的请求、滥用举报，以及任何你不方便公开讨论的问题。",
+        "href": "mailto:clashconverter@gmail.com",
+        "cta": "发送邮件"
+      },
+      {
+        "name": "GitHub Issues",
+        "desc": "github.com/sunway910/clashconverter/issues",
+        "note": "适合缺陷报告、协议支持请求和功能建议。Issue 是公开的，也能帮助遇到同样问题的其他用户。",
+        "href": "https://github.com/sunway910/clashconverter/issues",
+        "cta": "提交 Issue"
+      }
+    ],
+    "beforeTitle": "写邮件之前",
+    "beforeItems": [
+      "转换相关问题：请先查看首页的常见问题（FAQ）——关于节点被过滤、内核差异、导入步骤等大多数问题都有解答。",
+      "客户端下载问题：资源页面的下载按钮均指向各项目的官方仓库或官方商店页面；如遇安装问题，客户端项目自己的 issue 区是更快的求助渠道。",
+      "隐私相关请求：请在邮件主题中注明「隐私」，以便尽快处理。我们的目标是在 30 天内回复。"
+    ],
+    "responseTitle": "响应时间",
+    "response": "ClashConverter 是维护者利用业余时间维护的开源项目，因此无法承诺即时回复——大多数消息会在数日内得到回复，隐私相关的请求最迟不超过 30 天。"
+  },
   "resources": {
     "menuTitle": "资源",
     "title": "资源与下载",

@@ -29,6 +29,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
       changeFrequency: 'weekly' as const,
       lastModified: currentDate
+    },
+    {
+      path: '/privacy',
+      priority: 0.3,
+      changeFrequency: 'yearly' as const,
+      lastModified: currentDate
+    },
+    {
+      path: '/terms',
+      priority: 0.3,
+      changeFrequency: 'yearly' as const,
+      lastModified: currentDate
+    },
+    {
+      path: '/contact',
+      priority: 0.3,
+      changeFrequency: 'yearly' as const,
+      lastModified: currentDate
     }
   ];
 

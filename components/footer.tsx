@@ -1,53 +1,84 @@
 "use client"
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { Mail, Github, ArrowUpRight } from 'lucide-react';
-import { useState } from 'react';
+import Link from 'next/link';
 
 const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'clashconverter@gmail.com';
+const GITHUB_URL = 'https://github.com/sunway910/clashconverter';
 
 export function Footer() {
-  const t = useTranslations('footer');
+  const t = useTranslations('footerNav');
+  const tFooter = useTranslations('footer');
+  const locale = useLocale();
   const currentYear = new Date().getFullYear();
-  const [showEmail, setShowEmail] = useState(false);
+
+  const navLinks = [
+    { href: `/${locale}`, label: t('tool') },
+    { href: `/${locale}/resources`, label: t('resources') },
+    { href: `/${locale}/about`, label: t('about') },
+    { href: `/${locale}/contact`, label: t('contact') },
+    { href: `/${locale}/privacy`, label: t('privacy') },
+    { href: `/${locale}/terms`, label: t('terms') },
+  ];
 
   return (
     <footer className="w-full py-8 md:py-12 bg-neo-card/50 dark:bg-neo-card-dark/50 backdrop-blur-sm border-t border-neo-border dark:border-neo-border-dark">
       <div className="mx-auto max-w-6xl px-4 md:px-8">
 
-        {/* Main Footer Content - Clean horizontal layout */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-6 md:gap-8">
+        {/* Main Footer Content - Three-column layout */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-6">
 
-          {/* Left: Brand & Copyright */}
-          <div className="flex flex-col items-center md:items-start gap-3">
-            {/* Brand */}
+          {/* Column 1: Brand & Copyright */}
+          <div className="flex flex-col items-center md:items-start gap-3 text-center md:text-left">
             <span className="neo-label text-neo-muted dark:text-neo-muted-light tracking-wide">
               CLASH CONVERTER
             </span>
-
-            {/* Copyright */}
+            <p className="text-sm text-neo-muted dark:text-neo-muted-light max-w-xs">
+              {t('tagline')}
+            </p>
             <p className="text-sm text-neo-muted dark:text-neo-muted-light font-medium">
-              © {currentYear} {t('rights')}
+              © {currentYear} {tFooter('rights')}
             </p>
           </div>
 
-          {/* Right: Action Buttons */}
-          <div className="flex items-center gap-2">
-            {/* Email Button */}
-            <button
-              onClick={() => setShowEmail(true)}
+          {/* Column 2: Site Navigation */}
+          <nav
+            aria-label="Footer navigation"
+            className="flex flex-col items-center md:items-start gap-2"
+          >
+            <span className="neo-label text-neo-muted dark:text-neo-muted-light tracking-wide mb-1">
+              {t('siteTitle')}
+            </span>
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-sm text-neo-muted dark:text-neo-muted-light hover:text-neo-foreground dark:hover:text-white transition-colors duration-200"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+
+          {/* Column 3: Connect */}
+          <div className="flex flex-col items-center md:items-start gap-2">
+            <span className="neo-label text-neo-muted dark:text-neo-muted-light tracking-wide mb-1">
+              {t('connectTitle')}
+            </span>
+
+            {/* Email */}
+            <a
+              href={`mailto:${CONTACT_EMAIL}`}
               className="group flex items-center gap-2 px-4 py-2 text-sm font-medium text-neo-muted dark:text-neo-muted-light hover:text-neo-foreground dark:hover:text-white transition-all duration-200 border border-neo-border dark:border-neo-border-dark hover:border-neo-foreground/30 dark:hover:border-white/30 rounded-md"
-              type="button"
-              aria-label={showEmail ? 'Hide contact email' : 'Show contact email'}
             >
               <Mail className="w-4 h-4" />
-              <span className="hidden sm:inline">
-                {showEmail ? CONTACT_EMAIL : t('contact')}
-              </span>
-            </button>
+              <span className="hidden sm:inline">{CONTACT_EMAIL}</span>
+              <span className="sm:hidden">{tFooter('contact')}</span>
+            </a>
 
-            {/* GitHub Button */}
+            {/* GitHub */}
             <a
-              href="https://github.com/sunway910/clashconverter"
+              href={GITHUB_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="group flex items-center gap-2 px-4 py-2 text-sm font-medium text-neo-muted dark:text-neo-muted-light hover:text-neo-foreground dark:hover:text-white transition-all duration-200 border border-neo-border dark:border-neo-border-dark hover:border-neo-foreground/30 dark:hover:border-white/30 rounded-md"
@@ -58,7 +89,6 @@ export function Footer() {
             </a>
           </div>
         </div>
-
 
       </div>
     </footer>
