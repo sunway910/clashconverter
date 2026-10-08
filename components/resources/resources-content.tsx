@@ -14,7 +14,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Download, Server, ArrowLeft, Smartphone, Shield, Radar } from 'lucide-react';
+import { Download, Server, ArrowLeft, Smartphone, Shield, Radar, BookOpen } from 'lucide-react';
 import Link from 'next/link';
 
 const clients = [
@@ -147,6 +147,73 @@ export function ResourcesContent() {
             </Card>
           ))}
         </div>
+      </div>
+
+      {/* Client Selection Guide Section */}
+      <div className="mb-16 md:mb-20">
+        <div className="flex items-center gap-3 mb-8">
+          <div className="p-3 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 dark:from-amber-600 dark:to-orange-700 shadow-lg">
+            <BookOpen className="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <h2 className="text-2xl md:text-3xl font-bold text-stone-900 dark:text-stone-100">
+              {t('resources.guide.title')}
+            </h2>
+            <p className="text-stone-600 dark:text-stone-400 max-w-2xl">
+              {t('resources.guide.intro')}
+            </p>
+          </div>
+        </div>
+
+        {/* Pick by platform */}
+        <h3 className="text-lg font-semibold text-stone-900 dark:text-stone-100 mb-4">
+          {t('resources.guide.byPlatform.title')}
+        </h3>
+        <div className="grid gap-4 sm:grid-cols-3 mb-8">
+          {(['windows', 'android', 'ios'] as const).map((platform) => (
+            <Card key={platform} className="p-4 border-stone-200 dark:border-stone-800">
+              <h4 className="font-semibold text-stone-900 dark:text-stone-100 mb-2">
+                {t(`resources.guide.byPlatform.${platform}.title`)}
+              </h4>
+              <p className="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">
+                {t(`resources.guide.byPlatform.${platform}.desc`)}
+              </p>
+            </Card>
+          ))}
+        </div>
+
+        {/* Protocol compatibility */}
+        <div className="p-6 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 dark:from-stone-900 dark:to-stone-800 border border-amber-200 dark:border-stone-700 mb-8">
+          <h3 className="font-semibold text-stone-900 dark:text-stone-100 mb-2">
+            {t('resources.guide.byProtocol.title')}
+          </h3>
+          <p className="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">
+            {t('resources.guide.byProtocol.desc')}
+          </p>
+        </div>
+
+        {/* Import steps */}
+        <h3 className="text-lg font-semibold text-stone-900 dark:text-stone-100 mb-4">
+          {t('resources.guide.import.title')}
+        </h3>
+        <div className="space-y-4 mb-6">
+          {t.raw('resources.guide.import.steps').map((step: { title: string; desc: string }, index: number) => (
+            <div key={step.title} className="flex gap-4">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-stone-900 dark:bg-stone-100 text-stone-100 dark:text-stone-900 flex items-center justify-center font-bold text-sm">
+                {index + 1}
+              </div>
+              <div>
+                <h4 className="font-semibold text-stone-900 dark:text-stone-100 mb-1">{step.title}</h4>
+                <p className="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">{step.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Official sources note */}
+        <p className="text-sm text-stone-500 dark:text-stone-400 leading-relaxed border-l-2 border-stone-300 dark:border-stone-700 pl-4">
+          {t('resources.guide.officialSources')}
+        </p>
       </div>
 
       {/* Proxy Node Installation Section */}

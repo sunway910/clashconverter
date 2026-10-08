@@ -227,6 +227,51 @@
       "description": "立即将您的代理链接转换为 Clash 或 Sing-Box 格式",
       "button": "开始转换"
     },
+    "guide": {
+      "title": "如何选择合适的代理客户端",
+      "intro": "面对上面九款客户端，选哪一个取决于三个问题：你用什么设备？节点使用哪些协议？你想控制多少配置细节？",
+      "byPlatform": {
+        "title": "按平台选择",
+        "windows": {
+          "title": "Windows / macOS / Linux",
+          "desc": "Clash Verge Rev、Clash Party (Mihomo) 和 FlClash 都是基于 Clash Meta (Mihomo) 内核的完整桌面客户端——支持本站能转换的全部协议，包括 VLESS 和 Hysteria2。FlClash 还支持 Android。"
+        },
+        "android": {
+          "title": "Android",
+          "desc": "Clash Meta for Android（官方 Mihomo 客户端）、FlClash 或 V2RayNG。前两者可直接导入 Clash YAML 配置；如果你的节点只是普通分享链接，V2RayNG 更合适。"
+        },
+        "ios": {
+          "title": "iOS / iPadOS",
+          "desc": "Loon、Shadowrocket 或 Sing-Box——均为 App Store 付费应用，支持分应用规则、脚本和模块系统。转换前请先确认各应用支持的协议：iOS 客户端对协议的限制最严格。"
+        }
+      },
+      "byProtocol": {
+        "title": "先确认协议兼容性",
+        "desc": "这在 iOS 和老内核上尤其重要：Clash Premium 配置不能包含 VLESS 或 Hysteria 节点，Loon 则完全不支持 HTTP/SOCKS5 条目。在转换器中选择输出格式时，不兼容的节点会被自动过滤并提示——但从一开始就选对目标格式，才能避免丢失节点。首页的协议支持矩阵明确列出了每种格式保留哪些协议。"
+      },
+      "import": {
+        "title": "从转换完成到成功连接",
+        "steps": [
+          {
+            "title": "转换你的链接",
+            "desc": "把分享链接（或订阅链接）粘贴到首页的转换器中，选择与客户端匹配的输出格式。"
+          },
+          {
+            "title": "下载配置文件",
+            "desc": "点击下载按钮保存生成的 YAML/JSON/INI 文件，或直接复制到剪贴板。"
+          },
+          {
+            "title": "导入客户端",
+            "desc": "桌面 Clash 客户端：配置 → 导入 → 选择文件。Loon / Shadowrocket：配置 → 从文件导入或粘贴文本。Sing-Box 应用：配置 → 新建 → 粘贴 JSON。"
+          },
+          {
+            "title": "选择节点并测试",
+            "desc": "选择一个代理分组（生成的配置已内置现成的选择分组），挑选节点，然后运行客户端的延迟测试确认连通性。"
+          }
+        ]
+      },
+      "officialSources": "本页所有下载按钮均指向各项目的官方 GitHub 仓库发布页或官方 App Store 页面。我们绝不重新托管或镜像客户端安装包。"
+    },
     "detectors": {
       "title": "连通性检测工具",
       "description": "检查您的 IP 或端口是否被防火墙拦截",
@@ -343,6 +388,164 @@
         "url": "https://github.com/Gozargah/Marzban"
       }
     }
+  },
+  "homeContent": {
+    "lastUpdated": "最后更新：2026 年 10 月 9 日",
+    "intro": {
+      "title": "Clash 转换器是什么？",
+      "paragraphs": [
+        "Clash Converter 是一个免费的在线工具，可以把代理分享链接转换为各大代理客户端可直接使用的配置文件，也能把配置文件反向转换回可分享的链接。它支持九种协议（Shadowsocks、ShadowsocksR、VMess、VLESS、Trojan、Hysteria、Hysteria2、HTTP、SOCKS5），以及六种输出目标：Clash Meta (Mihomo)、Clash Premium、Sing-Box、Loon、QuantumultX 和 Surfboard。",
+        "这个工具的存在，是因为代理配置生态高度碎片化：一条 vmess:// 链接无法直接粘贴进大多数客户端，一份 Clash YAML 配置在 Sing-Box 应用里毫无用处，而手动改写意味着直接编辑 base64、JSON 或 YAML，任何一个小错都会导致配置失效。Clash Converter 把这个翻译过程自动化：粘贴输入、选择目标格式，几秒钟内就能得到可下载的配置。",
+        "与很多在线转换器不同，本工具的全部工作都在你的浏览器内完成。你的链接、服务器地址和凭据永远不会上传到任何服务器——详见下方的隐私章节。"
+      ]
+    },
+    "inputs": {
+      "title": "支持的输入格式",
+      "intro": "Clash Converter 接受三类输入，并会自动识别格式：",
+      "subsections": [
+        {
+          "title": "代理分享链接",
+          "paragraphs": [
+            "每行一条链接，使用大多数订阅和节点分享采用的标准 URI 格式：ss://、ssr://、vmess://、vless://、trojan://、hysteria://、hysteria2://、http://、socks5://。链接中 # 符号后面的文字会成为生成配置里的节点名称，因此带名称的链接会生成出整洁有序的配置。加密（base64）载荷会自动解码，包括部分服务商使用的 URL-safe base64 变体。"
+          ]
+        },
+        {
+          "title": "Clash YAML 配置",
+          "paragraphs": [
+            "粘贴完整的 Clash 配置文件，并把工具切换到「YAML 转链接」模式。proxies 区段中的每一条代理都会被提取并转换回可分享的链接形式——适用于把现有配置迁移到只接受链接的客户端，或从大型订阅文件中拆出单个节点。"
+          ]
+        },
+        {
+          "title": "Sing-Box JSON",
+          "paragraphs": [
+            "JSON 格式的 Sing-Box 配置同样可以导入，其 outbound 条目会被转换回代理链接。这打通了 Clash 与 Sing-Box 这两大配置生态之间的回路。"
+          ]
+        }
+      ]
+    },
+    "outputs": {
+      "title": "支持的输出格式",
+      "intro": "选择与你的客户端匹配的输出格式。每种目标支持的协议不同，详见下方的支持矩阵：",
+      "subsections": [
+        {
+          "title": "Clash Meta (Mihomo) —— 推荐",
+          "paragraphs": [
+            "持续维护中的 Clash 内核，也是大多数用户最稳妥的默认选择。Clash Meta 支持本工具可转换的全部九种协议，包括原版内核从未支持过的 VLESS、Hysteria、Hysteria2 等现代协议。Clash Verge Rev、Clash Party 等主流桌面客户端都基于它，且更新频繁。"
+          ]
+        },
+        {
+          "title": "Clash Premium",
+          "paragraphs": [
+            "原版 Clash 内核，已于 2023 年停止维护，但少数老客户端仍依赖它。它支持 SS、SSR、VMess、Trojan、HTTP、SOCKS5，无法加载 VLESS、Hysteria、Hysteria2 节点。如果你的链接包含这些协议，工具会自动过滤并明确告知过滤了多少节点——不会出现静默失败。"
+          ]
+        },
+        {
+          "title": "Sing-Box",
+          "paragraphs": [
+            "一个通用代理平台，对现代协议（SS、VMess、VLESS、Trojan、Hysteria、Hysteria2、HTTP）提供一流支持，并有 Android、iOS、Windows、macOS、Linux 原生客户端。输出为 JSON 格式。SSR 与 SOCKS5 条目不属于 Sing-Box 格式，会被过滤并给出提示。"
+          ]
+        },
+        {
+          "title": "Loon",
+          "paragraphs": [
+            "功能强大的 iOS 客户端，采用 INI 风格配置，支持丰富的脚本与规则自定义。Loon 配置支持 SS、SSR、VMess、Trojan 节点；生成的文件内置现成的代理分组和规则集，导入即可使用。"
+          ]
+        },
+        {
+          "title": "QuantumultX",
+          "paragraphs": [
+            "老牌 iOS 客户端，以精细的规则与重写系统著称。它支持 SS、SSR、VMess、Trojan、HTTP、SOCKS5 链接；VLESS 与 Hysteria 系列协议在该平台不可用，会被相应过滤。"
+          ]
+        },
+        {
+          "title": "Surfboard",
+          "paragraphs": [
+            "兼容 Surge 的客户端，支持 SS、VMess、Trojan、HTTP、SOCKS5、Hysteria2。配置以 Surfboard 所期望的 Surge 兼容 INI 风格生成，并附带精简的代理分组结构。"
+          ]
+        }
+      ]
+    },
+    "matrix": {
+      "title": "协议支持矩阵",
+      "intro": "各协议可被转换到哪些目标格式：",
+      "note": "当目标格式不支持某个协议时，工具会过滤这些节点并显示确切的过滤数量，而不是生成一份损坏的配置。"
+    },
+    "steps": {
+      "title": "如何转换代理链接（三步）",
+      "items": [
+        {
+          "title": "粘贴输入",
+          "desc": "把代理链接（每行一条）、Clash YAML、Sing-Box JSON 或订阅链接粘贴到输入编辑器。格式会自动识别；订阅链接会在你确认后自动抓取并展开。"
+        },
+        {
+          "title": "选择目标格式",
+          "desc": "在格式选择器中选择 Clash Meta、Clash Premium、Sing-Box、Loon、QuantumultX 或 Surfboard。转换前，内核特性面板会说明每种格式支持哪些能力。"
+        },
+        {
+          "title": "下载或复制",
+          "desc": "转换结果即时生成。可下载为文件或复制到剪贴板，然后导入客户端。如有不兼容节点，会在通知中列出。"
+        }
+      ]
+    },
+    "privacy": {
+      "title": "隐私优先",
+      "paragraphs": [
+        "每一次转换都在你的浏览器本地完成。没有上传接口、没有队列、没有日志：你的代理链接、订阅地址、服务器凭据和生成的文件从不经过任何服务器。关闭标签页，你输入的一切即被清除。",
+        "这是刻意的设计决策，不是营销话术——转换引擎就是一段随页面下发到你浏览器的普通 JavaScript，这也意味着页面加载完成后，即使网络不稳，工具依然可用。本站收集与不收集哪些信息的完整说明，请见隐私政策。"
+      ]
+    },
+    "opensource": {
+      "title": "免费、开源、持续维护",
+      "paragraphs": [
+        "Clash Converter 完全免费：没有账号系统、没有使用上限、没有注册墙。包括解析器、生成器和本站在内的全部代码都在 GitHub 上开源，你可以审查数据的确切处理方式，也可以自行部署。",
+        "协议支持跟随生态演进：新的传输方式或协议变体被广泛采用后，解析器与适配器会随之更新。欢迎通过联系页面或仓库 issue 提交缺陷报告和协议支持请求。"
+      ]
+    },
+    "faq": {
+      "title": "常见问题",
+      "items": [
+        {
+          "q": "使用这个转换器需要安装什么吗？",
+          "a": "不需要。Clash Converter 完全在浏览器中运行，Windows、macOS、Linux、Android、iOS 均可使用。你唯一会下载的东西，就是转换生成的配置文件本身。"
+        },
+        {
+          "q": "把代理链接粘贴到这里安全吗？",
+          "a": "安全。转换在你的浏览器本地完成，链接和凭据不会被发送到或存储在任何服务器上。代码开源，这个说法可验证，而不只是承诺。"
+        },
+        {
+          "q": "Clash Meta 和 Clash Premium 有什么区别？",
+          "a": "Clash Meta (Mihomo) 是持续维护的内核，完整支持 VLESS、Hysteria、Hysteria2。Clash Premium 是原版内核，2023 年已停止维护，不支持这些新协议。除非老客户端强制要求 Premium，否则请选 Meta。"
+        },
+        {
+          "q": "为什么有些节点在输出里消失了？",
+          "a": "部分目标格式无法表达所有协议——例如 Clash Premium 不能包含 VLESS 节点，Loon 不能包含 HTTP 代理。工具会过滤不支持的节点，并显示确切的过滤数量，而不是生成无效文件。"
+        },
+        {
+          "q": "可以转换订阅链接吗？",
+          "a": "可以。粘贴订阅链接并在提示中确认，工具会抓取内容、解析并转换其中的全部节点。订阅请求由你的浏览器直接发起，不经过任何服务器中转。"
+        },
+        {
+          "q": "转换出的配置能在手机上用吗？",
+          "a": "可以。选择与你的移动客户端匹配的格式——例如 iOS 上选 Loon，Android 上选 Sing-Box JSON 或 Clash Meta YAML（FlClash、Clash Meta for Android 等）——然后在应用的配置管理中导入下载的文件。"
+        },
+        {
+          "q": "工具会修改我的节点吗？",
+          "a": "它只翻译表示形式，不改动内容：服务器地址、端口、UUID、密码和传输设置原样保留。变化的只是外围语法，以及目标格式开箱即用所需的代理分组和规则。"
+        },
+        {
+          "q": "Clash Converter 真的免费吗？",
+          "a": "免费——无需注册、没有限制、不用付费。项目开源，依靠不打扰的广告维持运转；如果你愿意，也可以从 GitHub 仓库自行部署。"
+        }
+      ]
+    },
+    "cta": "准备好了吗？把链接粘贴到上方编辑器，选择目标格式——几秒钟就能完成。"
+  },
+  "aboutExtras": {
+    "openSourceTitle": "开源与维护",
+    "openSourceParagraphs": [
+      "ClashConverter 由 @sunway910 公开开发和维护。包括解析器、生成器和本站在内的完整源代码位于 github.com/sunway910/clashconverter，更新记录发布在仓库的 CHANGELOG 中。你可以审查数据的确切处理方式、提交缺陷报告，或自行部署本工具。",
+      "协议支持跟随生态演进：新的协议变体或传输方式被广泛采用后，解析器与适配器会随之更新。欢迎通过 GitHub Issues 或联系页面提交功能建议和协议支持请求。"
+    ]
   },
   "inputLabel": "输入",
   "outputLabel": "输出",

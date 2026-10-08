@@ -1,4 +1,5 @@
 import { Converter } from '@/components/converter';
+import { HomeContent } from '@/components/converter/home-content';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { LanguageToggle } from '@/components/language-toggle';
 import Image from 'next/image';
@@ -67,6 +68,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
       {/* Main Content - Entrance animation */}
       <main className="relative z-0 animate-neo-enter">
         <Converter />
+        <HomeContent />
         <JSONLDStructuredData locale={locale} type="all" pageType="home" />
       </main>
 

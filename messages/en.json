@@ -227,6 +227,51 @@
       "description": "Convert your proxy links to Clash or sing-box format now",
       "button": "Start Converting"
     },
+    "guide": {
+      "title": "How to Choose the Right Proxy Client",
+      "intro": "With nine clients listed above, picking one comes down to three questions: what device are you on, which protocols do your nodes use, and how much configuration detail do you want to control?",
+      "byPlatform": {
+        "title": "Pick by Platform",
+        "windows": {
+          "title": "Windows / macOS / Linux",
+          "desc": "Clash Verge Rev, Clash Party (Mihomo), and FlClash are full desktop clients built on the Clash Meta (Mihomo) kernel — they support every protocol this site can convert, including VLESS and Hysteria2. FlClash additionally runs on Android."
+        },
+        "android": {
+          "title": "Android",
+          "desc": "Clash Meta for Android (the official Mihomo client), FlClash, or V2RayNG. The first two import Clash YAML profiles directly; V2RayNG is the better pick if your nodes are plain share links."
+        },
+        "ios": {
+          "title": "iOS / iPadOS",
+          "desc": "Loon, Shadowrocket, or Sing-Box — paid App Store apps with per-app rules, scripting, and module systems. Check each app's supported protocols before converting: iOS clients are the most restrictive about which protocols they accept."
+        }
+      },
+      "byProtocol": {
+        "title": "Check Protocol Compatibility First",
+        "desc": "This matters most on iOS and with legacy kernels: a Clash Premium profile cannot contain VLESS or Hysteria nodes, and Loon rejects HTTP/SOCKS5 entries entirely. When you pick an output format in the converter, incompatible nodes are filtered automatically and reported — but choosing the right target format from the start avoids losing nodes. The protocol support matrix on the homepage shows exactly which formats keep which protocols."
+      },
+      "import": {
+        "title": "From Converted Config to Connected",
+        "steps": [
+          {
+            "title": "Convert your links",
+            "desc": "Paste your share links (or subscription URL) into the converter on the homepage and pick the output format that matches your client."
+          },
+          {
+            "title": "Download the config file",
+            "desc": "Use the Download button to save the generated YAML/JSON/INI file — or copy it to the clipboard."
+          },
+          {
+            "title": "Import into your client",
+            "desc": "Desktop Clash clients: Profiles → Import → select the file. Loon / Shadowrocket: Configuration → import from file or paste the text. Sing-Box apps: Profiles → New → paste the JSON."
+          },
+          {
+            "title": "Select a node and test",
+            "desc": "Choose a proxy group (the generated config includes a ready-made selector group), pick a node, and run the client's latency test to confirm connectivity."
+          }
+        ]
+      },
+      "officialSources": "All download buttons on this page link to each project's official GitHub repository releases or its official App Store listing. We never re-host or mirror client installers."
+    },
     "detectors": {
       "title": "Connectivity Detection Tools",
       "description": "Check if your IP or port is blocked by the firewall",
@@ -343,6 +388,164 @@
         "url": "https://github.com/Gozargah/Marzban"
       }
     }
+  },
+  "homeContent": {
+    "lastUpdated": "Last updated: October 9, 2026",
+    "intro": {
+      "title": "What Is Clash Converter?",
+      "paragraphs": [
+        "Clash Converter is a free online tool that converts proxy share links into ready-to-use configuration files for popular proxy clients — and converts those configuration files back into shareable links. It supports nine protocols (Shadowsocks, ShadowsocksR, VMess, VLESS, Trojan, Hysteria, Hysteria2, HTTP, and SOCKS5) and six output targets: Clash Meta (Mihomo), Clash Premium, Sing-Box, Loon, QuantumultX, and Surfboard.",
+        "The tool exists because proxy configurations are fragmented. A node that arrives as a vmess:// link cannot be pasted into most clients directly, a Clash YAML profile is useless in a Sing-Box app, and rewriting either by hand means editing base64 blobs, JSON, or YAML with zero margin for error. Clash Converter automates that translation: paste your input, pick a target format, and get a downloadable configuration in seconds.",
+        "Unlike many online converters, this tool does the work entirely in your browser. Your links, server addresses, and credentials are never uploaded to any server — more on that in the privacy section below."
+      ]
+    },
+    "inputs": {
+      "title": "Supported Input Formats",
+      "intro": "Clash Converter accepts three kinds of input and detects the format automatically:",
+      "subsections": [
+        {
+          "title": "Proxy share links",
+          "paragraphs": [
+            "One link per line, in the standard URI scheme used by most subscriptions and node sharers: ss://, ssr://, vmess://, vless://, trojan://, hysteria://, hysteria2://, http://, and socks5://. The text after the # symbol in each link becomes the node's display name in the generated configuration, so named links produce a neatly organized config. Encrypted (base64) payloads are decoded automatically, including the URL-safe base64 variants that some providers use."
+          ]
+        },
+        {
+          "title": "Clash YAML profiles",
+          "paragraphs": [
+            "Paste a complete Clash configuration file and switch the tool to YAML-to-links mode. Every proxy entry in the proxies section is extracted and converted back into its shareable link form — useful when migrating an existing profile to a client that only accepts links, or when you need to pull individual nodes out of a large subscription file."
+          ]
+        },
+        {
+          "title": "Sing-Box JSON",
+          "paragraphs": [
+            "Sing-Box configurations in JSON format can likewise be imported, and their outbound entries are converted back to proxy links. This closes the loop between the two most common configuration ecosystems: Clash and Sing-Box."
+          ]
+        }
+      ]
+    },
+    "outputs": {
+      "title": "Supported Output Formats",
+      "intro": "Choose the output that matches your client. Each target supports different protocols, summarized in the matrix below:",
+      "subsections": [
+        {
+          "title": "Clash Meta (Mihomo) — recommended",
+          "paragraphs": [
+            "The actively maintained Clash kernel, and the safest default for most users. Clash Meta supports all nine protocols this tool can convert, including the modern VLESS, Hysteria, and Hysteria2 protocols the original kernel never gained. It powers current desktop clients such as Clash Verge Rev and Clash Party, and receives regular updates."
+          ]
+        },
+        {
+          "title": "Clash Premium",
+          "paragraphs": [
+            "The original Clash kernel, discontinued in 2023 but still required by a few older clients. It supports SS, SSR, VMess, Trojan, HTTP, and SOCKS5, but cannot load VLESS, Hysteria, or Hysteria2 nodes. If your links contain those protocols, the tool filters them out and tells you exactly how many nodes were removed — so nothing silently breaks."
+          ]
+        },
+        {
+          "title": "Sing-Box",
+          "paragraphs": [
+            "A universal proxy platform with first-class support for modern protocols (SS, VMess, VLESS, Trojan, Hysteria, Hysteria2, and HTTP) and native apps on Android, iOS, Windows, macOS, and Linux. Output is JSON. SSR and SOCKS5 entries are not part of the Sing-Box format and are filtered with a notification."
+          ]
+        },
+        {
+          "title": "Loon",
+          "paragraphs": [
+            "A powerful iOS client with an INI-style configuration, rich scripting, and rule customization. Loon profiles support SS, SSR, VMess, and Trojan nodes; the generated file includes ready-made proxy groups and rule sets so the profile works immediately after import."
+          ]
+        },
+        {
+          "title": "QuantumultX",
+          "paragraphs": [
+            "A long-standing iOS client favored for its fine-grained rule and rewrite system. It supports SS, SSR, VMess, Trojan, HTTP, and SOCKS5 links; the VLESS and Hysteria protocol families are not available on this platform and are filtered accordingly."
+          ]
+        },
+        {
+          "title": "Surfboard",
+          "paragraphs": [
+            "A Surge-compatible client that accepts SS, VMess, Trojan, HTTP, SOCKS5, and Hysteria2. Configurations are generated in the Surge-compatible INI style that Surfboard expects, with a minimal proxy group structure."
+          ]
+        }
+      ]
+    },
+    "matrix": {
+      "title": "Protocol Support Matrix",
+      "intro": "Which protocols survive conversion into which target format:",
+      "note": "When a target format does not support a protocol, the tool filters those nodes and shows a notification with the exact count, instead of producing a broken configuration."
+    },
+    "steps": {
+      "title": "How to Convert Proxy Links (3 Steps)",
+      "items": [
+        {
+          "title": "Paste your input",
+          "desc": "Drop your proxy links (one per line), Clash YAML, Sing-Box JSON, or a subscription URL into the input editor. The format is detected automatically, and subscription URLs are fetched and expanded for you after a confirmation."
+        },
+        {
+          "title": "Pick the target format",
+          "desc": "Use the format selector to choose Clash Meta, Clash Premium, Sing-Box, Loon, QuantumultX, or Surfboard. The kernel feature panel explains what each format supports before you commit."
+        },
+        {
+          "title": "Download or copy",
+          "desc": "The converted configuration appears instantly. Download it as a file or copy it to your clipboard, then import it into your client. Incompatible nodes, if any, are listed in a notification."
+        }
+      ]
+    },
+    "privacy": {
+      "title": "Your Privacy Comes First",
+      "paragraphs": [
+        "Every conversion runs locally in your browser. There is no upload endpoint for your data, no queue, no logging: your proxy links, subscription addresses, server credentials, and generated files never touch a server. Close the tab and everything you entered is gone.",
+        "This is a deliberate design decision, not a marketing line — the conversion engine is plain JavaScript that ships to your browser, which also means the tool keeps working once the page has loaded, even on flaky connections. The full details of what this site does and does not collect are in the privacy policy."
+      ]
+    },
+    "opensource": {
+      "title": "Free, Open Source, and Actively Maintained",
+      "paragraphs": [
+        "Clash Converter costs nothing and has no account system, no usage caps, and no registration wall. The entire codebase — parsers, generators, and this website — is open source on GitHub, so you can audit exactly how your data is handled or self-host the tool if you prefer.",
+        "Protocol support tracks the ecosystem: when a new transport or protocol variant gains adoption, the parsers and adapters are updated. Bug reports and protocol support requests are welcome through the contact page or the repository issue tracker."
+      ]
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "items": [
+        {
+          "q": "Do I need to install anything to use this converter?",
+          "a": "No. Clash Converter runs entirely in your web browser on any device — Windows, macOS, Linux, Android, or iOS. The only thing you download is the converted configuration file itself."
+        },
+        {
+          "q": "Is it safe to paste my proxy links here?",
+          "a": "Yes. Conversion happens locally in your browser; your links and credentials are never sent to or stored on any server. The code is open source, so this claim is verifiable rather than just a promise."
+        },
+        {
+          "q": "What is the difference between Clash Meta and Clash Premium?",
+          "a": "Clash Meta (Mihomo) is the actively maintained kernel with full support for VLESS, Hysteria, and Hysteria2. Clash Premium is the original kernel, discontinued in 2023, which lacks those protocols. Choose Meta unless a legacy client forces you to use Premium."
+        },
+        {
+          "q": "Why did some of my nodes disappear from the output?",
+          "a": "Some target formats cannot represent every protocol — for example, Clash Premium cannot contain VLESS nodes and Loon cannot contain HTTP proxies. The tool filters unsupported nodes and shows a notification with the exact count instead of generating an invalid file."
+        },
+        {
+          "q": "Can I convert a subscription link instead of individual links?",
+          "a": "Yes. Paste a subscription URL and confirm the prompt; the tool fetches the content, parses it, and converts everything it contains. Your subscription URL is requested directly from your browser and is not proxied through any server."
+        },
+        {
+          "q": "Can I use the converted config on my phone?",
+          "a": "Yes. Pick the format that matches your mobile client — for example, Loon for iOS, or Sing-Box JSON / Clash Meta YAML for Android apps like FlClash or Clash Meta for Android — then import the downloaded file in the app's profile settings."
+        },
+        {
+          "q": "Does the tool modify my nodes?",
+          "a": "It only translates representation, not content: server addresses, ports, UUIDs, passwords, and transport settings are preserved exactly. Only the surrounding syntax changes, plus the proxy groups and rules the target format needs to work out of the box."
+        },
+        {
+          "q": "Is Clash Converter really free?",
+          "a": "Yes — no registration, no limits, no payment. The project is open source and supported by unobtrusive ads; if you prefer, you can self-host it from the GitHub repository."
+        }
+      ]
+    },
+    "cta": "Ready to convert? Paste your links in the editor above and pick a target format — it takes seconds."
+  },
+  "aboutExtras": {
+    "openSourceTitle": "Open Source & Maintenance",
+    "openSourceParagraphs": [
+      "ClashConverter is developed and maintained in the open by @sunway910. The complete source code — parsers, generators, and this website — lives at github.com/sunway910/clashconverter, where release notes are published in the repository's CHANGELOG. You can audit exactly how your data is handled, file bug reports, or self-host the tool.",
+      "Protocol support tracks the ecosystem: when a new protocol variant or transport gains adoption, the parsers and adapters are updated. Feature requests and protocol support requests are welcome through GitHub Issues or the contact page."
+    ]
   },
   "inputLabel": "Input",
   "outputLabel": "Output",

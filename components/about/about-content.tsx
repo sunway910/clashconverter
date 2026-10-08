@@ -103,6 +103,18 @@ export function AboutContent() {
         </div>
       </div>
 
+      {/* H2 - Open source & maintenance */}
+      <h2 className="text-2xl md:text-3xl font-bold mt-10 mb-6 text-stone-900 dark:text-stone-100 border-t border-stone-200 dark:border-stone-800 pt-10 text-center">
+        {t('aboutExtras.openSourceTitle')}
+      </h2>
+      <div className="mb-8">
+        {t.raw('aboutExtras.openSourceParagraphs').map((paragraph: string, index: number) => (
+          <p key={index} className="text-base leading-relaxed text-stone-600 dark:text-stone-400 mb-3">
+            {paragraph}
+          </p>
+        ))}
+      </div>
+
       {/* FAQ Section - H2 with structured accordion */}
       <div className="border-t border-stone-200 dark:border-stone-800 pt-10">
         <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center text-stone-900 dark:text-stone-100">
