@@ -2,9 +2,7 @@
 import { useTranslations, useLocale } from 'next-intl';
 import { Mail, Github, ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
-
-const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'clashconverter@gmail.com';
-const GITHUB_URL = 'https://github.com/sunway910/clashconverter';
+import { CONTACT_EMAIL, GITHUB_URL } from '@/lib/site';
 
 export function Footer() {
   const t = useTranslations('footerNav');

@@ -115,7 +115,7 @@
       {
         "heading": "12. Contact Us",
         "paragraphs": [
-          "If you have questions, requests, or complaints about this policy or how the Site handles information, contact us at clashconverter@gmail.com or open an issue at https://github.com/sunway910/clashconverter/issues. We aim to respond to privacy-related requests within 30 days."
+          "If you have questions, requests, or complaints about this policy or how the Site handles information, contact us at {email} or open an issue at https://github.com/sunway910/clashconverter/issues. We aim to respond to privacy-related requests within 30 days."
         ]
       }
     ]
@@ -176,7 +176,7 @@
       {
         "heading": "9. Contact",
         "paragraphs": [
-          "Questions about these Terms can be sent to clashconverter@gmail.com or raised as an issue at https://github.com/sunway910/clashconverter/issues."
+          "Questions about these Terms can be sent to {email} or raised as an issue at https://github.com/sunway910/clashconverter/issues."
         ]
       }
     ]
@@ -187,9 +187,9 @@
     "channels": [
       {
         "name": "Email",
-        "desc": "clashconverter@gmail.com",
+        "desc": "{email}",
         "note": "Best for privacy requests, abuse reports, and anything you would rather not discuss publicly.",
-        "href": "mailto:clashconverter@gmail.com",
+        "href": "mailto:{email}",
         "cta": "Send Email"
       },
       {

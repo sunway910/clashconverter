@@ -115,7 +115,7 @@
       {
         "heading": "12. 联系我们",
         "paragraphs": [
-          "如果你对本政策或本站的信息处理方式有任何疑问、请求或投诉，请发送邮件至 clashconverter@gmail.com，或在 https://github.com/sunway910/clashconverter/issues 提交 issue。我们的目标是在 30 天内回复与隐私相关的请求。"
+          "如果你对本政策或本站的信息处理方式有任何疑问、请求或投诉，请发送邮件至 {email}，或在 https://github.com/sunway910/clashconverter/issues 提交 issue。我们的目标是在 30 天内回复与隐私相关的请求。"
         ]
       }
     ]
@@ -176,7 +176,7 @@
       {
         "heading": "9. 联系方式",
         "paragraphs": [
-          "如对本条款有疑问，可发送邮件至 clashconverter@gmail.com，或在 https://github.com/sunway910/clashconverter/issues 提交 issue。"
+          "如对本条款有疑问，可发送邮件至 {email}，或在 https://github.com/sunway910/clashconverter/issues 提交 issue。"
         ]
       }
     ]
@@ -187,9 +187,9 @@
     "channels": [
       {
         "name": "电子邮箱",
-        "desc": "clashconverter@gmail.com",
+        "desc": "{email}",
         "note": "适合隐私相关的请求、滥用举报，以及任何你不方便公开讨论的问题。",
-        "href": "mailto:clashconverter@gmail.com",
+        "href": "mailto:{email}",
         "cta": "发送邮件"
       },
       {

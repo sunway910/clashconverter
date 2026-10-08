@@ -11,6 +11,7 @@ import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { interpolateMessage } from '@/lib/site';
 
 interface LegalSection {
   heading: string;
@@ -47,7 +48,11 @@ function LinkifiedText({ text }: { text: string }) {
 export function LegalContent({ namespace }: { namespace: 'privacyPage' | 'termsPage' }) {
   const t = useTranslations(namespace);
   const tRoot = useTranslations();
-  const sections = t.raw('sections') as LegalSection[];
+  const sections = (t.raw('sections') as LegalSection[]).map((section) => ({
+    ...section,
+    paragraphs: section.paragraphs?.map(interpolateMessage),
+    items: section.items?.map(interpolateMessage),
+  }));
 
   return (
     <section className="w-full max-w-4xl mx-auto px-4 py-12 md:py-16">

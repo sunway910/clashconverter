@@ -9,6 +9,7 @@ import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Mail, Github, Clock } from 'lucide-react';
 import Link from 'next/link';
+import { interpolateMessage } from '@/lib/site';
 
 interface ContactChannel {
   name: string;
@@ -21,8 +22,13 @@ interface ContactChannel {
 export function ContactContent() {
   const t = useTranslations('contactPage');
   const tRoot = useTranslations();
-  const channels = t.raw('channels') as ContactChannel[];
-  const beforeItems = t.raw('beforeItems') as string[];
+  const channels = (t.raw('channels') as ContactChannel[]).map((channel) => ({
+    ...channel,
+    desc: interpolateMessage(channel.desc),
+    note: interpolateMessage(channel.note),
+    href: interpolateMessage(channel.href),
+  }));
+  const beforeItems = (t.raw('beforeItems') as string[]).map(interpolateMessage);
 
   return (
     <section className="w-full max-w-4xl mx-auto px-4 py-12 md:py-16">
