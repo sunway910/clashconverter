@@ -1,0 +1,25 @@
+# ClashConverter
+
+> Free online proxy configuration converter at https://clashconverter.com. Converts proxy share links (SS, SSR, VMess, VLESS, Trojan, Hysteria, Hysteria2, HTTP, SOCKS5, WireGuard, AnyTLS) into Clash Meta (Mihomo), Clash Premium, Sing-Box, Loon, QuantumultX, and Surfboard configuration formats — and back.
+
+ClashConverter is a free, open-source, client-side web tool. All parsing, validation, and conversion run entirely inside the user's browser: proxy links, server addresses, credentials, and generated configurations are never uploaded to, stored on, or logged by any server. No account or registration is required. The source code is public at https://github.com/sunway910/clashconverter.
+
+## Site structure
+
+- Home (https://clashconverter.com/): the converter tool. Paste proxy links or paste a Clash YAML / Sing-Box JSON config, pick an output format, convert, then download or copy the result.
+- Resources (https://clashconverter.com/en/resources): guides and reference content for proxy protocols and clients.
+- About (https://clashconverter.com/en/about): project background, privacy model, and maintenance information.
+- Contact (https://clashconverter.com/en/contact): contact channels.
+- Privacy Policy (https://clashconverter.com/en/privacy) and Terms (https://clashconverter.com/en/terms).
+
+## Documentation for AI agents
+
+Markdown documents describing the site's features, structure, and data. These documents cross-link each other; [llms-full.txt](https://clashconverter.com/llms-full.txt) contains all of them concatenated.
+
+- [Index](https://clashconverter.com/index.md): what ClashConverter is, core features, quick start, and privacy model.
+- [Formats](https://clashconverter.com/formats.md): supported input and output formats with the per-kernel protocol compatibility matrix.
+- [Protocols](https://clashconverter.com/protocols.md): the 11 supported proxy protocols and their share-link URI syntax.
+- [FAQ](https://clashconverter.com/faq.md): frequently asked questions about the converter.
+- [Privacy](https://clashconverter.com/privacy.md): privacy policy (client-side processing, cookies, analytics, advertising).
+- [About](https://clashconverter.com/about.md): open-source project background and maintenance.
+- [Advertise](https://clashconverter.com/advertise.md): advertising and sponsorship inquiries.

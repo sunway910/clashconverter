@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:llms": "node scripts/build-llms.js",
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",

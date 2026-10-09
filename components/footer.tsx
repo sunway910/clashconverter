@@ -19,12 +19,25 @@ export function Footer() {
     { href: `/${locale}/terms`, label: t('terms') },
   ];
 
+  // Machine-readable docs for AI agents (served from /public)
+  const agentLinks = [
+    { href: '/llms.txt', label: 'llms.txt' },
+    { href: '/llms-full.txt', label: 'llms-full.txt' },
+    { href: '/index.md', label: 'index.md' },
+    { href: '/formats.md', label: 'formats.md' },
+    { href: '/protocols.md', label: 'protocols.md' },
+    { href: '/faq.md', label: 'faq.md' },
+    { href: '/privacy.md', label: 'privacy.md' },
+    { href: '/about.md', label: 'about.md' },
+    { href: '/advertise.md', label: 'advertise.md' },
+  ];
+
   return (
     <footer className="w-full py-8 md:py-12 bg-neo-card/50 dark:bg-neo-card-dark/50 backdrop-blur-sm border-t border-neo-border dark:border-neo-border-dark">
       <div className="mx-auto max-w-6xl px-4 md:px-8">
 
-        {/* Main Footer Content - Three-column layout */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-6">
+        {/* Main Footer Content - Four-column layout */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-6">
 
           {/* Column 1: Brand & Copyright */}
           <div className="flex flex-col items-center md:items-start gap-3 text-center md:text-left">
@@ -86,6 +99,25 @@ export function Footer() {
               <ArrowUpRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
             </a>
           </div>
+
+          {/* Column 4: Agents (machine-readable docs for AI agents) */}
+          <nav
+            aria-label="Agent documentation"
+            className="flex flex-col items-center md:items-start gap-2"
+          >
+            <span className="neo-label text-neo-muted dark:text-neo-muted-light tracking-wide mb-1">
+              {t('agentsTitle')}
+            </span>
+            {agentLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                className="text-sm text-neo-muted dark:text-neo-muted-light hover:text-neo-foreground dark:hover:text-white transition-colors duration-200"
+              >
+                {link.label}
+              </a>
+            ))}
+          </nav>
         </div>
 
       </div>
