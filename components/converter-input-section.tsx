@@ -92,6 +92,9 @@ export const InputSection = memo(({
         </CardHeader>
 
         <CardContent className="relative z-10 flex-1 flex flex-col px-4 pb-4">
+          {/* Spacer to match output section button height */}
+          <div className="mb-3 h-10" />
+
           {/* Editor Area - recessed, functional */}
           <div className="flex-1 neo-input rounded-neoMd bg-neo-canvas dark:bg-neo-canvasDark border border-neo-border dark:border-neo-borderDark overflow-hidden">
             <PreviewEditor
@@ -113,9 +116,6 @@ export const InputSection = memo(({
               {labels.itemsFound}
             </div>
           </div>
-
-          {/* Spacer to match output section button height */}
-          <div className="mt-3 h-10" />
         </CardContent>
       </Card>
 

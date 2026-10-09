@@ -105,30 +105,8 @@ export const OutputSection = memo(({
           </CardHeader>
 
           <CardContent className="relative z-10 flex-1 flex flex-col px-4 pb-4">
-            {/* Editor Area - recessed, functional */}
-            <div className="flex-1 neo-input rounded-neoMd bg-neo-canvas dark:bg-neo-canvasDark border border-neo-border dark:border-neo-borderDark overflow-hidden">
-              <PreviewEditor
-                key={outputFormat}
-                value={output}
-                language={outputLanguage}
-                height="100%"
-                placeholder={outputPlaceholder}
-              />
-            </div>
-
-            {/* Status Bar - technical, informative */}
-            <div className="mt-3 flex items-center justify-between text-xs h-5">
-              <div className="flex items-center gap-1.5 text-neo-muted dark:text-neo-mutedLight">
-                <Cpu className="w-3.5 h-3.5" />
-                <span className="mono">{kernelTitle}</span>
-              </div>
-              <div className="mono text-neo-muted dark:text-neo-mutedLight">
-                {itemCount} NODES
-              </div>
-            </div>
-
             {/* Action Buttons - Sharp, functional */}
-            <div className="mt-3 flex gap-2 h-10">
+            <div className="mb-3 flex gap-2 h-10">
               {/* Download Button - Primary action */}
               <Button
                 onClick={onDownload}
@@ -154,6 +132,28 @@ export const OutputSection = memo(({
                   <Copy className="w-4 h-4" />
                 )}
               </Button>
+            </div>
+
+            {/* Editor Area - recessed, functional */}
+            <div className="flex-1 neo-input rounded-neoMd bg-neo-canvas dark:bg-neo-canvasDark border border-neo-border dark:border-neo-borderDark overflow-hidden">
+              <PreviewEditor
+                key={outputFormat}
+                value={output}
+                language={outputLanguage}
+                height="100%"
+                placeholder={outputPlaceholder}
+              />
+            </div>
+
+            {/* Status Bar - technical, informative */}
+            <div className="mt-3 flex items-center justify-between text-xs h-5">
+              <div className="flex items-center gap-1.5 text-neo-muted dark:text-neo-mutedLight">
+                <Cpu className="w-3.5 h-3.5" />
+                <span className="mono">{kernelTitle}</span>
+              </div>
+              <div className="mono text-neo-muted dark:text-neo-mutedLight">
+                {itemCount} NODES
+              </div>
             </div>
           </CardContent>
         </Card>
