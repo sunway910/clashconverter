@@ -142,13 +142,6 @@ export const seoConfig: SEOConfig = {
 };
 
 /**
- * Generate full title with template
- */
-export function generateTitle(title: string): string {
-  return seoConfig.titleTemplate.replace('%s', title);
-}
-
-/**
  * Get localized metadata based on locale
  */
 export function getLocalizedMetadata(locale: string) {
@@ -501,37 +494,6 @@ export function generateAggregateRatingSchema() {
         name: seoConfig.siteName,
         applicationCategory: 'UtilityApplication',
         operatingSystem: 'Web Browser'
-      }
-    }
-  };
-}
-
-/**
- * Generate VideoObject structured data for tutorial videos (when available)
- */
-export function generateVideoObjectSchema(
-  name: string,
-  description: string,
-  thumbnailUrl: string,
-  uploadDate: string,
-  duration: string
-) {
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'VideoObject',
-    name,
-    description,
-    thumbnailUrl,
-    uploadDate,
-    duration,
-    contentUrl: `${seoConfig.siteUrl}/videos/${name.toLowerCase().replace(/\s+/g, '-')}.mp4`,
-    embedUrl: `${seoConfig.siteUrl}/videos/${name.toLowerCase().replace(/\s+/g, '-')}.mp4`,
-    publisher: {
-      '@type': 'Organization',
-      name: seoConfig.siteName,
-      logo: {
-        '@type': 'ImageObject',
-        url: `${seoConfig.siteUrl}/clash_converter_linear.svg`
       }
     }
   };

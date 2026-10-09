@@ -50,7 +50,3 @@ export function parseYamlToProxies(yaml: string): import('../../types').ProxyNod
     return [];
   }
 }
-
-// Re-export proxiesToLinks from the link-generator module
-// This maintains backward compatibility for code that imports from this file
-export { proxiesToLinks } from '../../generators/link-generator';

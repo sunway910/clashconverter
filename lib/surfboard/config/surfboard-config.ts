@@ -17,27 +17,6 @@ export const SURFBOARD_GENERAL = [
   'enhanced-mode-by-rule = true',
 ];
 
-// Empty remote sections (user can add custom remotes)
-export const SURFBOARD_PROXY_REMOTE = '';
-export const SURFBOARD_RULE_REMOTE = '';
-
-// Local rule types supported by Surfboard
-export const SURFBOARD_RULE_TYPES = [
-  'DOMAIN',
-  'DOMAIN-SUFFIX',
-  'DOMAIN-KEYWORD',
-  'IP-CIDR',
-  'SRC-IP-CIDR',
-  'GEOIP',
-  'MATCH',
-  'FINAL',
-  'IP-CIDR6',
-  'PROCESS-NAME',
-  'IN-PORT',
-  'DEST-PORT',
-  'SRC-IP',
-];
-
 // Default rules for Surfboard
 export const SURFBOARD_RULES = [
   'GEOIP,CN,🎯 全球直连',
@@ -48,21 +27,6 @@ export const SURFBOARD_RULES = [
 export const SURFBOARD_REMOTE_RULES = [
   'https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyGFWlist.list,🚀 节点选择'
 ];
-
-// MITM configuration (disabled by default)
-export const SURFBOARD_MITM: string[] = [];
-
-// URL Rewrite section (empty - user can add custom rewrites)
-export const SURFBOARD_URL_REWRITE: string[] = [];
-
-// Header Rewrite section (empty - user can add custom rewrites)
-export const SURFBOARD_HEADER_REWRITE: string[] = [];
-
-// Script section (empty - user can add custom scripts)
-export const SURFBOARD_SCRIPT: string[] = [];
-
-// Host section (empty - user can add custom hosts)
-export const SURFBOARD_HOST: string[] = [];
 
 // Policy types for Surfboard (Surge-compatible)
 export type SurfboardPolicyType = 'select' | 'url-test' | 'fallback' | 'load-balance';

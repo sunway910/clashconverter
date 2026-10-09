@@ -24,12 +24,3 @@ export function proxiesToLinks(proxies: ProxyNode[]): string[] {
   return links;
 }
 
-/**
- * Convert a single proxy to its link format
- * @param proxy - ProxyNode to convert
- * @returns Proxy link string or empty string if unsupported type
- */
-export function proxyToLink(proxy: ProxyNode): string {
-  const adapter = ProtocolAdapterRegistry.get(proxy.type);
-  return adapter ? adapter.toLink(proxy) : '';
-}

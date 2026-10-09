@@ -28,9 +28,3 @@ export function loadExpectedFile(formatDir: string, extension: string): string {
   return readFileSync(filePath, 'utf-8');
 }
 
-/**
- * Get all supported test format directories
- */
-export function getTestFormats(): string[] {
-  return ['clash-meta', 'clash-premium', 'sing-box', 'loon'];
-}

@@ -18,27 +18,6 @@ export const QUANX_DNS = [
   'server=8.8.8.8',
 ];
 
-// Remote sections (empty - user can add custom remotes)
-export const QUANX_SERVER_REMOTE = '';
-export const QUANX_FILTER_REMOTE = '';
-export const QUANX_REWRITE_REMOTE = '';
-
-// Local rule types supported by QuantumultX
-export const QUANX_RULE_TYPES = [
-  'DOMAIN',
-  'DOMAIN-SUFFIX',
-  'DOMAIN-KEYWORD',
-  'IP-CIDR',
-  'SRC-IP-CIDR',
-  'GEOIP',
-  'MATCH',
-  'FINAL',
-  'USER-AGENT',
-  'HOST',
-  'HOST-SUFFIX',
-  'HOST-KEYWORD',
-];
-
 // Default rules for QuantumultX
 export const QUANX_RULES = [
   'GEOIP,CN,🎯 全球直连',
@@ -49,18 +28,6 @@ export const QUANX_RULES = [
 export const QUANX_REMOTE_RULES = [
   'https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyGFWlist.list,🚀 节点选择'
 ];
-
-// MITM configuration (disabled by default)
-export const QUANX_MITM: string[] = [];
-
-// Rewrite section (empty - user can add custom rewrites)
-export const QUANX_REWRITE_LOCAL: string[] = [];
-
-// Host section (empty - user can add custom hosts)
-export const QUANX_HOST_LOCAL: string[] = [];
-
-// Script section (empty - user can add custom scripts)
-export const QUANX_SCRIPT: string[] = [];
 
 // Policy types for QuantumultX
 export type QuanxPolicyType = 'static' | 'url-latency-benchmark' | 'available' | 'round-robin';
