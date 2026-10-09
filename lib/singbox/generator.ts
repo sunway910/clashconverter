@@ -11,7 +11,7 @@ import { UnsupportedProtocolError } from '../errors';
 
 // Protocols supported by sing-box (all protocols are now supported)
 export const SING_BOX_SUPPORTED_PROTOCOLS = new Set([
-  'ss', 'ssr', 'vmess', 'vless', 'trojan', 'hysteria', 'hysteria2', 'http', 'socks5',
+  'ss', 'ssr', 'vmess', 'vless', 'trojan', 'hysteria', 'hysteria2', 'http', 'socks5', 'wireguard', 'anytls',
 ]);
 
 /**

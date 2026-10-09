@@ -19,7 +19,9 @@ export type ProxyType =
   | 'hysteria'
   | 'hysteria2'
   | 'http'
-  | 'socks5';
+  | 'socks5'
+  | 'wireguard'
+  | 'anytls';
 
 /**
  * Common fields shared by all proxy nodes
@@ -47,6 +49,22 @@ interface TLSOptions {
 interface WebSocketOptions {
   path?: string;
   headers?: Record<string, string>;
+}
+
+/**
+ * gRPC options (for Trojan/VLESS transports)
+ */
+interface GRpcOptions {
+  'grpc-service-name'?: string;
+}
+
+/**
+ * Trojan-Go Shadowsocks relay options (encryption=ss;method;password)
+ */
+interface TrojanSSOptions {
+  enabled: boolean;
+  method: string;
+  password: string;
 }
 
 /**
@@ -116,7 +134,47 @@ export interface TrojanProxyNode extends BaseProxyNode, TLSOptions {
   type: 'trojan';
   password: string;
   udp?: boolean;
-  network?: 'tcp' | 'ws' | 'grpc';
+  network?: 'tcp' | 'ws' | 'grpc' | 'h2';
+  'ws-opts'?: WebSocketOptions;
+  'grpc-opts'?: GRpcOptions;
+  alpn?: string[];
+  'client-fingerprint'?: string;
+  'ss-opts'?: TrojanSSOptions;
+}
+
+/**
+ * WireGuard proxy node (Clash Meta / Sing-Box)
+ */
+export interface WireGuardProxyNode extends BaseProxyNode {
+  type: 'wireguard';
+  'private-key': string;
+  'public-key': string;
+  ip?: string;
+  ipv6?: string;
+  'pre-shared-key'?: string;
+  'allowed-ips'?: string[];
+  reserved?: number[] | string;
+  udp?: boolean;
+  mtu?: number;
+  'remote-dns-resolve'?: boolean;
+  dns?: string[];
+  'dialer-proxy'?: string;
+}
+
+/**
+ * AnyTLS proxy node (Clash Meta mihomo>=1.19.2 / Sing-Box >=1.12)
+ */
+export interface AnyTLSProxyNode extends BaseProxyNode {
+  type: 'anytls';
+  password: string;
+  sni?: string;
+  alpn?: string[];
+  'client-fingerprint'?: string;
+  'skip-cert-verify'?: boolean;
+  udp?: boolean;
+  'idle-session-check-interval'?: number;
+  'idle-session-timeout'?: number;
+  'min-idle-session'?: number;
 }
 
 /**
@@ -180,7 +238,9 @@ export type ProxyNode =
   | HysteriaProxyNode
   | Hysteria2ProxyNode
   | HTTPProxyNode
-  | SOCKS5ProxyNode;
+  | SOCKS5ProxyNode
+  | WireGuardProxyNode
+  | AnyTLSProxyNode;
 
 /**
  * Type guard for SS proxy node
@@ -245,6 +305,20 @@ export function isSOCKS5Proxy(node: ProxyNode): node is SOCKS5ProxyNode {
   return node.type === 'socks5';
 }
 
+/**
+ * Type guard for WireGuard proxy node
+ */
+export function isWireGuardProxy(node: ProxyNode): node is WireGuardProxyNode {
+  return node.type === 'wireguard';
+}
+
+/**
+ * Type guard for AnyTLS proxy node
+ */
+export function isAnyTLSProxy(node: ProxyNode): node is AnyTLSProxyNode {
+  return node.type === 'anytls';
+}
+
 // ============================================================================
 // Protocol Type Guards
 // ============================================================================
@@ -253,7 +327,7 @@ export function isSOCKS5Proxy(node: ProxyNode): node is SOCKS5ProxyNode {
  * Check if a protocol type value is valid
  */
 export function isValidProxyType(type: string): type is ProxyType {
-  return ['ss', 'ssr', 'vmess', 'vless', 'trojan', 'hysteria', 'hysteria2', 'http', 'socks5'].includes(type);
+  return ['ss', 'ssr', 'vmess', 'vless', 'trojan', 'hysteria', 'hysteria2', 'http', 'socks5', 'wireguard', 'anytls'].includes(type);
 }
 
 // ============================================================================

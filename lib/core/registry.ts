@@ -30,6 +30,8 @@ import { TrojanAdapter } from '../adapters/trojan-adapter';
 import { HysteriaAdapter, Hysteria2Adapter } from '../adapters/hysteria-adapter';
 import { HTTPAdapter } from '../adapters/http-adapter';
 import { SOCKS5Adapter } from '../adapters/socks5-adapter';
+import { WireGuardAdapter } from '../adapters/wireguard-adapter';
+import { AnyTLSAdapter } from '../adapters/anytls-adapter';
 
 /**
  * Initialize protocol adapters
@@ -46,6 +48,8 @@ export function initializeProtocolAdapters(): void {
   ProtocolAdapterRegistry.register(new Hysteria2Adapter());
   ProtocolAdapterRegistry.register(new HTTPAdapter());
   ProtocolAdapterRegistry.register(new SOCKS5Adapter());
+  ProtocolAdapterRegistry.register(new WireGuardAdapter());
+  ProtocolAdapterRegistry.register(new AnyTLSAdapter());
 }
 
 /**

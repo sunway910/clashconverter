@@ -1,6 +1,26 @@
 import { ParsedProxy, ProxyNode } from '../types';
 import { base64Decode, parseUrlParams, safeJsonParse } from '../utils';
 
+// js-hoist-regexp: Hoist RegExp outside function for reuse
+const IPV4_REGEX = /^(\d{1,3}\.){3}\d{1,3}$/;
+
+/**
+ * Split "server:port" (or bare server) handling bracketed IPv6 like [::1]:443
+ * @returns Tuple of server host (brackets stripped) and parsed port (NaN if absent)
+ */
+function splitHostPort(serverInfo: string): [string, number] {
+  let host = serverInfo.replace(/\/+$/, '');
+  if (host.startsWith('[') && host.includes(']')) {
+    const end = host.indexOf(']');
+    host = host.slice(1, end) + host.slice(end + 1);
+  }
+  const colonIndex = host.lastIndexOf(':');
+  if (colonIndex === -1) return [host, NaN];
+  const portStr = host.slice(colonIndex + 1);
+  if (!/^\d+$/.test(portStr)) return [host, NaN];
+  return [host.slice(0, colonIndex), parseInt(portStr, 10)];
+}
+
 // Shadowsocks parser: ss://base64(method:password@server:port)#name or ss://base64(method:password)@server:port#name
 export function parseSS(link: string): ParsedProxy | null {
   if (!link.startsWith('ss://')) return null;
@@ -193,6 +213,7 @@ export function parseVmess(link: string): ParsedProxy | null {
 }
 
 // Trojan parser: trojan://password@server:port?params#name
+// Supports standard Trojan and Trojan-Go links (ws/h2/grpc transports, encryption=ss;method;password)
 export function parseTrojan(link: string): ParsedProxy | null {
   if (!link.startsWith('trojan://')) return null;
 
@@ -201,22 +222,197 @@ export function parseTrojan(link: string): ParsedProxy | null {
     const params = parseUrlParams(url.search.slice(1));
     const name = url.hash ? decodeURIComponent(url.hash.slice(1)) : 'Trojan';
 
-    return {
+    // Normalize transport: only ws/h2/grpc are transports, everything else is tcp
+    const rawNetwork = (params.type || 'tcp').toLowerCase();
+    const network = rawNetwork === 'ws' || rawNetwork === 'grpc' || rawNetwork === 'h2' ? rawNetwork : 'tcp';
+
+    // Trojan-Go Shadowsocks relay: encryption=ss;method;password
+    const encryption = params.encryption ? params.encryption.split(';') : [];
+    const ssOpts =
+      encryption.length === 3 && encryption[0] === 'ss'
+        ? { enabled: true, method: encryption[1], password: encryption[2] }
+        : undefined;
+
+    const config = {
       name,
-      config: {
-        name,
-        type: 'trojan',
-        server: url.hostname,
-        port: parseInt(url.port, 10),
-        password: decodeURIComponent(url.username),
-        udp: true,
-        // Trojan defaults to skip-cert-verify=true (insecure) for compatibility
-        // Set to false only if allowInsecure is explicitly 'false' or '0'
-        'skip-cert-verify': params.allowInsecure !== 'false' && params.allowInsecure !== '0',
-        sni: params.sni || params.peer || '',
-        network: params.type || 'tcp',
-      } as ProxyNode,
-    };
+      type: 'trojan',
+      server: url.hostname,
+      port: parseInt(url.port, 10),
+      password: decodeURIComponent(url.username),
+      udp: true,
+      // Trojan defaults to skip-cert-verify=true (insecure) for compatibility
+      // Set to false only if allowInsecure is explicitly 'false' or '0'
+      'skip-cert-verify': params.allowInsecure !== 'false' && params.allowInsecure !== '0',
+      sni: params.sni || params.peer || '',
+      network,
+      ...(ssOpts && { 'ss-opts': ssOpts }),
+    } as ProxyNode;
+
+    // WebSocket transport options
+    if (network === 'ws') {
+      (config as any)['ws-opts'] = {
+        path: params.path || '/',
+        ...(params.host && { headers: { Host: params.host } }),
+      };
+    }
+
+    // gRPC transport options
+    if (network === 'grpc') {
+      (config as any)['grpc-opts'] = {
+        'grpc-service-name': params.serviceName || params.path || '',
+      };
+    }
+
+    // ALPN (comma separated)
+    if (params.alpn) {
+      const alpn = params.alpn.split(',').map(s => s.trim()).filter(Boolean);
+      if (alpn.length) (config as any).alpn = alpn;
+    }
+
+    // uTLS fingerprint
+    const fingerprint = params.fp || params['client-fingerprint'];
+    if (fingerprint) (config as any)['client-fingerprint'] = fingerprint;
+
+    return { name, config };
+  } catch {
+    return null;
+  }
+}
+
+// WireGuard parser: wireguard://private-key@server:port?params#name (wg:// shorthand accepted)
+export function parseWireguard(link: string): ParsedProxy | null {
+  const lower = link.toLowerCase();
+  if (!lower.startsWith('wireguard://') && !lower.startsWith('wg://')) return null;
+
+  try {
+    const scheme = lower.startsWith('wireguard://') ? 'wireguard://' : 'wg://';
+    let rest = link.slice(scheme.length);
+
+    // Extract hash (name)
+    const hashIndex = rest.indexOf('#');
+    const name = hashIndex !== -1 ? decodeURIComponent(rest.slice(hashIndex + 1)) : 'WireGuard';
+    if (hashIndex !== -1) rest = rest.slice(0, hashIndex);
+
+    // Extract query params (keys normalized: underscores -> hyphens, case-insensitive)
+    const queryIndex = rest.indexOf('?');
+    const params: Record<string, string> = {};
+    if (queryIndex !== -1) {
+      for (const [key, value] of Object.entries(parseUrlParams(rest.slice(queryIndex + 1)))) {
+        params[key.replace(/_/g, '-').toLowerCase()] = value;
+      }
+      rest = rest.slice(0, queryIndex);
+    }
+
+    // Split private key (userinfo) from endpoint
+    const atIndex = rest.lastIndexOf('@');
+    if (atIndex === -1) return null;
+
+    const privateKey = decodeURIComponent(rest.slice(0, atIndex)).trim();
+    const [server, port] = splitHostPort(rest.slice(atIndex + 1));
+    if (!server) return null;
+
+    // Peer public key is mandatory for a working WireGuard node
+    const publicKey = params['public-key'] || params.publickey || '';
+    if (!publicKey) return null;
+
+    // address/ip: comma separated local addresses, entries may carry a CIDR suffix
+    let ip: string | undefined;
+    let ipv6: string | undefined;
+    for (const addr of (params.address || params.ip || '').split(',')) {
+      const value = addr.trim().replace(/\/\d+$/, '').replace(/^\[|\]$/g, '');
+      if (!value) continue;
+      if (!ip && IPV4_REGEX.test(value)) ip = value;
+      else if (!ipv6 && value.includes(':')) ipv6 = value;
+    }
+
+    // reserved: three comma separated integers (reused from sing-box style links)
+    let reserved: number[] | undefined;
+    if (params.reserved) {
+      const parsed = params.reserved
+        .split(',')
+        .map(v => parseInt(v.trim(), 10))
+        .filter(n => Number.isInteger(n));
+      if (parsed.length === 3) reserved = parsed;
+    }
+
+    const config = {
+      name,
+      type: 'wireguard',
+      server,
+      port: Number.isInteger(port) ? port : 51820,
+      'private-key': privateKey,
+      'public-key': publicKey,
+      udp: true,
+      ...(ip && { ip }),
+      ...(ipv6 && { ipv6 }),
+      ...(params['pre-shared-key'] && { 'pre-shared-key': params['pre-shared-key'] }),
+      ...(params['allowed-ips'] && {
+        'allowed-ips': params['allowed-ips'].split(',').map(s => s.trim()).filter(Boolean),
+      }),
+      ...(reserved && { reserved }),
+      ...(params.mtu && Number.isInteger(parseInt(params.mtu, 10)) && { mtu: parseInt(params.mtu, 10) }),
+      ...(params['remote-dns-resolve'] && {
+        'remote-dns-resolve': /^(true|1)$/i.test(params['remote-dns-resolve']),
+      }),
+      ...(params.dns && { dns: params.dns.split(',').map(s => s.trim()).filter(Boolean) }),
+      ...(params['dialer-proxy'] && { 'dialer-proxy': params['dialer-proxy'] }),
+    } as ProxyNode;
+
+    return { name, config };
+  } catch {
+    return null;
+  }
+}
+
+// AnyTLS parser: anytls://password@server:port?params#name
+export function parseAnytls(link: string): ParsedProxy | null {
+  if (!link.toLowerCase().startsWith('anytls://')) return null;
+
+  try {
+    let rest = link.slice('anytls://'.length);
+
+    // Extract hash (name)
+    const hashIndex = rest.indexOf('#');
+    const name = hashIndex !== -1 ? decodeURIComponent(rest.slice(hashIndex + 1)) : 'AnyTLS';
+    if (hashIndex !== -1) rest = rest.slice(0, hashIndex);
+
+    // Extract query params
+    const queryIndex = rest.indexOf('?');
+    const params = queryIndex !== -1 ? parseUrlParams(rest.slice(queryIndex + 1)) : {};
+    if (queryIndex !== -1) rest = rest.slice(0, queryIndex);
+
+    // Split password (userinfo) from endpoint
+    const atIndex = rest.lastIndexOf('@');
+    if (atIndex === -1) return null;
+
+    const password = decodeURIComponent(rest.slice(0, atIndex));
+    const [server, port] = splitHostPort(rest.slice(atIndex + 1));
+    if (!server) return null;
+
+    const insecure = params['skip-cert-verify'] || params.allowInsecure || params.allow_insecure;
+    const fingerprint = params.fp || params.fingerprint || params['client-fingerprint'];
+
+    const idleCheck = parseInt(params['idle-session-check-interval'] || '', 10);
+    const idleTimeout = parseInt(params['idle-session-timeout'] || '', 10);
+    const minIdle = parseInt(params['min-idle-session'] || '', 10);
+
+    const config = {
+      name,
+      type: 'anytls',
+      server,
+      port: Number.isInteger(port) ? port : 443,
+      password,
+      'skip-cert-verify': insecure ? /^(true|1)$/i.test(insecure) : false,
+      udp: params.udp ? /^(true|1)$/i.test(params.udp) : true,
+      ...(params.sni && { sni: params.sni }),
+      ...(params.alpn && { alpn: params.alpn.split(',').map(s => s.trim()).filter(Boolean) }),
+      ...(fingerprint && { 'client-fingerprint': fingerprint }),
+      ...(Number.isInteger(idleCheck) && { 'idle-session-check-interval': idleCheck }),
+      ...(Number.isInteger(idleTimeout) && { 'idle-session-timeout': idleTimeout }),
+      ...(Number.isInteger(minIdle) && { 'min-idle-session': minIdle }),
+    } as ProxyNode;
+
+    return { name, config };
   } catch {
     return null;
   }

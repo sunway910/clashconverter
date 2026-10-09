@@ -59,6 +59,8 @@ export const seoConfig: SEOConfig = {
     'convert proxy to yaml',
     'socks5 to clash',
     'http proxy to clash',
+    'wireguard to clash',
+    'anytls to clash',
     // Long-tail keywords - User intent
     'how to convert proxy links to clash',
     'convert vmess to clash yaml online',
@@ -243,7 +245,7 @@ export function generateFAQSchema(locale: string) {
       },
       {
         question: 'Which proxy protocols are supported?',
-        answer: 'Clash Converter supports 9 proxy protocols: Shadowsocks (SS), ShadowsocksR (SSR), VMess, VLESS, Trojan, Hysteria, Hysteria2, HTTP, and SOCKS5. It can convert both to and from Clash YAML format.'
+        answer: 'Clash Converter supports 11 proxy protocols: Shadowsocks (SS), ShadowsocksR (SSR), VMess, VLESS, Trojan, Hysteria, Hysteria2, HTTP, SOCKS5, WireGuard, and AnyTLS. It can convert both to and from Clash YAML format.'
       },
       {
         question: 'What is the difference between Clash Meta and Clash Premium?',
@@ -377,7 +379,7 @@ export function generateHowToSchema(locale: string) {
       steps: [
         {
           name: 'Prepare Your Proxy Links',
-          text: 'Gather your proxy links. Supported formats include ss://, ssr://, vmess://, vless://, trojan://, hysteria://, hysteria2://, http://, and socks5://. Each link should be on a separate line.',
+          text: 'Gather your proxy links. Supported formats include ss://, ssr://, vmess://, vless://, trojan://, hysteria://, hysteria2://, wireguard://, anytls://, http://, and socks5://. Each link should be on a separate line.',
           image: `${seoConfig.siteUrl}/og-image.png`
         },
         {
@@ -408,7 +410,7 @@ export function generateHowToSchema(locale: string) {
       steps: [
         {
           name: '准备您的代理链接',
-          text: '收集您的代理链接。支持的格式包括 ss://、ssr://、vmess://、vless://、trojan://、hysteria://、hysteria2://、http:// 和 socks5://。每个链接应单独一行。',
+          text: '收集您的代理链接。支持的格式包括 ss://、ssr://、vmess://、vless://、trojan://、hysteria://、hysteria2://、wireguard://、anytls://、http:// 和 socks5://。每个链接应单独一行。',
           image: `${seoConfig.siteUrl}/og-image.png`
         },
         {

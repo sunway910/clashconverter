@@ -14,6 +14,8 @@ export type {
   Hysteria2ProxyNode,
   HTTPProxyNode,
   SOCKS5ProxyNode,
+  WireGuardProxyNode,
+  AnyTLSProxyNode,
   LegacyProxyNode,
 } from './types/proxy-nodes';
 
@@ -28,6 +30,8 @@ export {
   isHysteria2Proxy,
   isHTTPProxy,
   isSOCKS5Proxy,
+  isWireGuardProxy,
+  isAnyTLSProxy,
   isValidProxyType,
 } from './types/proxy-nodes';
 
@@ -50,6 +54,8 @@ export {
   hysteria2ProxySchema,
   httpProxySchema,
   socks5ProxySchema,
+  wireguardProxySchema,
+  anytlsProxySchema,
 } from './types/validators';
 
 export interface ParsedProxy {

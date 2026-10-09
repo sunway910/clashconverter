@@ -55,6 +55,6 @@ export class ClashYamlGenerator extends BaseFormatGenerator {
    * @returns Set of all supported protocol types
    */
   getSupportedProtocols(): Set<string> {
-    return new Set(['ss', 'ssr', 'vmess', 'trojan', 'hysteria', 'hysteria2', 'vless', 'http', 'socks5']);
+    return new Set(['ss', 'ssr', 'vmess', 'trojan', 'hysteria', 'hysteria2', 'vless', 'http', 'socks5', 'wireguard', 'anytls']);
   }
 }

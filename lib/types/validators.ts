@@ -149,7 +149,68 @@ export const trojanProxySchema = z.object({
   udp: z.boolean().optional().default(true),
   'skip-cert-verify': z.boolean().optional(),
   sni: nullableString(),
-  network: z.enum(['tcp', 'ws', 'grpc']).optional().default('tcp'),
+  network: z.enum(['tcp', 'ws', 'grpc', 'h2']).optional().default('tcp'),
+  'ws-opts': z
+    .object({
+      path: z.string().optional(),
+      headers: z.record(z.string(), z.string()).optional(),
+    })
+    .optional(),
+  'grpc-opts': z
+    .object({
+      'grpc-service-name': z.string().optional(),
+    })
+    .optional(),
+  alpn: z.array(z.string()).optional(),
+  'client-fingerprint': nullableString(),
+  'ss-opts': z
+    .object({
+      enabled: z.boolean(),
+      method: z.string().min(1),
+      password: z.string().min(1),
+    })
+    .optional(),
+});
+
+/**
+ * WireGuard schema
+ */
+export const wireguardProxySchema = z.object({
+  name: nameSchema,
+  type: z.literal('wireguard'),
+  server: serverSchema,
+  port: portSchema,
+  'private-key': z.string().min(1),
+  'public-key': z.string().min(1),
+  ip: nullableString(),
+  ipv6: nullableString(),
+  'pre-shared-key': nullableString(),
+  'allowed-ips': z.array(z.string()).optional(),
+  reserved: z.union([z.array(z.number().int()).length(3), z.string()]).optional(),
+  udp: nullableBoolean(),
+  mtu: z.number().int().min(1).max(65535).optional(),
+  'remote-dns-resolve': nullableBoolean(),
+  dns: z.array(z.string()).optional(),
+  'dialer-proxy': nullableString(),
+});
+
+/**
+ * AnyTLS schema
+ */
+export const anytlsProxySchema = z.object({
+  name: nameSchema,
+  type: z.literal('anytls'),
+  server: serverSchema,
+  port: portSchema,
+  password: z.string().min(1),
+  sni: nullableString(),
+  alpn: z.array(z.string()).optional(),
+  'client-fingerprint': nullableString(),
+  'skip-cert-verify': z.boolean().optional(),
+  udp: nullableBoolean(),
+  'idle-session-check-interval': z.number().int().min(0).optional(),
+  'idle-session-timeout': z.number().int().min(0).optional(),
+  'min-idle-session': z.number().int().min(0).optional(),
 });
 
 /**
@@ -225,6 +286,8 @@ export const proxyNodeSchema = z.discriminatedUnion('type', [
   hysteria2ProxySchema,
   httpProxySchema,
   socks5ProxySchema,
+  wireguardProxySchema,
+  anytlsProxySchema,
 ]);
 
 // ============================================================================
@@ -319,6 +382,10 @@ export function getSchemaForType(type: ProxyType): z.ZodObject<any, any> {
       return httpProxySchema;
     case 'socks5':
       return socks5ProxySchema;
+    case 'wireguard':
+      return wireguardProxySchema;
+    case 'anytls':
+      return anytlsProxySchema;
     default:
       throw new ValidationError(
         ErrorCode.VALIDATION_FAILED,

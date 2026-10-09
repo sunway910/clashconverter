@@ -12,6 +12,8 @@ const SING_BOX_TYPE_MAP: Record<string, string> = {
   'hysteria': 'hysteria',
   'hysteria2': 'hysteria2',
   'http': 'http',
+  'wireguard': 'wireguard',
+  'anytls': 'anytls',
 };
 
 /**
@@ -219,6 +221,33 @@ function singBoxOutboundToProxyNode(outbound: any, proxyType: string): ProxyNode
         ...base,
         username: user.username || '',
         password: user.password || '',
+      } as ProxyNode;
+
+    case 'wireguard': {
+      const localAddresses: string[] = outbound.local_address || [];
+      const ip = localAddresses.find((a: string) => !a.includes(':'))?.replace(/\/\d+$/, '');
+      const ipv6 = localAddresses.find((a: string) => a.includes(':'))?.replace(/\/\d+$/, '');
+      return {
+        ...base,
+        'private-key': outbound.private_key || '',
+        'public-key': outbound.peer_public_key || '',
+        udp: true,
+        ...(ip && { ip }),
+        ...(ipv6 && { ipv6 }),
+        ...(outbound.pre_shared_key && { 'pre-shared-key': outbound.pre_shared_key }),
+        ...(outbound.reserved !== undefined && { reserved: outbound.reserved }),
+        ...(outbound.mtu && { mtu: outbound.mtu }),
+      } as ProxyNode;
+    }
+
+    case 'anytls':
+      return {
+        ...base,
+        password: outbound.password || '',
+        udp: true,
+        ...(outbound.tls?.server_name && { sni: outbound.tls.server_name }),
+        ...(outbound.tls?.insecure !== undefined && { 'skip-cert-verify': outbound.tls.insecure }),
+        ...(Array.isArray(outbound.tls?.alpn) && { alpn: outbound.tls.alpn }),
       } as ProxyNode;
 
     default:

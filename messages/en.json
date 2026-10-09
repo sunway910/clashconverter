@@ -406,7 +406,7 @@
         {
           "title": "Proxy share links",
           "paragraphs": [
-            "One link per line, in the standard URI scheme used by most subscriptions and node sharers: ss://, ssr://, vmess://, vless://, trojan://, hysteria://, hysteria2://, http://, and socks5://. The text after the # symbol in each link becomes the node's display name in the generated configuration, so named links produce a neatly organized config. Encrypted (base64) payloads are decoded automatically, including the URL-safe base64 variants that some providers use."
+            "One link per line, in the standard URI scheme used by most subscriptions and node sharers: ss://, ssr://, vmess://, vless://, trojan://, hysteria://, hysteria2://, wireguard://, anytls://, http://, and socks5://. The text after the # symbol in each link becomes the node's display name in the generated configuration, so named links produce a neatly organized config. Encrypted (base64) payloads are decoded automatically, including the URL-safe base64 variants that some providers use."
           ]
         },
         {
@@ -620,7 +620,7 @@
   },
   "inputPlaceholder": {
     "subscribe-url": "Paste your subscription link here\n\nSupported subscription types:\n\nType 1: Direct YAML download\nhttps://example.com/link/...?clash=3\n\nType 2: Base64 encoded proxy links\nhttps://example.com/api/v1/client/subscribe?token=xxx\n\n💡 We will automatically fetch and convert the subscription content",
-    "txt": "Paste your proxy links here - one per line\n\nSupported protocols:\n\nhysteria://server:port?protocol=udp&auth=xxx&peer=xxx#Hysteria-Node\nhysteria2://password@server:port/?sni=xxx#Hysteria2-Node\nss://[base64]#SS-Node\nssr://[base64]#SSR-Node\nvmess://[base64]#Vmess-Node\nvless://uuid@server:port?encryption=none&security=tls&type=tcp#Vless-Node\ntrojan://password@server:port#Trojan-Node\nsocks5://server:port#Socks5-Node\nhttp://user:pass@server:port#Http-Node\n\n💡 Tip: The #name suffix becomes the proxy name in your output file",
+    "txt": "Paste your proxy links here - one per line\n\nSupported protocols:\n\nhysteria://server:port?protocol=udp&auth=xxx&peer=xxx#Hysteria-Node\nhysteria2://password@server:port/?sni=xxx#Hysteria2-Node\nss://[base64]#SS-Node\nssr://[base64]#SSR-Node\nvmess://[base64]#Vmess-Node\nvless://uuid@server:port?encryption=none&security=tls&type=tcp#Vless-Node\ntrojan://password@server:port#Trojan-Node\nwireguard://privatekey@server:port?publickey=xxx&address=10.0.0.2#WireGuard-Node\nanytls://password@server:port?sni=xxx#AnyTLS-Node\nsocks5://server:port#Socks5-Node\nhttp://user:pass@server:port#Http-Node\n\n💡 Tip: The #name suffix becomes the proxy name in your output file",
     "clash": "proxies:\n  - name: SS-HongKong\n    type: ss\n    server: hk.example.com\n    port: 443\n  - name: VMESS-US\n    type: vmess\n    server: us.example.com\n    port: 443\n\nproxy-groups:\n  - name: PROXY\n    type: select\n    proxies: ...",
     "sing-box": "'{'\n  \"outbounds\": [\n    '{'\n      \"type\": \"shadowsocks\",\n      \"tag\": \"SS-HongKong\",\n      \"server\": \"hk.example.com\",\n      \"server_port\": 443,\n      \"method\": \"aes-128-gcm\",\n      \"password\": \"password\"\n    '}',\n    ..."
   },
@@ -742,12 +742,12 @@
   },
   "seoContent": {
     "title": "Free Online Clash & Sing-Box Converter - Convert Proxy Links",
-    "intro": "ClashConverter is a free online tool that converts various proxy protocols (SS, SSR, VMess, Trojan, Hysteria, VLESS, HTTP, SOCKS5) into Clash YAML, Sing-Box, Loon, QuantumultX, and Surfboard configuration formats.",
+    "intro": "ClashConverter is a free online tool that converts various proxy protocols (SS, SSR, VMess, Trojan, Hysteria, VLESS, HTTP, SOCKS5, WireGuard, AnyTLS) into Clash YAML, Sing-Box, Loon, QuantumultX, and Surfboard configuration formats.",
     "privacy": "All conversions happen directly in your local browser - your proxy configurations are never uploaded to any server, ensuring complete privacy and security.",
     "features": {
       "title": "Key Features of Our Converter",
       "items": [
-        "Support for 9 proxy protocols: SS, SSR, VMess, VLESS, Trojan, Hysteria, Hysteria2, HTTP, SOCKS5",
+        "Support for 11 proxy protocols: SS, SSR, VMess, VLESS, Trojan, Hysteria, Hysteria2, HTTP, SOCKS5, WireGuard, AnyTLS",
         "Convert Clash YAML back to shareable proxy links",
         "Support for convert proxy links to Clash Meta (Mihomo), Clash Premium, Sing-Box, Loon, QuantumultX, Surfboard config file",
         "Client-side processing - no server upload required",
@@ -765,7 +765,9 @@
         { "name": "ShadowsocksR (SSR)", "desc": "Convert SSR links with protocol, obfs, and other custom parameters" },
         { "name": "VMess", "desc": "Convert VMess links commonly used by V2Ray and V2RayN clients" },
         { "name": "VLESS", "desc": "Convert VLESS links - a lightweight protocol supported by Clash Meta/Mihomo" },
-        { "name": "Trojan", "desc": "Convert Trojan links with TLS authentication" },
+        { "name": "Trojan", "desc": "Convert Trojan links with TLS authentication - supports Trojan-Go ws/gRPC transports and Shadowsocks relay" },
+        { "name": "WireGuard", "desc": "Convert WireGuard links with full config: keys, allowed-ips, reserved and MTU (Clash Meta/Premium and Sing-Box)" },
+        { "name": "AnyTLS", "desc": "Convert AnyTLS links - the modern TLS-based protocol supported by Clash Meta (Mihomo) and Sing-Box" },
         { "name": "Hysteria", "desc": "Convert Hysteria v1 links with QUIC protocol support" },
         { "name": "Hysteria2", "desc": "Convert Hysteria2 links - the latest version with improved performance" },
         { "name": "HTTP Proxy", "desc": "Convert HTTP/HTTPS proxy links with username and password authentication" },
@@ -775,7 +777,7 @@
     "howToUse": {
       "title": "How to Use Our Converter",
       "steps": [
-        { "title": "Paste Your Proxy Links", "desc": "Enter your proxy links in the input box. Each link should be on a separate line. Supported formats include ss://, ssr://, vmess://, vless://, trojan://, hysteria://, hysteria2://, http://, and socks5://" },
+        { "title": "Paste Your Proxy Links", "desc": "Enter your proxy links in the input box. Each link should be on a separate line. Supported formats include ss://, ssr://, vmess://, vless://, trojan://, hysteria://, hysteria2://, wireguard://, anytls://, http://, and socks5://" },
         { "title": "Select Your Output Format", "desc": "Choose between Clash Meta (Mihomo) for full protocol support, Clash Premium for legacy compatibility, Sing-Box, Loon, QuantumultX, or Surfboard format. Each format has different protocol support." },
         { "title": "Convert & Download", "desc": "Click the convert button and your configuration will be generated instantly. You can then download the config file or copy it to your clipboard." }
       ]
@@ -783,16 +785,16 @@
     "faq": {
       "title": "Frequently Asked Questions",
       "items": [
-        { "q": "What is Clash Converter?", "a": "Clash Converter is a free online tool that converts various proxy protocols (SS, SSR, VMess, Trojan, Hysteria, VLESS, HTTP, SOCKS5) into Clash YAML, Sing-Box, Loon, QuantumultX, or Surfboard configuration format. It supports Clash Meta (Mihomo), Clash Premium, Sing-Box, Loon, QuantumultX, and Surfboard." },
+        { "q": "What is Clash Converter?", "a": "Clash Converter is a free online tool that converts various proxy protocols (SS, SSR, VMess, Trojan, Hysteria, VLESS, HTTP, SOCKS5, WireGuard, AnyTLS) into Clash YAML, Sing-Box, Loon, QuantumultX, or Surfboard configuration format. It supports Clash Meta (Mihomo), Clash Premium, Sing-Box, Loon, QuantumultX, and Surfboard." },
         { "q": "Is Clash Converter safe to use?", "a": "Yes, Clash Converter is completely safe and privacy-focused. All conversion happens client-side in your browser. Your proxy configurations are never uploaded to any server, ensuring complete privacy and security." },
-        { "q": "Which proxy protocols are supported?", "a": "Clash Converter supports 9 proxy protocols: Shadowsocks (SS), ShadowsocksR (SSR), VMess, VLESS, Trojan, Hysteria, Hysteria2, HTTP, and SOCKS5. It can convert both to and from Clash YAML format." },
+        { "q": "Which proxy protocols are supported?", "a": "Clash Converter supports 11 proxy protocols: Shadowsocks (SS), ShadowsocksR (SSR), VMess, VLESS, Trojan, Hysteria, Hysteria2, HTTP, SOCKS5, WireGuard, and AnyTLS. It can convert both to and from Clash YAML format." },
         { "q": "What is the difference between Clash Meta and Clash Premium?", "a": "Clash Meta (Mihomo) is the actively maintained version that supports all modern protocols including VLESS, Hysteria, and Hysteria2. Clash Premium is the original kernel that is no longer maintained and does not support these newer protocols." },
         { "q": "How do I convert proxy links to Clash format?", "a": "Simply paste your proxy links (one per line) into the input box. Each link should be in the format like ss://base64#name, vmess://base64#name, etc. Click \"Convert\" and the Clash YAML configuration will be generated instantly." },
         { "q": "Can I convert Clash YAML back to proxy links?", "a": "Yes! Click the \"Swap Direction\" button to switch from \"Proxies to YAML\" mode to \"YAML to Proxies\" mode. Paste your Clash YAML config and the tool will extract and convert all proxy nodes back to shareable links." },
         { "q": "Why should I use this clash converter?", "a": "Our clash converter offers the most comprehensive protocol support, works entirely in your browser for privacy, has no limitations or registration requirements, and is regularly updated to support the latest proxy protocols." },
         { "q": "Does this work with Clash Verge and other clients?", "a": "Yes! The YAML output is compatible with all Clash-based clients including Clash Verge, Clash Nyanpasu, Clash for Android, Clash for Windows, and other clients that use Clash Meta (Mihomo) or Clash Premium kernels." },
         { "q": "What is sing-box and why should I use it?", "a": "sing-box is a universal proxy platform that supports multiple protocols and platforms. It's actively maintained and works on Android, iOS, Windows, macOS, and Linux. sing-box supports SS, VMess, VLESS, Trojan, Hysteria, Hysteria2, and HTTP protocols. Use sing-box if you need cross-platform compatibility or prefer JSON configuration format." },
-        { "q": "Which protocols are supported for sing-box output?", "a": "sing-box output supports all 9 protocols: SS, SSR, VMess, VLESS, Trojan, Hysteria, Hysteria2, HTTP, and SOCKS5. SSR nodes are automatically converted to Shadowsocks format for compatibility." },
+        { "q": "Which protocols are supported for sing-box output?", "a": "sing-box output supports all 11 protocols: SS, SSR, VMess, VLESS, Trojan, Hysteria, Hysteria2, HTTP, SOCKS5, WireGuard, and AnyTLS. SSR nodes are automatically converted to Shadowsocks format for compatibility." },
         { "q": "What is Loon and which protocols does it support?", "a": "Loon is a powerful iOS proxy client with advanced features and rule customization. It supports SS, SSR, VMess, and Trojan protocols. Does NOT support VLESS, Hysteria, Hysteria2, HTTP, or SOCKS5." },
         { "q": "What is QuantumultX and which protocols does it support?", "a": "QuantumultX is a popular iOS proxy client with powerful rule-based filtering and rewrite features. It supports SS, SSR, VMess, Trojan, HTTP, and SOCKS5 protocols. Does NOT support VLESS, Hysteria, or Hysteria2." },
         { "q": "What is Surfboard and which protocols does it support?", "a": "Surfboard is a professional iOS proxy client based on Surge format. It supports SS, VMess, Trojan, HTTP, SOCKS5, and Hysteria2 protocols. Does NOT support SSR, VLESS, or Hysteria (v1)." },

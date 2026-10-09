@@ -1,11 +1,11 @@
 import { ParsedProxy, ProxyNode } from '../types';
-import { parseSS, parseSSR, parseVmess, parseTrojan, parseHysteria, parseHysteria2, parseVless, parseHttp, parseSocks5, parseTelegramLink } from './protocol-parsers';
+import { parseSS, parseSSR, parseVmess, parseTrojan, parseHysteria, parseHysteria2, parseVless, parseHttp, parseSocks5, parseWireguard, parseAnytls, parseTelegramLink } from './protocol-parsers';
 
 // js-set-map-lookups: Use Set for O(1) protocol lookups instead of Array.includes()
-const KNOWN_PROTOCOLS = new Set(['ss', 'ssr', 'vmess', 'trojan', 'hysteria', 'hysteria2', 'vless', 'http', 'https', 'socks', 'socks5']);
+const KNOWN_PROTOCOLS = new Set(['ss', 'ssr', 'vmess', 'trojan', 'hysteria', 'hysteria2', 'vless', 'http', 'https', 'socks', 'socks5', 'wireguard', 'wg', 'anytls']);
 
 // js-set-map-lookups: Use Set for O(1) supported protocol lookups
-const SUPPORTED_PROTOCOLS = new Set(['ss', 'ssr', 'vmess', 'trojan', 'hysteria', 'hysteria2', 'vless', 'http', 'https', 'socks', 'socks5']);
+const SUPPORTED_PROTOCOLS = new Set(['ss', 'ssr', 'vmess', 'trojan', 'hysteria', 'hysteria2', 'vless', 'http', 'https', 'socks', 'socks5', 'wireguard', 'wg', 'anytls']);
 
 // js-hoist-regexp: Hoist RegExp outside function for reuse
 const TELEGRAM_LINK_REGEX = /^https:\/\/t\.me\/(socks|http)/;
@@ -44,6 +44,8 @@ export function parseProxyLink(link: string): ParsedProxy | null {
     parseHysteria2,
     parseHysteria,
     parseVless,
+    parseWireguard,
+    parseAnytls,
     parseHttp,
     parseSocks5,
   ];
@@ -67,7 +69,7 @@ export function parseMultipleProxies(input: string): { proxies: ProxyNode[]; uns
   let defaultNameCounter = 0;
 
   // Default protocol names that should use defaultName_X format
-  const defaultProtocolNames = new Set(['SS', 'SSR', 'Vmess', 'Trojan', 'Hysteria', 'Hysteria2', 'VLESS', 'HTTP', 'SOCKS5', 'Telegram']);
+  const defaultProtocolNames = new Set(['SS', 'SSR', 'Vmess', 'Trojan', 'Hysteria', 'Hysteria2', 'VLESS', 'HTTP', 'SOCKS5', 'Telegram', 'WireGuard', 'AnyTLS']);
 
   for (const line of lines) {
     const trimmedLine = line.trim();

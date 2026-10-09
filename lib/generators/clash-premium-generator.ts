@@ -17,8 +17,9 @@ export class ClashPremiumGenerator extends ClashYamlGenerator {
 
   /**
    * Protocols not supported by Clash Premium
+   * (anytls is Meta-only; wireguard IS supported by the Premium core)
    */
-  private static readonly UNSUPPORTED_PROTOCOLS = new Set(['vless', 'hysteria', 'hysteria2']);
+  private static readonly UNSUPPORTED_PROTOCOLS = new Set(['vless', 'hysteria', 'hysteria2', 'anytls']);
 
   /**
    * Filter proxies to exclude unsupported protocols
@@ -34,6 +35,6 @@ export class ClashPremiumGenerator extends ClashYamlGenerator {
    * @returns Set of supported protocol types (excludes VLESS, Hysteria, Hysteria2)
    */
   getSupportedProtocols(): Set<string> {
-    return new Set(['ss', 'ssr', 'vmess', 'trojan', 'http', 'socks5']);
+    return new Set(['ss', 'ssr', 'vmess', 'trojan', 'http', 'socks5', 'wireguard']);
   }
 }

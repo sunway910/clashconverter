@@ -13,3 +13,5 @@ export { VLESSAdapter } from './vless-adapter';
 export { HysteriaAdapter, Hysteria2Adapter } from './hysteria-adapter';
 export { HTTPAdapter } from './http-adapter';
 export { SOCKS5Adapter } from './socks5-adapter';
+export { WireGuardAdapter } from './wireguard-adapter';
+export { AnyTLSAdapter } from './anytls-adapter';

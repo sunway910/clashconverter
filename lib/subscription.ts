@@ -119,7 +119,7 @@ export function detectContentType(content: string): SubscriptionContentType {
   // Proxy node patterns
   if (
     /^[\s-]*name:/.test(trimmedContent) ||
-    /^[\s-]*type:\s*(ss|ssr|vmess|trojan|hysteria|hysteria2|vless|http|socks|socks5)/m.test(trimmedContent)
+    /^[\s-]*type:\s*(ss|ssr|vmess|trojan|hysteria|hysteria2|vless|http|socks|socks5|wireguard|anytls)/m.test(trimmedContent)
   ) {
     return 'yaml';
   }

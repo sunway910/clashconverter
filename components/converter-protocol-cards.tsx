@@ -10,6 +10,8 @@ const PROTOCOL_CARDS = [
   { name: 'Hysteria2' },
   { name: 'HTTP' },
   { name: 'SOCKS5' },
+  { name: 'WireGuard' },
+  { name: 'AnyTLS' },
 ] as const;
 
 // Vibrant gradient colors for each protocol card - Candy Shop Palette
@@ -23,6 +25,8 @@ const CARD_GRADIENTS = [
   'from-red-500 to-red-700',
   'from-teal-400 to-teal-600',
   'from-orange-400 to-orange-600',
+  'from-sky-400 to-indigo-600',
+  'from-fuchsia-500 to-violet-700',
 ];
 
 export const ProtocolCards = React.memo(() => (

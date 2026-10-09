@@ -406,7 +406,7 @@
         {
           "title": "代理分享链接",
           "paragraphs": [
-            "每行一条链接，使用大多数订阅和节点分享采用的标准 URI 格式：ss://、ssr://、vmess://、vless://、trojan://、hysteria://、hysteria2://、http://、socks5://。链接中 # 符号后面的文字会成为生成配置里的节点名称，因此带名称的链接会生成出整洁有序的配置。加密（base64）载荷会自动解码，包括部分服务商使用的 URL-safe base64 变体。"
+            "每行一条链接，使用大多数订阅和节点分享采用的标准 URI 格式：ss://、ssr://、vmess://、vless://、trojan://、hysteria://、hysteria2://、wireguard://、anytls://、http://、socks5://。链接中 # 符号后面的文字会成为生成配置里的节点名称，因此带名称的链接会生成出整洁有序的配置。加密（base64）载荷会自动解码，包括部分服务商使用的 URL-safe base64 变体。"
           ]
         },
         {
@@ -620,7 +620,7 @@
   },
   "inputPlaceholder": {
     "subscribe-url": "在此粘贴订阅链接\n\n支持的订阅类型：\n\n类型 1：直接下载 YAML 文件\nhttps://example.com/link/...?clash=3\n\n类型 2：Base64 编码的代理链接\nhttps://example.com/api/v1/client/subscribe?token=xxx\n\n💡 我们将自动获取并转换订阅内容",
-    "txt": "在此粘贴代理链接，每行一个\n\n支持的协议：\n\nhysteria://server:port?protocol=udp&auth=xxx&peer=xxx#Hysteria-节点\nhysteria2://password@server:port/?sni=xxx#Hysteria2-节点\nss://[base64]#SS-节点\nssr://[base64]#SSR-节点\nvmess://[base64]#Vmess-节点\nvless://uuid@server:port?encryption=none&security=tls&type=tcp#Vless-节点\ntrojan://password@server:port#Trojan-节点\nsocks5://server:port#Socks5-节点\nhttp://user:pass@server:port#Http-节点\n\n💡 提示：链接末尾的 #名称 会成为输出文件中的代理名称",
+    "txt": "在此粘贴代理链接，每行一个\n\n支持的协议：\n\nhysteria://server:port?protocol=udp&auth=xxx&peer=xxx#Hysteria-节点\nhysteria2://password@server:port/?sni=xxx#Hysteria2-节点\nss://[base64]#SS-节点\nssr://[base64]#SSR-节点\nvmess://[base64]#Vmess-节点\nvless://uuid@server:port?encryption=none&security=tls&type=tcp#Vless-节点\ntrojan://password@server:port#Trojan-节点\nwireguard://私钥@server:port?publickey=xxx&address=10.0.0.2#WireGuard-节点\nanytls://password@server:port?sni=xxx#AnyTLS-节点\nsocks5://server:port#Socks5-节点\nhttp://user:pass@server:port#Http-节点\n\n💡 提示：链接末尾的 #名称 会成为输出文件中的代理名称",
     "clash": "proxies:\n  - name: SS-HongKong\n    type: ss\n    server: hk.example.com\n    port: 443\n  - name: VMESS-US\n    type: vmess\n    server: us.example.com\n    port: 443\n\nproxy-groups:\n  - name: 🚀 节点选择\n    type: select\n    proxies: ...",
     "sing-box": "'{'\n  \"outbounds\": [\n    '{'\n      \"type\": \"shadowsocks\",\n      \"tag\": \"SS-HongKong\",\n      \"server\": \"hk.example.com\",\n      \"server_port\": 443,\n      \"method\": \"aes-128-gcm\",\n      \"password\": \"password\"\n    '}',\n    ..."
   },
@@ -742,12 +742,12 @@
   },
   "seoContent": {
     "title": "代理链接转换器",
-    "intro": "ClashConverter 是一个免费的在线工具，可以将各种代理协议（SS、SSR、VMess、Trojan、Hysteria、VLESS、HTTP、SOCKS5）转换为 Clash YAML、Sing-Box、Loon、QuantumultX、Surfboard 配置格式。",
+    "intro": "ClashConverter 是一个免费的在线工具，可以将各种代理协议（SS、SSR、VMess、Trojan、Hysteria、VLESS、HTTP、SOCKS5、WireGuard、AnyTLS）转换为 Clash YAML、Sing-Box、Loon、QuantumultX、Surfboard 配置格式。",
     "privacy": "所有转换都直接在您的本地浏览器中进行 - 您的代理配置永远不会上传到任何服务器，确保完全的隐私和安全。",
     "features": {
       "title": "我们转换器的核心功能",
       "items": [
-        "支持 9 种代理协议：SS、SSR、VMess、VLESS、Trojan、Hysteria、Hysteria2、HTTP、SOCKS5",
+        "支持 11 种代理协议：SS、SSR、VMess、VLESS、Trojan、Hysteria、Hysteria2、HTTP、SOCKS5、WireGuard、AnyTLS",
         "将 Clash YAML 转换回可分享的代理链接",
         "支持将代理链接转换 Clash Meta (Mihomo)、Clash Premium、Sing-Box、Loon、QuantumultX、Surfboard 配置文件",
         "客户端处理 - 无需上传服务器",
@@ -765,7 +765,9 @@
         { "name": "ShadowsocksR (SSR)", "desc": "转换带有 protocol、obfs 等自定义参数的 SSR 链接" },
         { "name": "VMess", "desc": "转换 V2Ray 和 V2RayN 客户端常用的 VMess 链接" },
         { "name": "VLESS", "desc": "转换 VLESS 链接 - Clash Meta/Mihomo 支持的轻量级协议" },
-        { "name": "Trojan", "desc": "转换带有 TLS 认证的 Trojan 链接" },
+        { "name": "Trojan", "desc": "转换带有 TLS 认证的 Trojan 链接 - 支持 Trojan-Go 的 ws/gRPC 传输层与 Shadowsocks 中转" },
+        { "name": "WireGuard", "desc": "转换 WireGuard 链接，支持完整配置：公私钥、allowed-ips、reserved、MTU（Clash Meta/Premium 与 Sing-Box）" },
+        { "name": "AnyTLS", "desc": "转换 AnyTLS 链接 - Clash Meta (Mihomo) 与 Sing-Box 支持的新型 TLS 协议" },
         { "name": "Hysteria", "desc": "转换带有 QUIC 协议支持的 Hysteria v1 链接" },
         { "name": "Hysteria2", "desc": "转换 Hysteria2 链接 - 性能提升的最新版本" },
         { "name": "HTTP 代理", "desc": "转换带有用户名和密码认证的 HTTP/HTTPS 代理链接" },
@@ -775,7 +777,7 @@
     "howToUse": {
       "title": "如何使用我们的转换器",
       "steps": [
-        { "title": "粘贴您的代理链接", "desc": "在输入框中输入您的代理链接。每个链接应单独一行。支持的格式包括 ss://、ssr://、vmess://、vless://、trojan://、hysteria://、hysteria2://、http:// 和 socks5://" },
+        { "title": "粘贴您的代理链接", "desc": "在输入框中输入您的代理链接。每个链接应单独一行。支持的格式包括 ss://、ssr://、vmess://、vless://、trojan://、hysteria://、hysteria2://、wireguard://、anytls://、http:// 和 socks5://" },
         { "title": "选择输出格式", "desc": "在 Clash Meta (Mihomo) 完整协议支持、Clash Premium 遗留兼容性、Sing-Box、Loon、QuantumultX 或 Surfboard 格式之间选择。每种格式有不同的协议支持。" },
         { "title": "转换和下载", "desc": "点击转换按钮，您的配置将立即生成。然后您可以下载配置文件或将其复制到剪贴板。" }
       ]
@@ -783,16 +785,16 @@
     "faq": {
       "title": "常见问题",
       "items": [
-        { "q": "什么是 Clash 转换器？", "a": "Clash 转换器是一个免费的在线工具，可以将各种代理协议（SS、SSR、VMess、Trojan、Hysteria、VLESS、HTTP、SOCKS5）转换为 Clash YAML、Sing-Box、Loon、QuantumultX、Surfboard 配置格式。支持 Clash Meta (Mihomo)、Clash Premium、Sing-Box、Loon、QuantumultX、Surfboard 内核。" },
+        { "q": "什么是 Clash 转换器？", "a": "Clash 转换器是一个免费的在线工具，可以将各种代理协议（SS、SSR、VMess、Trojan、Hysteria、VLESS、HTTP、SOCKS5、WireGuard、AnyTLS）转换为 Clash YAML、Sing-Box、Loon、QuantumultX、Surfboard 配置格式。支持 Clash Meta (Mihomo)、Clash Premium、Sing-Box、Loon、QuantumultX、Surfboard 内核。" },
         { "q": "Clash 转换器安全吗？", "a": "是的，Clash 转换器完全安全且注重隐私。所有转换都在您的浏览器客户端进行。您的代理配置永远不会上传到任何服务器，确保完全的隐私和安全。" },
-        { "q": "支持哪些代理协议？", "a": "Clash 转换器支持 9 种代理协议：Shadowsocks (SS)、ShadowsocksR (SSR)、VMess、VLESS、Trojan、Hysteria、Hysteria2、HTTP 和 SOCKS5。可以双向转换到和从 Clash YAML 格式。" },
+        { "q": "支持哪些代理协议？", "a": "Clash 转换器支持 11 种代理协议：Shadowsocks (SS)、ShadowsocksR (SSR)、VMess、VLESS、Trojan、Hysteria、Hysteria2、HTTP、SOCKS5、WireGuard 和 AnyTLS。可以双向转换到和从 Clash YAML 格式。" },
         { "q": "Clash Meta 和 Clash Premium 有什么区别？", "a": "Clash Meta (Mihomo) 是积极维护的版本，支持所有现代协议，包括 VLESS、Hysteria 和 Hysteria2。Clash Premium 是原始内核，不再维护，不支持这些新协议。" },
         { "q": "如何将代理链接转换为 Clash 格式？", "a": "只需将您的代理链接（每行一个）粘贴到输入框中。每个链接应采用 ss://base64#name、vmess://base64#name 等格式。点击「转换」按钮，Clash YAML 配置将立即生成。" },
         { "q": "我可以将 Clash YAML 转换回代理链接吗？", "a": "可以！点击「切换方向」按钮，从「代理转 YAML」模式切换到「YAML 转代理」模式。粘贴您的 Clash YAML 配置，工具将提取所有代理节点并转换回可分享的链接。" },
         { "q": "为什么应该使用这个 Clash 转换器？", "a": "我们的 Clash 转换器提供最全面的协议支持，完全在浏览器中工作以保护隐私，没有限制或注册要求，并定期更新以支持最新的代理协议。" },
         { "q": "这适用于 Clash Verge 和其他客户端吗？", "a": "是的！YAML 输出与所有基于 Clash 的客户端兼容，包括 Clash Verge、Clash Nyanpasu、Clash for Android、Clash for Windows 以及其他使用 Clash Meta (Mihomo) 或 Clash Premium 内核的客户端。" },
         { "q": "什么是 Sing-Box，为什么要使用它？", "a": "Sing-Box 是一个支持多种协议和平台的通用代理平台。它积极维护，支持 Android、iOS、Windows、macOS 和 Linux。Sing-Box 支持 SS、VMess、VLESS、Trojan、Hysteria、Hysteria2 和 HTTP 协议。如果您需要跨平台兼容性或喜欢 JSON 配置格式，可以使用 Sing-Box。" },
-        { "q": "Sing-Box 输出支持哪些协议？", "a": "Sing-Box 输出支持所有 9 种协议：SS、SSR、VMess、VLESS、Trojan、Hysteria、Hysteria2、HTTP 和 SOCKS5。SSR 节点会自动转换为 Shadowsocks 格式以确保兼容性。" },
+        { "q": "Sing-Box 输出支持哪些协议？", "a": "Sing-Box 输出支持所有 11 种协议：SS、SSR、VMess、VLESS、Trojan、Hysteria、Hysteria2、HTTP、SOCKS5、WireGuard 和 AnyTLS。SSR 节点会自动转换为 Shadowsocks 格式以确保兼容性。" },
         { "q": "什么是 Loon，支持哪些协议？", "a": "Loon 是功能强大的 iOS 代理客户端，支持高级功能和规则自定义。支持 SS、SSR、VMess、Trojan 协议。不支持 VLESS、Hysteria、Hysteria2、HTTP、SOCKS5。" },
         { "q": "什么是 QuantumultX，支持哪些协议？", "a": "QuantumultX 是流行的 iOS 代理客户端，支持强大的规则过滤和重写功能。支持 SS、SSR、VMess、Trojan、HTTP、SOCKS5 协议。不支持 VLESS、Hysteria、Hysteria2。" },
         { "q": "什么是 Surfboard，支持哪些协议？", "a": "Surfboard 是专业的 iOS 代理客户端，基于 Surge 格式。支持 SS、VMess、Trojan、HTTP、SOCKS5、Hysteria2 协议。不支持 SSR、VLESS、Hysteria (v1)。" },
