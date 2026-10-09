@@ -1,4 +1,5 @@
 import { ProxyNode } from '../types';
+import { normalizeProxyNodeHostnames } from '../utils';
 
 // js-set-map-lookups: Use Set for O(1) lookups instead of Array.includes()
 const NON_PROXY_OUTBOUND_TYPES = new Set(['selector', 'urltest', 'direct', 'block', 'dns']);
@@ -65,6 +66,8 @@ export function parseSingBoxToProxies(input: string): {
 
       const proxy = singBoxOutboundToProxyNode(outbound, proxyType);
       if (proxy) {
+        // Convert non-ASCII (IDN) hostnames to Punycode
+        normalizeProxyNodeHostnames(proxy);
         proxies.push(proxy);
       }
     }

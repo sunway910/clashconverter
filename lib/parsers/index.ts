@@ -1,4 +1,5 @@
 import { ParsedProxy, ProxyNode } from '../types';
+import { normalizeProxyNodeHostnames } from '../utils';
 import { parseSS, parseSSR, parseVmess, parseTrojan, parseHysteria, parseHysteria2, parseVless, parseHttp, parseSocks5, parseWireguard, parseAnytls, parseTelegramLink } from './protocol-parsers';
 
 // js-set-map-lookups: Use Set for O(1) protocol lookups instead of Array.includes()
@@ -32,7 +33,10 @@ export function parseProxyLink(link: string): ParsedProxy | null {
   // Try Telegram links first before regular HTTP/HTTPS
   if (isTelegramLink(link)) {
     const result = parseTelegramLink(link);
-    if (result) return result;
+    if (result) {
+      normalizeProxyNodeHostnames(result.config);
+      return result;
+    }
   }
 
   // Try each parser
@@ -52,7 +56,11 @@ export function parseProxyLink(link: string): ParsedProxy | null {
 
   for (const parser of parsers) {
     const result = parser(link);
-    if (result) return result;
+    if (result) {
+      // Convert non-ASCII (IDN) hostnames to Punycode before returning
+      normalizeProxyNodeHostnames(result.config);
+      return result;
+    }
   }
 
   return null;

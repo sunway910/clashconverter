@@ -6,6 +6,7 @@
 import { z } from 'zod';
 import type { ProxyType } from './proxy-nodes';
 import { ValidationError, ErrorCode } from '../errors';
+import { normalizeProxyNodeHostnames } from '../utils';
 
 // ============================================================================
 // Common Validators
@@ -302,7 +303,7 @@ export const proxyNodeSchema = z.discriminatedUnion('type', [
  */
 export function validateProxyNode(node: unknown): import('./proxy-nodes').ProxyNode {
   try {
-    return proxyNodeSchema.parse(node);
+    return proxyNodeSchema.parse(normalizeProxyNodeHostnames(node));
   } catch (error) {
     if (error instanceof z.ZodError) {
       // Format error message for better debugging
@@ -338,7 +339,7 @@ export function validateProxyNodes(nodes: unknown[]): import('./proxy-nodes').Pr
  */
 export function safeValidateProxyNode(node: unknown): import('./proxy-nodes').ProxyNode | null {
   try {
-    return proxyNodeSchema.safeParse(node).data || null;
+    return proxyNodeSchema.safeParse(normalizeProxyNodeHostnames(node)).data || null;
   } catch {
     return null;
   }
@@ -350,7 +351,7 @@ export function safeValidateProxyNode(node: unknown): import('./proxy-nodes').Pr
  * @returns True if valid ProxyNode
  */
 export function isValidProxyNode(value: unknown): value is import('./proxy-nodes').ProxyNode {
-  return proxyNodeSchema.safeParse(value).success;
+  return proxyNodeSchema.safeParse(normalizeProxyNodeHostnames(value)).success;
 }
 
 // ============================================================================
