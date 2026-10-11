@@ -209,9 +209,15 @@ export function parseSSR(link: string): ParsedProxy | null {
       obfs,
     };
 
-    // Add optional params (SSR link param keys: protoparam/obfsparam -> Clash keys)
-    if (params.protoparam) config['protocol-param'] = params.protoparam;
-    if (params.obfsparam) config['obfs-param'] = params.obfsparam;
+    // Add optional params (SSR link param values are base64 encoded)
+    if (params.protoparam) {
+      const decodedParam = base64Decode(params.protoparam);
+      if (decodedParam) config['protocol-param'] = decodedParam;
+    }
+    if (params.obfsparam) {
+      const decodedParam = base64Decode(params.obfsparam);
+      if (decodedParam) config['obfs-param'] = decodedParam;
+    }
     if (params.group) config.group = base64Decode(params.group);
 
     return { name: nodeName, config };
