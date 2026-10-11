@@ -4,6 +4,7 @@
 
 import type { ProxyNode, WireGuardProxyNode } from '../types';
 import type { IProtocolAdapter } from './protocol-adapter';
+import { applyCommonClashFields } from './shared';
 
 /**
  * Adapter for WireGuard protocol
@@ -30,9 +31,13 @@ export class WireGuardAdapter implements IProtocolAdapter {
     if (wg['allowed-ips']?.length) obj['allowed-ips'] = wg['allowed-ips'];
     if (wg.reserved !== undefined) obj.reserved = wg.reserved;
     if (wg.mtu) obj.mtu = wg.mtu;
+    if (wg.workers) obj.workers = wg.workers;
+    if (wg['persistent-keepalive'] !== undefined) obj['persistent-keepalive'] = wg['persistent-keepalive'];
+    if (wg.peers?.length) obj.peers = wg.peers;
     if (wg['remote-dns-resolve'] !== undefined) obj['remote-dns-resolve'] = wg['remote-dns-resolve'];
     if (wg.dns?.length) obj.dns = wg.dns;
-    if (wg['dialer-proxy']) obj['dialer-proxy'] = wg['dialer-proxy'];
+    if (wg['refresh-server-ip-interval'] !== undefined) obj['refresh-server-ip-interval'] = wg['refresh-server-ip-interval'];
+    applyCommonClashFields(node, obj);
 
     return obj;
   }
@@ -54,6 +59,7 @@ export class WireGuardAdapter implements IProtocolAdapter {
     if (wg['pre-shared-key']) obj.pre_shared_key = wg['pre-shared-key'];
     if (wg.reserved !== undefined) obj.reserved = wg.reserved;
     if (wg.mtu) obj.mtu = wg.mtu;
+    if (wg['persistent-keepalive'] !== undefined) obj.persistent_keepalive = `${wg['persistent-keepalive']}s`;
 
     return obj;
   }
@@ -71,6 +77,7 @@ export class WireGuardAdapter implements IProtocolAdapter {
       params.push(`reserved=${Array.isArray(wg.reserved) ? wg.reserved.join(',') : wg.reserved}`);
     }
     if (wg.mtu) params.push(`mtu=${wg.mtu}`);
+    if (wg['persistent-keepalive'] !== undefined) params.push(`persistent-keepalive=${wg['persistent-keepalive']}`);
     if (wg.dns?.length) params.push(`dns=${wg.dns.join(',')}`);
     if (wg['remote-dns-resolve']) params.push('remote-dns-resolve=true');
 

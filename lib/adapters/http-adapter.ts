@@ -4,6 +4,7 @@
 
 import type { ProxyNode, HTTPProxyNode } from '../types';
 import type { IProtocolAdapter } from './protocol-adapter';
+import { applyCommonClashFields, buildSingBoxTls } from './shared';
 
 /**
  * Adapter for HTTP protocol
@@ -25,6 +26,11 @@ export class HTTPAdapter implements IProtocolAdapter {
     if (httpNode.username) obj.username = httpNode.username;
     if (httpNode.password) obj.password = httpNode.password;
     if (httpNode.tls) obj.tls = httpNode.tls;
+    if (httpNode.sni) obj.sni = httpNode.sni;
+    if (httpNode['skip-cert-verify'] !== undefined) obj['skip-cert-verify'] = httpNode['skip-cert-verify'];
+    if (httpNode.fingerprint) obj.fingerprint = httpNode.fingerprint;
+    if (httpNode.headers) obj.headers = httpNode.headers;
+    applyCommonClashFields(node, obj);
 
     return obj;
   }
@@ -32,7 +38,7 @@ export class HTTPAdapter implements IProtocolAdapter {
   toSingBoxJson(node: ProxyNode): Record<string, any> {
     const httpNode = node as unknown as HTTPProxyNode;
 
-    return {
+    const obj: Record<string, any> = {
       tag: httpNode.name,
       type: 'http',
       server: httpNode.server,
@@ -45,6 +51,11 @@ export class HTTPAdapter implements IProtocolAdapter {
       ],
       set_system_proxy: true,
     };
+
+    const tls = buildSingBoxTls(node);
+    if (tls) obj.tls = tls;
+
+    return obj;
   }
 
   toLink(node: ProxyNode): string {
@@ -55,6 +66,7 @@ export class HTTPAdapter implements IProtocolAdapter {
       link += `${encodeURIComponent(httpNode.username)}:${encodeURIComponent(httpNode.password)}@`;
     }
     link += `${httpNode.server}:${httpNode.port}`;
+    if (httpNode.tls) link += '?tls=1';
     if (!this.isDefaultName(httpNode.name)) {
       link += `#${encodeURIComponent(httpNode.name)}`;
     }

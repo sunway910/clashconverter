@@ -4,6 +4,7 @@
 
 import type { ProxyNode, SSRProxyNode } from '../types';
 import type { IProtocolAdapter } from './protocol-adapter';
+import { applyCommonClashFields } from './shared';
 
 /**
  * Base64 encode with URL-safe variant (no padding)
@@ -36,6 +37,8 @@ export class SSRAdapter implements IProtocolAdapter {
     if (ssrNode['protocol-param']) obj['protocol-param'] = ssrNode['protocol-param'];
     if (ssrNode['obfs-param']) obj['obfs-param'] = ssrNode['obfs-param'];
     if (ssrNode.group) obj.group = ssrNode.group;
+    if (ssrNode.udp !== undefined) obj.udp = ssrNode.udp;
+    applyCommonClashFields(node, obj);
 
     return obj;
   }

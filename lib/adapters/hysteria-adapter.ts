@@ -4,6 +4,7 @@
 
 import type { ProxyNode, HysteriaProxyNode, Hysteria2ProxyNode } from '../types';
 import type { IProtocolAdapter } from './protocol-adapter';
+import { applyCommonClashFields, buildSingBoxTls, passthroughClashFields } from './shared';
 
 /**
  * Adapter for Hysteria v1 protocol
@@ -14,7 +15,7 @@ export class HysteriaAdapter implements IProtocolAdapter {
   toClashJson(node: ProxyNode): Record<string, any> {
     const hysNode = node as unknown as HysteriaProxyNode;
 
-    return {
+    const obj: Record<string, any> = {
       type: 'hysteria',
       name: hysNode.name,
       server: hysNode.server,
@@ -27,12 +28,29 @@ export class HysteriaAdapter implements IProtocolAdapter {
       down: hysNode.down || 50,
       alpn: hysNode.alpn || (hysNode.alpn === '' ? [] : ['h3']),
     };
+
+    passthroughClashFields(node, obj, [
+      'ports',
+      'obfs',
+      'obfs-protocol',
+      'fingerprint',
+      'ca',
+      'ca-str',
+      'recv-window',
+      'recv-window-conn',
+      'disable-mtu-discovery',
+      'fast-open',
+      'hop-interval',
+    ]);
+    applyCommonClashFields(node, obj);
+
+    return obj;
   }
 
   toSingBoxJson(node: ProxyNode): Record<string, any> {
     const hysNode = node as unknown as HysteriaProxyNode;
 
-    return {
+    const obj: Record<string, any> = {
       tag: hysNode.name,
       type: 'hysteria',
       server: hysNode.server,
@@ -42,6 +60,13 @@ export class HysteriaAdapter implements IProtocolAdapter {
       down_mbps: hysNode.down || 50,
       ...(hysNode.sni && { server_name: hysNode.sni }),
     };
+
+    if (hysNode.obfs) obj.obfs = hysNode.obfs;
+    if (hysNode['skip-cert-verify'] !== undefined) {
+      obj.tls = { enabled: true, insecure: Boolean(hysNode['skip-cert-verify']) };
+    }
+
+    return obj;
   }
 
   toLink(node: ProxyNode): string {
@@ -56,6 +81,9 @@ export class HysteriaAdapter implements IProtocolAdapter {
     if (hysNode['skip-cert-verify']) params.push('insecure=1');
     if (hysNode.up) params.push(`upmbps=${hysNode.up}`);
     if (hysNode.down) params.push(`downmbps=${hysNode.down}`);
+    if (hysNode.ports) params.push(`mport=${encodeURIComponent(hysNode.ports)}`);
+    if (hysNode.obfs) params.push(`obfs=${encodeURIComponent(hysNode.obfs)}`);
+    if (hysNode['fast-open']) params.push('fastopen=1');
     if (hysNode.alpn) {
       const alpnValue = Array.isArray(hysNode.alpn) ? hysNode.alpn[0] : hysNode.alpn;
       params.push(`alpn=${encodeURIComponent(alpnValue)}`);
@@ -85,6 +113,19 @@ export class Hysteria2Adapter implements IProtocolAdapter {
 
     if (hys2Node['skip-cert-verify']) obj['skip-cert-verify'] = hys2Node['skip-cert-verify'];
     if (hys2Node.sni) obj.sni = hys2Node.sni;
+    passthroughClashFields(node, obj, [
+      'ports',
+      'hop-interval',
+      'up',
+      'down',
+      'obfs',
+      'obfs-password',
+      'fingerprint',
+      'alpn',
+      'cwnd',
+      'udp-mtu',
+    ]);
+    applyCommonClashFields(node, obj);
 
     return obj;
   }
@@ -98,13 +139,17 @@ export class Hysteria2Adapter implements IProtocolAdapter {
       server: hys2Node.server,
       server_port: hys2Node.port,
       password: hys2Node.password,
-      tls: {
-        enabled: true,
-      },
+      tls: buildSingBoxTls(node, { force: true }),
     };
 
-    if (hys2Node.sni) {
-      obj.tls.server_name = hys2Node.sni;
+    if (typeof hys2Node.up === 'number') obj.up_mbps = hys2Node.up;
+    if (typeof hys2Node.down === 'number') obj.down_mbps = hys2Node.down;
+
+    if (hys2Node.obfs || hys2Node['obfs-password']) {
+      obj.obfs = {
+        type: 'salamander',
+        ...(hys2Node['obfs-password'] && { password: hys2Node['obfs-password'] }),
+      };
     }
 
     return obj;
@@ -117,6 +162,13 @@ export class Hysteria2Adapter implements IProtocolAdapter {
     const params: string[] = [];
     if (hys2Node.sni) params.push(`sni=${encodeURIComponent(hys2Node.sni)}`);
     if (hys2Node['skip-cert-verify']) params.push('insecure=1');
+    const obfsPassword = hys2Node['obfs-password'];
+    if (obfsPassword) params.push(`obfs-password=${encodeURIComponent(obfsPassword)}`);
+    if (hys2Node.obfs) params.push(`obfs=${encodeURIComponent(hys2Node.obfs)}`);
+    if (hys2Node.ports) params.push(`mport=${encodeURIComponent(hys2Node.ports)}`);
+    if (hys2Node.up) params.push(`upmbps=${hys2Node.up}`);
+    if (hys2Node.down) params.push(`downmbps=${hys2Node.down}`);
+    if (hys2Node.alpn?.length) params.push(`alpn=${hys2Node.alpn.join(',')}`);
     if (params.length) link += `/?${params.join('&')}`;
     link += `#${encodeURIComponent(hys2Node.name)}`;
     return link;

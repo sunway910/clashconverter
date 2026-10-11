@@ -4,6 +4,7 @@
 
 import type { ProxyNode, AnyTLSProxyNode } from '../types';
 import type { IProtocolAdapter } from './protocol-adapter';
+import { applyCommonClashFields } from './shared';
 
 /**
  * Adapter for AnyTLS protocol (Clash Meta >= 1.19.2, Sing-Box >= 1.12)
@@ -30,6 +31,7 @@ export class AnyTLSAdapter implements IProtocolAdapter {
     if (n['idle-session-check-interval'] !== undefined) obj['idle-session-check-interval'] = n['idle-session-check-interval'];
     if (n['idle-session-timeout'] !== undefined) obj['idle-session-timeout'] = n['idle-session-timeout'];
     if (n['min-idle-session'] !== undefined) obj['min-idle-session'] = n['min-idle-session'];
+    applyCommonClashFields(node, obj);
 
     return obj;
   }
