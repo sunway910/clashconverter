@@ -5,6 +5,7 @@
 import { describe, it, expect } from 'vitest';
 import { parse } from 'yaml';
 import { parseSS, parseSSR, parseVmess, parseSocks5, parseHysteria2 } from '../parsers/protocol-parsers';
+import { parseSingBoxToProxies } from '../singbox/parser';
 import { ProtocolAdapterRegistry } from '../adapters/protocol-adapter';
 import { validateProxyNode, safeValidateProxyNode } from '../types/validators';
 import { base64Encode } from '../utils';
@@ -182,6 +183,25 @@ describe('common Clash fields passthrough', () => {
     expect(obj.tfo).toBe(true);
     expect(obj['ip-version']).toBe('ipv6');
     expect(obj['interface-name']).toBe('en0');
+  });
+});
+
+describe('sing-box config detection', () => {
+  it('rejects flow-style YAML quietly instead of failing JSON.parse', () => {
+    const result = parseSingBoxToProxies('{proxies: [a, b]}');
+    expect(result.proxies).toEqual([]);
+    expect(result.unsupported).toEqual([]);
+  });
+
+  it('parses BOM-prefixed sing-box JSON', () => {
+    const config = JSON.stringify({
+      outbounds: [
+        { tag: 'ss1', type: 'shadowsocks', server: '1.2.3.4', server_port: 8388, method: 'aes-128-gcm', password: 'pass' },
+      ],
+    });
+    const result = parseSingBoxToProxies('\uFEFF' + config);
+    expect(result.proxies).toHaveLength(1);
+    expect(result.proxies[0].type).toBe('ss');
   });
 });
 

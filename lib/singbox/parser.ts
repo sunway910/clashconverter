@@ -35,13 +35,24 @@ export function parseSingBoxToProxies(input: string): {
       return { proxies: [], unsupported: [], filteredCounts: {} };
     }
 
-    // Quick validation: check if input looks like JSON (starts with { or [)
+    // Strip BOM first (BOM-prefixed JSON would fail the character sniff)
+    const candidate = trimmed.replace(/^\uFEFF/, '');
+
+    // Cheap pre-filter: check if input looks like JSON (starts with { or [)
     // This avoids trying to parse proxy links like "ss://..." as JSON
-    if (!trimmed.startsWith('{') && !trimmed.startsWith('[')) {
+    if (!candidate.startsWith('{') && !candidate.startsWith('[')) {
       return { proxies: [], unsupported: [], filteredCounts: {} };
     }
 
-    const config = JSON.parse(trimmed);
+    // Two-step detection: the sniff above is not enough — flow-style YAML
+    // (e.g. "{proxies: [a, b]}") also starts with '{'. Decide with a strict
+    // JSON.parse and quietly bow out so other format parsers handle it.
+    let config: any;
+    try {
+      config = JSON.parse(candidate);
+    } catch {
+      return { proxies: [], unsupported: [], filteredCounts: {} };
+    }
 
     // Handle both outbounds array and single outbound object
     const outbounds = Array.isArray(config.outbounds)
