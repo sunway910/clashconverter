@@ -17,10 +17,10 @@ export const SURFBOARD_GENERAL = [
   'enhanced-mode-by-rule = true',
 ];
 
-// Default rules for Surfboard
+// Default rules for Surfboard (minimal groups: built-in DIRECT for CN traffic, single select group as final)
 export const SURFBOARD_RULES = [
-  'GEOIP,CN,🎯 全球直连',
-  'FINAL,🐟 漏网之鱼',
+  'GEOIP,CN,DIRECT',
+  'FINAL,🚀 节点选择',
 ];
 
 // Remote rules URLs (using ACL4SSR rulesets)

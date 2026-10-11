@@ -310,12 +310,12 @@ describe('LoonGenerator', () => {
         const result = callFormatProxyGroup(generator, group, proxyNames);
 
         // Should start with name and type
-        expect(result). startsWith('Large Group = select,proxy0');
+        expect(result.startsWith('Large Group = select,proxy0')).toBe(true);
         // Should include all proxies
         expect(result).toContain('proxy99');
-        // Should have correct number of commas (99 between 100 items)
+        // Should have correct number of commas (type + 100 proxies = 100 separators)
         const commaCount = (result.match(/,/g) || []).length;
-        expect(commaCount).toBe(99);
+        expect(commaCount).toBe(100);
       });
     });
 

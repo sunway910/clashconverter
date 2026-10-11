@@ -157,7 +157,8 @@ describe('SurfboardGenerator', () => {
 
       expect(result).toContain('[Proxy Group]');
       expect(result).toContain('🚀 节点选择');
-      expect(result).toContain('🐟 漏网之鱼');
+      // Minimal groups: final rule routes to the single select group
+      expect(result).toContain('FINAL,🚀 节点选择');
     });
   });
 

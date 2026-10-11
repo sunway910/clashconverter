@@ -34,10 +34,10 @@ export const LOON_REMOTE_RULES = [
   'https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyGFWlist.list,🚀 节点选择'
 ];
 
-// Local rules
+// Local rules (minimal groups: built-in DIRECT for CN traffic, single select group as final)
 export const LOON_RULES = [
-  'GEOIP,CN,🎯 全球直连',
-  'FINAL,🐟 漏网之鱼',
+  'GEOIP,CN,DIRECT',
+  'FINAL,🚀 节点选择',
 ];
 
 // Script configurations (empty - user can add custom scripts)
