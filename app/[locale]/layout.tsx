@@ -6,7 +6,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
 import { GoogleAnalytics } from "@/components/google-analytics";
 import { Footer } from "@/components/footer";
-import { generateMetadata as generateSEOMetadata, HreflangLinks, PerformancePreconnects } from "@/components/seo/seo-head";
+import { generateMetadata as generateSEOMetadata, PerformancePreconnects } from "@/components/seo/seo-head";
 import React from "react";
 import "../globals.css";
 
@@ -63,7 +63,6 @@ export default async function LocaleLayout({
         <html lang={locale === 'zh' ? 'zh-CN' : 'en'} suppressHydrationWarning>
             <body suppressHydrationWarning>
                 <PerformancePreconnects/>
-                <HreflangLinks locale={locale}/>
                 <div className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
                     <GoogleAnalytics gaId={GA_ID || ''}/>
                     <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>

@@ -1,6 +1,7 @@
 import { ResourcesContent } from '@/components/resources/resources-content';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { LanguageToggle } from '@/components/language-toggle';
+import { JSONLDStructuredData } from '@/components/seo/seo-head';
 import { seoConfig } from '@/lib/seo';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -142,7 +143,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-export default function ResourcesPage() {
+export default async function ResourcesPage({ params }: PageProps) {
+  const { locale } = await params;
+
   return (
     <div className="min-h-screen bg-stone-50 dark:bg-stone-950">
       <header className="sticky top-0 z-50 w-full border-b border-stone-200 bg-stone-50/80 backdrop-blur supports-[backdrop-filter]:bg-stone-50/60 dark:border-stone-800 dark:bg-stone-950/80 dark:supports-[backdrop-filter]:bg-stone-950/60">
@@ -157,6 +160,7 @@ export default function ResourcesPage() {
         </div>
       </header>
       <ResourcesContent />
+      <JSONLDStructuredData locale={locale} type="all" pageType="resources" />
     </div>
   );
 }

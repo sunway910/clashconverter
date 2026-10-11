@@ -1,7 +1,8 @@
 import { AboutContent } from '@/components/about/about-content';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { LanguageToggle } from '@/components/language-toggle';
-import { seoConfig, generateBreadcrumbSchema } from '@/lib/seo';
+import { JSONLDStructuredData } from '@/components/seo/seo-head';
+import { seoConfig } from '@/lib/seo';
 import Image from 'next/image';
 import Link from 'next/link';
 import type { Metadata } from 'next';
@@ -124,7 +125,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-export default function AboutPage() {
+export default async function AboutPage({ params }: PageProps) {
+  const { locale } = await params;
+
   return (
     <div className="min-h-screen bg-stone-50 dark:bg-stone-950">
       <header className="sticky top-0 z-50 w-full border-b border-stone-200 bg-stone-50/80 backdrop-blur supports-[backdrop-filter]:bg-stone-50/60 dark:border-stone-800 dark:bg-stone-950/80 dark:supports-[backdrop-filter]:bg-stone-950/60">
@@ -139,6 +142,7 @@ export default function AboutPage() {
         </div>
       </header>
       <AboutContent />
+      <JSONLDStructuredData locale={locale} type="all" pageType="about" />
     </div>
   );
 }

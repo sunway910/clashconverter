@@ -3,6 +3,44 @@
  * Centralized SEO metadata for optimal search engine rankings
  */
 
+import messagesEn from '../messages/en.json';
+import messagesZh from '../messages/zh.json';
+
+interface LocalizedFAQItem {
+  q: string;
+  a: string;
+}
+
+interface LocalizedStepItem {
+  title: string;
+  desc: string;
+}
+
+/** Subset of messages/*.json used to build structured data.
+ *  Schemas are generated from these files so JSON-LD always matches
+ *  the content users actually see on the page. */
+interface LocalizedMessages {
+  about: string;
+  homeContent: {
+    faq: { items: LocalizedFAQItem[] };
+    steps: { title: string; items: LocalizedStepItem[] };
+  };
+  seoContent: { title: string; faq: { items: LocalizedFAQItem[] } };
+  resources: { menuTitle: string };
+  contactPage: { title: string };
+  privacyPage: { title: string };
+  termsPage: { title: string };
+}
+
+const localizedMessages: Record<string, LocalizedMessages> = {
+  en: messagesEn as unknown as LocalizedMessages,
+  zh: messagesZh as unknown as LocalizedMessages
+};
+
+export function getMessages(locale: string): LocalizedMessages {
+  return localizedMessages[locale] || localizedMessages.en;
+}
+
 export interface SEOConfig {
   siteName: string;
   siteUrl: string;
@@ -223,83 +261,26 @@ export function generateSoftwareApplicationSchema(locale: string) {
 }
 
 /**
- * Generate FAQ structured data
+ * Generate FAQ structured data from the localized message files so the
+ * markup always matches the FAQ content visibly rendered on the page.
+ * - source 'home':  homeContent.faq.items (homepage accordion)
+ * - source 'about': seoContent.faq.items  (about page accordion)
  */
-export function generateFAQSchema(locale: string) {
-  const faqs = {
-    en: [
-      {
-        question: 'What is Clash Converter?',
-        answer: 'Clash Converter is a free online tool that converts various proxy protocols (SS, SSR, VMess, Trojan, Hysteria, VLESS, HTTP, SOCKS5) into Clash YAML configuration format. It supports both Clash Meta (Mihomo) and Clash Premium kernels.'
-      },
-      {
-        question: 'Is Clash Converter safe to use?',
-        answer: 'Yes, Clash Converter is completely safe and privacy-focused. All conversion happens client-side in your browser. Your proxy configurations are never uploaded to any server, ensuring complete privacy and security.'
-      },
-      {
-        question: 'Which proxy protocols are supported?',
-        answer: 'Clash Converter supports 11 proxy protocols: Shadowsocks (SS), ShadowsocksR (SSR), VMess, VLESS, Trojan, Hysteria, Hysteria2, HTTP, SOCKS5, WireGuard, and AnyTLS. It can convert both to and from Clash YAML format.'
-      },
-      {
-        question: 'What is the difference between Clash Meta and Clash Premium?',
-        answer: 'Clash Meta (Mihomo) is the actively maintained version that supports all modern protocols including VLESS, Hysteria, and Hysteria2. Clash Premium is the original kernel that is no longer maintained and does not support these newer protocols.'
-      },
-      {
-        question: 'How do I convert proxy links to Clash format?',
-        answer: 'Simply paste your proxy links (one per line) into the input box. Each link should be in the format like ss://base64#name, vmess://base64#name, etc. Click "Convert" and the Clash YAML configuration will be generated instantly.'
-      },
-      {
-        question: 'Can I convert Clash YAML back to proxy links?',
-        answer: 'Yes! Click the "Swap Direction" button to switch from "Proxies to YAML" mode to "YAML to Proxies" mode. Paste your Clash YAML config and the tool will extract and convert all proxy nodes back to shareable links.'
-      },
-      {
-        question: 'What is Sing-Box and does this tool support it?',
-        answer: 'Sing-Box is a universal proxy platform that supports multiple protocols. Clash Converter now supports converting proxy links to Sing-Box JSON configuration format. It supports SS, VMess, VLESS, Trojan, Hysteria, Hysteria2, and HTTP protocols for Sing-Box output.'
-      }
-    ],
-    zh: [
-      {
-        question: '什么是Clash转换器？',
-        answer: 'Clash转换器是一个免费的在线工具，可以将各种代理协议（SS、SSR、VMess、Trojan、Hysteria、VLESS、HTTP、SOCKS5）转换为Clash YAML配置格式。支持Clash Meta (Mihomo) 和 Clash Premium内核。'
-      },
-      {
-        question: 'Clash转换器安全吗？',
-        answer: '是的，Clash转换器完全安全且注重隐私。所有转换都在您的浏览器客户端进行。您的代理配置永远不会上传到任何服务器，确保完全的隐私和安全。'
-      },
-      {
-        question: '支持哪些代理协议？',
-        answer: 'Clash转换器支持9种代理协议：Shadowsocks (SS)、ShadowsocksR (SSR)、VMess、VLESS、Trojan、Hysteria、Hysteria2、HTTP和SOCKS5。可以双向转换到和从Clash YAML格式。'
-      },
-      {
-        question: 'Clash Meta和Clash Premium有什么区别？',
-        answer: 'Clash Meta (Mihomo) 是积极维护的版本，支持所有现代协议，包括VLESS、Hysteria和Hysteria2。Clash Premium是原始内核，不再维护，不支持这些新协议。'
-      },
-      {
-        question: '如何将代理链接转换为Clash格式？',
-        answer: '只需将您的代理链接（每行一个）粘贴到输入框中。每个链接应采用ss://base64#name、vmess://base64#name等格式。点击"转换"按钮，Clash YAML配置将立即生成。'
-      },
-      {
-        question: '我可以将Clash YAML转换回代理链接吗？',
-        answer: '可以！点击"切换方向"按钮，从"代理转YAML"模式切换到"YAML转代理"模式。粘贴您的Clash YAML配置，工具将提取所有代理节点并转换回可分享的链接。'
-      },
-      {
-        question: '什么是Sing-Box，这个工具支持吗？',
-        answer: 'Sing-Box是一个支持多种协议的通用代理平台。Clash转换器现在支持将代理链接转换为Sing-Box JSON配置格式。支持SS、VMess、VLESS、Trojan、Hysteria、Hysteria2和HTTP协议输出为Sing-Box格式。'
-      }
-    ]
-  };
-
-  const localeFAQs = faqs[locale as keyof typeof faqs] || faqs.en;
+export function generateFAQSchema(locale: string, source: 'home' | 'about' = 'home') {
+  const messages = getMessages(locale);
+  const items = source === 'about'
+    ? messages.seoContent.faq.items
+    : messages.homeContent.faq.items;
 
   return {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    mainEntity: localeFAQs.map(faq => ({
+    mainEntity: items.map(faq => ({
       '@type': 'Question',
-      name: faq.question,
+      name: faq.q,
       acceptedAnswer: {
         '@type': 'Answer',
-        text: faq.answer
+        text: faq.a
       }
     }))
   };
@@ -331,13 +312,14 @@ export function generateOrganizationSchema() {
     name: seoConfig.siteName,
     url: seoConfig.siteUrl,
     logo: `${seoConfig.siteUrl}/clash_converter_linear.svg`,
-    description: seoConfig.description,
-    sameAs: []
+    description: seoConfig.description
   };
 }
 
 /**
- * Generate WebSite structured data for search box
+ * Generate WebSite structured data (supports site-name display in search).
+ * No SearchAction: the sitelinks search box was retired by Google in
+ * November 2024 and this site has no /search endpoint.
  */
 export function generateWebSiteSchema() {
   return {
@@ -345,98 +327,22 @@ export function generateWebSiteSchema() {
     '@type': 'WebSite',
     name: seoConfig.siteName,
     url: seoConfig.siteUrl,
-    description: seoConfig.description,
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: {
-        '@type': 'EntryPoint',
-        urlTemplate: `${seoConfig.siteUrl}/search?q={search_term_string}`
-      },
-      'query-input': {
-        '@type': 'PropertyValueSpecification',
-        valueRequired: true,
-        valueName: 'search_term_string'
-      }
-    }
+    description: seoConfig.description
   };
 }
 
 /**
- * Generate HowTo structured data for step-by-step guides
+ * Generate HowTo structured data from the localized 3-step guide that is
+ * visibly rendered on the homepage (homeContent.steps).
  */
 export function generateHowToSchema(locale: string) {
-  const howToData = {
-    en: {
-      name: 'How to Convert Proxy Links to Clash YAML',
-      description: 'Step-by-step guide to convert your proxy links (SS, SSR, VMess, Trojan, Hysteria, VLESS) to Clash YAML configuration format.',
-      steps: [
-        {
-          name: 'Prepare Your Proxy Links',
-          text: 'Gather your proxy links. Supported formats include ss://, ssr://, vmess://, vless://, trojan://, hysteria://, hysteria2://, wireguard://, anytls://, http://, and socks5://. Each link should be on a separate line.',
-          image: `${seoConfig.siteUrl}/og-image.png`
-        },
-        {
-          name: 'Select Input Format',
-          text: 'Choose "Proxy Links" as your input format. This is the default option when you first visit the converter.',
-          image: `${seoConfig.siteUrl}/og-image.png`
-        },
-        {
-          name: 'Select Output Format',
-          text: 'Choose your desired output format: Clash Meta (Mihomo) for full protocol support, Clash Premium for legacy compatibility, or Sing-Box JSON format.',
-          image: `${seoConfig.siteUrl}/og-image.png`
-        },
-        {
-          name: 'Paste Your Proxy Links',
-          text: 'Paste your proxy links into the input textarea. You can paste multiple links at once, one per line.',
-          image: `${seoConfig.siteUrl}/og-image.png`
-        },
-        {
-          name: 'Convert and Download',
-          text: 'Click the convert button. Your configuration will be generated instantly. You can then download the config file or copy it to your clipboard.',
-          image: `${seoConfig.siteUrl}/og-image.png`
-        }
-      ]
-    },
-    zh: {
-      name: '如何将代理链接转换为Clash YAML',
-      description: '将代理链接（SS、SSR、VMess、Trojan、Hysteria、VLESS）转换为Clash YAML配置格式的分步指南。',
-      steps: [
-        {
-          name: '准备您的代理链接',
-          text: '收集您的代理链接。支持的格式包括 ss://、ssr://、vmess://、vless://、trojan://、hysteria://、hysteria2://、wireguard://、anytls://、http:// 和 socks5://。每个链接应单独一行。',
-          image: `${seoConfig.siteUrl}/og-image.png`
-        },
-        {
-          name: '选择输入格式',
-          text: '选择"代理链接"作为您的输入格式。这是您首次访问转换器时的默认选项。',
-          image: `${seoConfig.siteUrl}/og-image.png`
-        },
-        {
-          name: '选择输出格式',
-          text: '选择您想要的输出格式：Clash Meta (Mihomo) 支持完整协议，Clash Premium 用于旧版兼容，或 Sing-Box JSON 格式。',
-          image: `${seoConfig.siteUrl}/og-image.png`
-        },
-        {
-          name: '粘贴代理链接',
-          text: '将代理链接粘贴到输入文本框中。您可以一次粘贴多个链接，每行一个。',
-          image: `${seoConfig.siteUrl}/og-image.png`
-        },
-        {
-          name: '转换并下载',
-          text: '点击转换按钮。您的配置将立即生成。然后您可以下载配置文件或将其复制到剪贴板。',
-          image: `${seoConfig.siteUrl}/og-image.png`
-        }
-      ]
-    }
-  };
-
-  const data = howToData[locale as keyof typeof howToData] || howToData.en;
+  const messages = getMessages(locale);
+  const { title, items } = messages.homeContent.steps;
 
   return {
     '@context': 'https://schema.org',
     '@type': 'HowTo',
-    name: data.name,
-    description: data.description,
+    name: title,
     image: `${seoConfig.siteUrl}/og-image.png`,
     totalTime: 'PT2M',
     estimatedCost: {
@@ -444,95 +350,52 @@ export function generateHowToSchema(locale: string) {
       currency: 'USD',
       value: '0'
     },
-    supply: [
-      {
-        '@type': 'HowToSupply',
-        name: 'Proxy links (SS, SSR, VMess, Trojan, Hysteria, VLESS, HTTP, SOCKS5)'
-      }
-    ],
-    tool: [
-      {
-        '@type': 'HowToTool',
-        name: 'Web browser (Chrome, Firefox, Safari, Edge)'
-      }
-    ],
-    step: data.steps.map((step, index) => ({
+    step: items.map((step, index) => ({
       '@type': 'HowToStep',
       position: index + 1,
-      name: step.name,
-      text: step.text,
-      image: step.image,
-      url: `${seoConfig.siteUrl}#step-${index + 1}`
+      name: step.title,
+      text: step.desc
     }))
   };
 }
 
 /**
- * Generate AggregateRating structured data for social proof
+ * Generate AboutPage structured data for the about page.
+ * AboutPage (not ProfilePage) is the correct type for a page describing an
+ * organization/product; the mainEntity is the Organization itself.
  */
-export function generateAggregateRatingSchema() {
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'SoftwareApplication',
-    name: seoConfig.siteName,
-    url: seoConfig.siteUrl,
-    applicationCategory: 'UtilityApplication',
-    operatingSystem: 'Web Browser',
-    offers: {
-      '@type': 'Offer',
-      price: '0',
-      priceCurrency: 'USD'
-    },
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: '4.8',
-      ratingCount: '1250',
-      bestRating: '5',
-      worstRating: '1',
-      itemReviewed: {
-        '@type': 'SoftwareApplication',
-        name: seoConfig.siteName,
-        applicationCategory: 'UtilityApplication',
-        operatingSystem: 'Web Browser'
-      }
-    }
-  };
-}
-
-/**
- * Generate ProfilePage structured data for organization/about pages
- */
-export function generateProfilePageSchema(locale: string) {
-  const profileData = {
-    en: {
-      aboutPage: 'About Clash Converter - Privacy-Focused Proxy Conversion Tool',
-      description: 'Learn about Clash Converter, a free online tool that converts proxy links to Clash YAML and Sing-Box JSON formats. All conversions happen client-side for maximum privacy and security.'
-    },
-    zh: {
-      aboutPage: '关于Clash转换器 - 注重隐私的代理转换工具',
-      description: '了解Clash转换器，一个免费的在线工具，可将代理链接转换为Clash YAML和Sing-Box JSON格式。所有转换都在客户端进行，确保最大的隐私和安全。'
-    }
-  };
-
-  const data = profileData[locale as keyof typeof profileData] || profileData.en;
+export function generateAboutPageSchema(locale: string) {
+  const localePath = locale === 'zh' ? '/zh' : '';
 
   return {
     '@context': 'https://schema.org',
-    '@type': 'ProfilePage',
-    dateCreated: '2024-01-01',
-    dateModified: new Date().toISOString().split('T')[0],
+    '@type': 'AboutPage',
+    name: getMessages(locale).seoContent.title,
+    url: `${seoConfig.siteUrl}${localePath}/about`,
+    inLanguage: locale === 'zh' ? 'zh-CN' : 'en',
     mainEntity: {
       '@type': 'Organization',
       name: seoConfig.siteName,
       url: seoConfig.siteUrl,
       logo: `${seoConfig.siteUrl}/clash_converter_linear.svg`,
-      description: data.description,
-      sameAs: [],
-      address: {
-        '@type': 'PostalAddress',
-        addressCountry: 'US'
-      }
+      description: seoConfig.description
     }
+  };
+}
+
+/**
+ * Generate WebPage structured data for simple content pages
+ * (contact, privacy, terms).
+ */
+export function generateWebPageSchema(locale: string, path: string, name: string) {
+  const localePath = locale === 'zh' ? '/zh' : '';
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name,
+    url: `${seoConfig.siteUrl}${localePath}${path}`,
+    inLanguage: locale === 'zh' ? 'zh-CN' : 'en'
   };
 }
 

@@ -13,9 +13,10 @@ import {
   generateOrganizationSchema,
   generateWebSiteSchema,
   generateHowToSchema,
-  generateAggregateRatingSchema,
-  generateProfilePageSchema,
-  generateCollectionPageSchema
+  generateAboutPageSchema,
+  generateWebPageSchema,
+  generateCollectionPageSchema,
+  getMessages
 } from '@/lib/seo';
 
 export interface SEOHeadProps {
@@ -128,7 +129,12 @@ export function generateMetadata({
 
 /**
  * JSON-LD Structured Data Component
+ *
+ * Every schema is derived from the localized message files so the markup
+ * always matches the content visibly rendered on each page.
  */
+export type SEOPageType = 'home' | 'about' | 'resources' | 'contact' | 'privacy' | 'terms';
+
 export function JSONLDStructuredData({
   locale,
   type = 'all',
@@ -136,32 +142,49 @@ export function JSONLDStructuredData({
   customBreadcrumbs
 }: {
   locale: string;
-  type?: 'all' | 'software' | 'faq' | 'breadcrumb' | 'organization' | 'website' | 'howto' | 'rating' | 'profile' | 'collection';
-  pageType?: 'home' | 'about' | 'resources';
+  type?: 'all' | 'software' | 'faq' | 'faqAbout' | 'breadcrumb' | 'organization' | 'website' | 'howto' | 'about' | 'webpage' | 'collection';
+  pageType?: SEOPageType;
   customBreadcrumbs?: Array<{ name: string; url: string }>;
 }) {
+  const localePath = locale === 'zh' ? '/zh' : '';
+  const messages = getMessages(locale);
+
+  const pageLabels: Record<SEOPageType, { name: string; path: string }> = {
+    home: { name: seoConfig.siteName, path: '' },
+    about: { name: messages.about, path: '/about' },
+    resources: { name: messages.resources.menuTitle, path: '/resources' },
+    contact: { name: messages.contactPage.title, path: '/contact' },
+    privacy: { name: messages.privacyPage.title, path: '/privacy' },
+    terms: { name: messages.termsPage.title, path: '/terms' }
+  };
+
+  const page = pageLabels[pageType];
   const breadcrumbs = customBreadcrumbs || [
-    { name: 'Home', url: seoConfig.siteUrl },
-    { name: pageType === 'about' ? 'About' : pageType === 'resources' ? 'Resources' : 'Clash Converter', url: `${seoConfig.siteUrl}${locale === 'en' ? '' : `/${locale}`}${pageType === 'home' ? '' : `/${pageType}`}` }
+    { name: seoConfig.siteName, url: seoConfig.siteUrl },
+    { name: page.name, url: `${seoConfig.siteUrl}${localePath}${page.path}` }
   ];
 
   const schemas: Record<string, Record<string, unknown>> = {
     software: generateSoftwareApplicationSchema(locale),
-    faq: generateFAQSchema(locale),
+    faq: generateFAQSchema(locale, 'home'),
+    faqAbout: generateFAQSchema(locale, 'about'),
     breadcrumb: generateBreadcrumbSchema(breadcrumbs),
     organization: generateOrganizationSchema(),
     website: generateWebSiteSchema(),
     howto: generateHowToSchema(locale),
-    rating: generateAggregateRatingSchema(),
-    profile: generateProfilePageSchema(locale),
+    about: generateAboutPageSchema(locale),
+    webpage: generateWebPageSchema(locale, page.path, page.name),
     collection: generateCollectionPageSchema(locale)
   };
 
   // Select schemas based on page type
-  const schemasByPage: Record<string, string[]> = {
-    home: ['software', 'faq', 'organization', 'website', 'howto', 'rating'],
-    about: ['profile', 'organization', 'breadcrumb'],
-    resources: ['collection', 'breadcrumb']
+  const schemasByPage: Record<SEOPageType, string[]> = {
+    home: ['software', 'faq', 'organization', 'website', 'howto'],
+    about: ['about', 'faqAbout', 'breadcrumb'],
+    resources: ['collection', 'breadcrumb'],
+    contact: ['webpage', 'breadcrumb'],
+    privacy: ['webpage', 'breadcrumb'],
+    terms: ['webpage', 'breadcrumb']
   };
 
   const schemasToInclude = type === 'all'
@@ -177,31 +200,6 @@ export function JSONLDStructuredData({
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(schemas[schemaType])
           }}
-        />
-      ))}
-    </>
-  );
-}
-
-/**
- * Generate hreflang links for multilingual SEO
- */
-export function HreflangLinks({ locale }: { locale: string }) {
-  const baseUrl = seoConfig.siteUrl;
-
-  const locales = [
-    { code: 'en', path: '', isDefault: true },
-    { code: 'zh', path: '/zh', isDefault: false }
-  ];
-
-  return (
-    <>
-      {locales.map((loc) => (
-        <link
-          key={loc.code}
-          rel="alternate"
-          hrefLang={loc.isDefault ? 'x-default' : loc.code}
-          href={`${baseUrl}${loc.path}`}
         />
       ))}
     </>
