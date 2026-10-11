@@ -63,10 +63,13 @@ export class VLESSAdapter implements IProtocolAdapter {
       };
     }
 
-    obj.tls.utls = {
-      enabled: true,
-      fingerprint: 'chrome'
-    };
+    // uTLS fingerprint only applies when TLS is enabled
+    if (obj.tls) {
+      obj.tls.utls = {
+        enabled: true,
+        fingerprint: vlessNode['client-fingerprint'] || 'chrome',
+      };
+    }
 
     if (vlessNode['skip-cert-verify']) {
       if (!obj.tls) obj.tls = { enabled: true };
