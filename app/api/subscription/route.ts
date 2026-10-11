@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { isBlockedSubscriptionUrl } from '@/lib/url-guard';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -35,6 +36,14 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         { error: 'Only HTTP/HTTPS URLs are allowed' },
         { status: 400 }
+      );
+    }
+
+    // SSRF guard: reject loopback/private/link-local targets
+    if (isBlockedSubscriptionUrl(validatedUrl)) {
+      return NextResponse.json(
+        { error: 'Private, loopback and link-local addresses are not allowed' },
+        { status: 403 }
       );
     }
 
