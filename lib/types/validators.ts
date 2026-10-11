@@ -87,9 +87,10 @@ export const ssrProxySchema = z.object({
   password: z.string().min(1),
   protocol: z.string().min(1),
   obfs: z.string().min(1),
-  protocolparam: z.string().optional(),
-  obfsparam: z.string().optional(),
+  'protocol-param': z.string().optional(),
+  'obfs-param': z.string().optional(),
   group: z.string().optional(),
+  udp: nullableBoolean(),
 });
 
 /**

@@ -1,7 +1,43 @@
 /**
  * Strongly typed ProxyNode definitions for all proxy protocols
  * Using discriminated union pattern for type safety
+ *
+ * Field names follow Clash Meta (mihomo) configuration keys.
+ * Shared option structures live in ./options
  */
+
+import type {
+  ClientFingerprint,
+  GrpcOptions,
+  H2Options,
+  HttpOptions,
+  IPVersion,
+  NetworkType,
+  RealityOptions,
+  SmuxOptions,
+  SSPluginOptions,
+  SSPluginType,
+  TrojanSSOptions,
+  WireGuardPeerOptions,
+  WsOptions,
+} from './options';
+
+// Re-export shared options so existing `from '../types'` imports keep working
+export type {
+  ClientFingerprint,
+  GrpcOptions,
+  H2Options,
+  HttpOptions,
+  IPVersion,
+  NetworkType,
+  RealityOptions,
+  SmuxOptions,
+  SSPluginOptions,
+  SSPluginType,
+  TrojanSSOptions,
+  WireGuardPeerOptions,
+  WsOptions,
+} from './options';
 
 // ============================================================================
 // Common Base Types
@@ -24,9 +60,27 @@ export type ProxyType =
   | 'anytls';
 
 /**
- * Common fields shared by all proxy nodes
+ * Common dial/behavior fields shared by all proxy nodes (Clash Meta common fields)
  */
-interface BaseProxyNode {
+export interface CommonBaseFields {
+  /** TCP Fast Open */
+  tfo?: boolean;
+  /** Multipath TCP */
+  mptcp?: boolean;
+  /** Bind outbound connections to the given interface */
+  'interface-name'?: string;
+  /** Routing mark for outbound connections */
+  'routing-mark'?: number;
+  /** Preferred IP stack */
+  'ip-version'?: IPVersion;
+  /** Route this node's traffic through another proxy */
+  'dialer-proxy'?: string;
+}
+
+/**
+ * Common identity fields shared by all proxy nodes
+ */
+interface BaseProxyNode extends CommonBaseFields {
   name: string;
   type: ProxyType;
   server: string;
@@ -36,43 +90,11 @@ interface BaseProxyNode {
 /**
  * TLS-related options
  */
-interface TLSOptions {
+export interface TLSOptions {
   tls?: boolean;
   'skip-cert-verify'?: boolean;
   servername?: string;
   sni?: string;
-}
-
-/**
- * WebSocket options
- */
-interface WebSocketOptions {
-  path?: string;
-  headers?: Record<string, string>;
-}
-
-/**
- * gRPC options (for Trojan/VLESS transports)
- */
-interface GRpcOptions {
-  'grpc-service-name'?: string;
-}
-
-/**
- * Trojan-Go Shadowsocks relay options (encryption=ss;method;password)
- */
-interface TrojanSSOptions {
-  enabled: boolean;
-  method: string;
-  password: string;
-}
-
-/**
- * Reality options (for VLESS)
- */
-interface RealityOptions {
-  'public-key'?: string;
-  'short-id'?: string;
 }
 
 // ============================================================================
@@ -87,6 +109,12 @@ export interface SSProxyNode extends BaseProxyNode {
   cipher: string;
   password: string;
   udp?: boolean;
+  plugin?: SSPluginType;
+  'plugin-opts'?: SSPluginOptions;
+  'udp-over-tcp'?: boolean;
+  'udp-over-tcp-version'?: number;
+  'client-fingerprint'?: ClientFingerprint;
+  smux?: SmuxOptions;
 }
 
 /**
@@ -98,9 +126,10 @@ export interface SSRProxyNode extends BaseProxyNode {
   password: string;
   protocol: string;
   obfs: string;
-  protocolparam?: string;
-  obfsparam?: string;
+  'protocol-param'?: string;
+  'obfs-param'?: string;
   group?: string;
+  udp?: boolean;
 }
 
 /**
@@ -111,7 +140,22 @@ export interface VMessProxyNode extends BaseProxyNode, TLSOptions {
   uuid: string;
   alterId?: number;
   cipher?: string;
-  network?: 'tcp' | 'ws' | 'grpc' | 'h2' | 'quic';
+  udp?: boolean;
+  network?: NetworkType;
+  alpn?: string[];
+  'ws-opts'?: WsOptions;
+  'grpc-opts'?: GrpcOptions;
+  'h2-opts'?: H2Options;
+  'http-opts'?: HttpOptions;
+  'reality-opts'?: RealityOptions;
+  'client-fingerprint'?: ClientFingerprint;
+  'packet-addr'?: boolean;
+  xudp?: boolean;
+  'packet-encoding'?: string;
+  'global-padding'?: boolean;
+  'authenticated-length'?: boolean;
+  fingerprint?: string;
+  smux?: SmuxOptions;
 }
 
 /**
@@ -120,11 +164,21 @@ export interface VMessProxyNode extends BaseProxyNode, TLSOptions {
 export interface VLESSProxyNode extends BaseProxyNode, TLSOptions {
   type: 'vless';
   uuid: string;
-  network?: 'tcp' | 'ws' | 'grpc' | 'h2' | 'quic';
+  network?: NetworkType;
   flow?: string;
+  udp?: boolean;
+  alpn?: string[];
   'reality-opts'?: RealityOptions;
-  'client-fingerprint'?: string;
-  'ws-opts'?: WebSocketOptions;
+  'client-fingerprint'?: ClientFingerprint;
+  'ws-opts'?: WsOptions;
+  'grpc-opts'?: GrpcOptions;
+  'h2-opts'?: H2Options;
+  'http-opts'?: HttpOptions;
+  'packet-addr'?: boolean;
+  xudp?: boolean;
+  'packet-encoding'?: string;
+  fingerprint?: string;
+  smux?: SmuxOptions;
 }
 
 /**
@@ -134,11 +188,14 @@ export interface TrojanProxyNode extends BaseProxyNode, TLSOptions {
   type: 'trojan';
   password: string;
   udp?: boolean;
-  network?: 'tcp' | 'ws' | 'grpc' | 'h2';
-  'ws-opts'?: WebSocketOptions;
-  'grpc-opts'?: GRpcOptions;
+  network?: NetworkType;
+  'ws-opts'?: WsOptions;
+  'grpc-opts'?: GrpcOptions;
+  'h2-opts'?: H2Options;
+  'reality-opts'?: RealityOptions;
   alpn?: string[];
-  'client-fingerprint'?: string;
+  'client-fingerprint'?: ClientFingerprint;
+  fingerprint?: string;
   'ss-opts'?: TrojanSSOptions;
 }
 
@@ -156,9 +213,12 @@ export interface WireGuardProxyNode extends BaseProxyNode {
   reserved?: number[] | string;
   udp?: boolean;
   mtu?: number;
+  workers?: number;
+  'persistent-keepalive'?: number;
+  peers?: WireGuardPeerOptions[];
   'remote-dns-resolve'?: boolean;
   dns?: string[];
-  'dialer-proxy'?: string;
+  'refresh-server-ip-interval'?: number;
 }
 
 /**
@@ -169,7 +229,7 @@ export interface AnyTLSProxyNode extends BaseProxyNode {
   password: string;
   sni?: string;
   alpn?: string[];
-  'client-fingerprint'?: string;
+  'client-fingerprint'?: ClientFingerprint;
   'skip-cert-verify'?: boolean;
   udp?: boolean;
   'idle-session-check-interval'?: number;
@@ -185,11 +245,25 @@ export interface HysteriaProxyNode extends BaseProxyNode {
   auth_str?: string;
   auth?: string;
   protocol?: string;
+  /** Port hopping ranges, e.g. "1000-2000,3000" */
+  ports?: string;
+  /** Upload bandwidth in Mbps */
+  up?: number;
+  /** Download bandwidth in Mbps */
+  down?: number;
+  obfs?: string;
   'skip-cert-verify'?: boolean;
   sni?: string;
-  up?: number;
-  down?: number;
+  fingerprint?: string;
   alpn?: string[] | string;
+  ca?: string;
+  'ca-str'?: string;
+  'recv-window-conn'?: number;
+  'recv-window'?: number;
+  'disable-mtu-discovery'?: boolean;
+  'fast-open'?: boolean;
+  'hop-interval'?: number;
+  'obfs-protocol'?: string;
 }
 
 /**
@@ -198,8 +272,21 @@ export interface HysteriaProxyNode extends BaseProxyNode {
 export interface Hysteria2ProxyNode extends BaseProxyNode {
   type: 'hysteria2';
   password: string;
+  /** Port hopping ranges, e.g. "1000-2000,3000" */
+  ports?: string;
+  'hop-interval'?: number;
+  /** Upload bandwidth in Mbps */
+  up?: number;
+  /** Download bandwidth in Mbps */
+  down?: number;
+  obfs?: string;
+  'obfs-password'?: string;
   'skip-cert-verify'?: boolean;
   sni?: string;
+  fingerprint?: string;
+  alpn?: string[];
+  cwnd?: number;
+  'udp-mtu'?: number;
 }
 
 /**
@@ -210,6 +297,10 @@ export interface HTTPProxyNode extends BaseProxyNode {
   username?: string;
   password?: string;
   tls?: boolean;
+  sni?: string;
+  'skip-cert-verify'?: boolean;
+  fingerprint?: string;
+  headers?: Record<string, string>;
 }
 
 /**
@@ -219,6 +310,10 @@ export interface SOCKS5ProxyNode extends BaseProxyNode {
   type: 'socks5';
   username?: string;
   password?: string;
+  tls?: boolean;
+  udp?: boolean;
+  'skip-cert-verify'?: boolean;
+  fingerprint?: string;
 }
 
 // ============================================================================
@@ -323,25 +418,23 @@ export function isAnyTLSProxy(node: ProxyNode): node is AnyTLSProxyNode {
 // Protocol Type Guards
 // ============================================================================
 
+const VALID_PROXY_TYPES: readonly ProxyType[] = [
+  'ss',
+  'ssr',
+  'vmess',
+  'vless',
+  'trojan',
+  'hysteria',
+  'hysteria2',
+  'http',
+  'socks5',
+  'wireguard',
+  'anytls',
+];
+
 /**
  * Check if a protocol type value is valid
  */
 export function isValidProxyType(type: string): type is ProxyType {
-  return ['ss', 'ssr', 'vmess', 'vless', 'trojan', 'hysteria', 'hysteria2', 'http', 'socks5', 'wireguard', 'anytls'].includes(type);
-}
-
-// ============================================================================
-// Legacy Compatibility (to be removed after migration)
-// ============================================================================
-
-/**
- * @deprecated Use the specific protocol types instead
- * This is kept for backward compatibility during migration
- */
-export interface LegacyProxyNode {
-  name: string;
-  type: ProxyType;
-  server: string;
-  port: number;
-  [key: string]: any;
+  return (VALID_PROXY_TYPES as readonly string[]).includes(type);
 }

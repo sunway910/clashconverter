@@ -33,8 +33,8 @@ export class SSRAdapter implements IProtocolAdapter {
       obfs: ssrNode.obfs,
     };
 
-    if (ssrNode.protocolparam) obj.protocolparam = ssrNode.protocolparam;
-    if (ssrNode.obfsparam) obj.obfsparam = ssrNode.obfsparam;
+    if (ssrNode['protocol-param']) obj['protocol-param'] = ssrNode['protocol-param'];
+    if (ssrNode['obfs-param']) obj['obfs-param'] = ssrNode['obfs-param'];
     if (ssrNode.group) obj.group = ssrNode.group;
 
     return obj;
@@ -70,11 +70,11 @@ export class SSRAdapter implements IProtocolAdapter {
     if (ssrNode.group) {
       paramsParts.push(`group=${btoa(ssrNode.group)}`);
     }
-    if (ssrNode.protocolparam) {
-      paramsParts.push(`protoparam=${btoa(ssrNode.protocolparam)}`);
+    if (ssrNode['protocol-param']) {
+      paramsParts.push(`protoparam=${btoa(ssrNode['protocol-param'])}`);
     }
-    if (ssrNode.obfsparam) {
-      paramsParts.push(`obfsparam=${btoa(ssrNode.obfsparam)}`);
+    if (ssrNode['obfs-param']) {
+      paramsParts.push(`obfsparam=${btoa(ssrNode['obfs-param'])}`);
     }
 
     const paramsStr = paramsParts.join('&');

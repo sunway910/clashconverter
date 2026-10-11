@@ -155,9 +155,9 @@ export function parseSSR(link: string): ParsedProxy | null {
       obfs,
     };
 
-    // Add optional params
-    if (params.protoparam) config.protocolparam = params.protoparam;
-    if (params.obfsparam) config.obfsparam = params.obfsparam;
+    // Add optional params (SSR link param keys: protoparam/obfsparam -> Clash keys)
+    if (params.protoparam) config['protocol-param'] = params.protoparam;
+    if (params.obfsparam) config['obfs-param'] = params.obfsparam;
     if (params.group) config.group = base64Decode(params.group);
 
     return {

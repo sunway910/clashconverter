@@ -16,7 +16,6 @@ export type {
   SOCKS5ProxyNode,
   WireGuardProxyNode,
   AnyTLSProxyNode,
-  LegacyProxyNode,
 } from './types/proxy-nodes';
 
 // Re-export type guards
