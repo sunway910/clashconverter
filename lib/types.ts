@@ -18,6 +18,25 @@ export type {
   AnyTLSProxyNode,
 } from './types/proxy-nodes';
 
+// Re-export shared option types
+export type {
+  ClientFingerprint,
+  CommonBaseFields,
+  GrpcOptions,
+  H2Options,
+  HttpOptions,
+  IPVersion,
+  NetworkType,
+  RealityOptions,
+  SmuxOptions,
+  SSPluginOptions,
+  SSPluginType,
+  TLSOptions,
+  TrojanSSOptions,
+  WireGuardPeerOptions,
+  WsOptions,
+} from './types/proxy-nodes';
+
 // Re-export type guards
 export {
   isSSProxy,

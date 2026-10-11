@@ -1,8 +1,49 @@
-import { ParsedProxy, ProxyNode } from '../types';
-import { base64Decode, parseUrlParams, safeJsonParse } from '../utils';
+import type {
+  AnyTLSProxyNode,
+  Hysteria2ProxyNode,
+  HysteriaProxyNode,
+  HTTPProxyNode,
+  NetworkType,
+  ProxyNode,
+  SOCKS5ProxyNode,
+  SSProxyNode,
+  SSRProxyNode,
+  TrojanProxyNode,
+  VLESSProxyNode,
+  VMessProxyNode,
+  WireGuardProxyNode,
+} from '../types';
+import { ParsedProxy } from '../types';
+import {
+  base64Decode,
+  parseUrlParams,
+  safeJsonParse,
+} from '../utils';
+import {
+  buildGrpcOpts,
+  buildH2Opts,
+  buildHttpOpts,
+  buildSsPlugin,
+  buildWsOpts,
+  isTruthyParam,
+  parseAlpn,
+  parseFingerprint,
+  type LinkParams,
+} from './link-params';
 
 // js-hoist-regexp: Hoist RegExp outside function for reuse
 const IPV4_REGEX = /^(\d{1,3}\.){3}\d{1,3}$/;
+
+/** Transport values accepted in vmess/vless link `type`/`net` fields */
+const LINK_NETWORKS: readonly string[] = ['tcp', 'ws', 'grpc', 'h2', 'http', 'quic'];
+
+/**
+ * Normalize a transport value from a link; unknown transports fall back to tcp
+ */
+function normalizeNetwork(raw: string | undefined): NetworkType {
+  const value = (raw || 'tcp').toLowerCase();
+  return (LINK_NETWORKS as readonly string[]).includes(value) ? (value as NetworkType) : 'tcp';
+}
 
 /**
  * Split "server:port" (or bare server) handling bracketed IPv6 like [::1]:443
@@ -53,26 +94,34 @@ export function parseSS(link: string): ParsedProxy | null {
       const [server, portStr] = serverInfo.split(':');
       const port = parseInt(portStr, 10);
 
-      return {
+      const config: SSProxyNode = {
         name,
-        config: {
-          name,
-          type: 'ss',
-          server,
-          port,
-          cipher: method,
-          password,
-          udp: true,
-        } as ProxyNode,
+        type: 'ss',
+        server,
+        port,
+        cipher: method,
+        password,
+        udp: true,
       };
+
+      return { name, config };
     }
 
-    // Format 2: base64(method:password)@server:port
+    // Format 2: base64(method:password)@server:port[?plugin=...]
     // Find the @ separator - it should be between the base64 part and server part
     const atIndex = mainPart.indexOf('@');
     if (atIndex !== -1) {
       const encodedUserInfo = mainPart.slice(0, atIndex);
-      const serverInfo = mainPart.slice(atIndex + 1);
+      let serverInfo = mainPart.slice(atIndex + 1);
+
+      // SIP002 plugins ride on the query string: ?plugin=obfs-local;obfs=http;...
+      let pluginParam: string | undefined;
+      const queryIndex = serverInfo.indexOf('?');
+      if (queryIndex !== -1) {
+        const params: LinkParams = parseUrlParams(serverInfo.slice(queryIndex + 1));
+        pluginParam = params.plugin;
+        serverInfo = serverInfo.slice(0, queryIndex);
+      }
 
       decoded = base64Decode(encodedUserInfo);
       if (decoded) {
@@ -83,18 +132,23 @@ export function parseSS(link: string): ParsedProxy | null {
         const [server, portStr] = serverInfo.split(':');
         const port = parseInt(portStr, 10);
 
-        return {
+        const config: SSProxyNode = {
           name,
-          config: {
-            name,
-            type: 'ss',
-            server,
-            port,
-            cipher: method,
-            password,
-            udp: true,
-          } as ProxyNode,
+          type: 'ss',
+          server,
+          port,
+          cipher: method,
+          password,
+          udp: true,
         };
+
+        const plugin = buildSsPlugin(pluginParam);
+        if (plugin) {
+          config.plugin = plugin.plugin;
+          config['plugin-opts'] = plugin['plugin-opts'];
+        }
+
+        return { name, config };
       }
     }
 
@@ -144,7 +198,7 @@ export function parseSSR(link: string): ParsedProxy | null {
     // 'none' in SSR should be mapped to 'dummy' for Clash
     const cipher = method === 'none' ? 'dummy' : method;
 
-    const config: any = {
+    const config: SSRProxyNode = {
       name: nodeName,
       type: 'ssr',
       server,
@@ -160,10 +214,7 @@ export function parseSSR(link: string): ParsedProxy | null {
     if (params.obfsparam) config['obfs-param'] = params.obfsparam;
     if (params.group) config.group = base64Decode(params.group);
 
-    return {
-      name: nodeName,
-      config: config as ProxyNode,
-    };
+    return { name: nodeName, config };
   } catch {
     return null;
   }
@@ -189,24 +240,56 @@ export function parseVmess(link: string): ParsedProxy | null {
 
     const nodeName = name || config.ps || 'Vmess';
 
-    return {
+    const node: VMessProxyNode = {
       name: nodeName,
-      config: {
-        name: nodeName,
-        type: 'vmess',
-        server: config.add,
-        port: parseInt(config.port, 10),
-        uuid: config.id,
-        alterId: parseInt(config.aid || '0', 10),
-        cipher: config.scy || 'auto',
-        network: config.net || 'tcp',
-        tls: config.tls === 'tls' || config.tls === 'true',
-        udp: true,
-        // Default skip-cert-verify to false unless explicitly set
-        'skip-cert-verify': config.allowInsecure === 'true' || config.allowInsecure === '1' || config.allowInsecure === 1,
-        servername: config.sni || config.host || '',
-      } as ProxyNode,
+      type: 'vmess',
+      server: config.add,
+      port: parseInt(config.port, 10),
+      uuid: config.id,
+      alterId: parseInt(config.aid || '0', 10),
+      cipher: config.scy || 'auto',
+      network: normalizeNetwork(config.net),
+      tls: config.tls === 'tls' || config.tls === 'true',
+      udp: true,
+      // Default skip-cert-verify to false unless explicitly set
+      'skip-cert-verify': config.allowInsecure === 'true' || config.allowInsecure === '1' || config.allowInsecure === 1,
+      servername: config.sni || config.host || '',
     };
+
+    // Transport options carried in the vmess JSON (path/host doubles as SNI)
+    const transportParams: LinkParams = {
+      path: config.path,
+      host: config.host,
+      ed: config.ed,
+      'max-early-data': config['max-early-data'],
+      serviceName: config.serviceName || config.servicename,
+    };
+
+    if (node.network === 'ws') {
+      const wsOpts = buildWsOpts(transportParams);
+      if (wsOpts) node['ws-opts'] = wsOpts;
+    } else if (node.network === 'grpc') {
+      const grpcOpts = buildGrpcOpts(transportParams);
+      if (grpcOpts) node['grpc-opts'] = grpcOpts;
+    } else if (node.network === 'h2') {
+      const h2Opts = buildH2Opts(transportParams);
+      if (h2Opts) node['h2-opts'] = h2Opts;
+    } else if (node.network === 'http') {
+      const httpOpts = buildHttpOpts(transportParams);
+      if (httpOpts) node['http-opts'] = httpOpts;
+    }
+
+    // ALPN (comma separated)
+    const alpn = typeof config.alpn === 'string'
+      ? parseAlpn({ alpn: config.alpn })
+      : Array.isArray(config.alpn) ? config.alpn : undefined;
+    if (alpn?.length) node.alpn = alpn;
+
+    // uTLS fingerprint
+    const fingerprint = parseFingerprint({ fp: config.fp, 'client-fingerprint': config['client-fingerprint'] });
+    if (fingerprint) node['client-fingerprint'] = fingerprint;
+
+    return { name: nodeName, config: node };
   } catch {
     return null;
   }
@@ -219,12 +302,11 @@ export function parseTrojan(link: string): ParsedProxy | null {
 
   try {
     const url = new URL(link);
-    const params = parseUrlParams(url.search.slice(1));
+    const params: LinkParams = parseUrlParams(url.search.slice(1));
     const name = url.hash ? decodeURIComponent(url.hash.slice(1)) : 'Trojan';
 
     // Normalize transport: only ws/h2/grpc are transports, everything else is tcp
-    const rawNetwork = (params.type || 'tcp').toLowerCase();
-    const network = rawNetwork === 'ws' || rawNetwork === 'grpc' || rawNetwork === 'h2' ? rawNetwork : 'tcp';
+    const network = normalizeNetwork(params.type);
 
     // Trojan-Go Shadowsocks relay: encryption=ss;method;password
     const encryption = params.encryption ? params.encryption.split(';') : [];
@@ -233,7 +315,7 @@ export function parseTrojan(link: string): ParsedProxy | null {
         ? { enabled: true, method: encryption[1], password: encryption[2] }
         : undefined;
 
-    const config = {
+    const config: TrojanProxyNode = {
       name,
       type: 'trojan',
       server: url.hostname,
@@ -246,32 +328,42 @@ export function parseTrojan(link: string): ParsedProxy | null {
       sni: params.sni || params.peer || '',
       network,
       ...(ssOpts && { 'ss-opts': ssOpts }),
-    } as ProxyNode;
+    };
 
     // WebSocket transport options
     if (network === 'ws') {
-      (config as any)['ws-opts'] = {
-        path: params.path || '/',
-        ...(params.host && { headers: { Host: params.host } }),
-      };
+      const wsOpts = buildWsOpts(params);
+      if (wsOpts) config['ws-opts'] = wsOpts;
     }
 
     // gRPC transport options
     if (network === 'grpc') {
-      (config as any)['grpc-opts'] = {
-        'grpc-service-name': params.serviceName || params.path || '',
+      const grpcOpts = buildGrpcOpts(params);
+      if (grpcOpts) config['grpc-opts'] = grpcOpts;
+    }
+
+    // H2 transport options
+    if (network === 'h2') {
+      const h2Opts = buildH2Opts(params);
+      if (h2Opts) config['h2-opts'] = h2Opts;
+    }
+
+    // Reality options
+    if (params.security === 'reality') {
+      config['reality-opts'] = {
+        ...(params.pbk && { 'public-key': params.pbk }),
+        ...(params.sid && { 'short-id': params.sid }),
+        ...(params.spx && { 'spider-x': params.spx }),
       };
     }
 
     // ALPN (comma separated)
-    if (params.alpn) {
-      const alpn = params.alpn.split(',').map(s => s.trim()).filter(Boolean);
-      if (alpn.length) (config as any).alpn = alpn;
-    }
+    const alpn = parseAlpn(params);
+    if (alpn) config.alpn = alpn;
 
     // uTLS fingerprint
-    const fingerprint = params.fp || params['client-fingerprint'];
-    if (fingerprint) (config as any)['client-fingerprint'] = fingerprint;
+    const fingerprint = parseFingerprint(params);
+    if (fingerprint) config['client-fingerprint'] = fingerprint;
 
     return { name, config };
   } catch {
@@ -335,7 +427,7 @@ export function parseWireguard(link: string): ParsedProxy | null {
       if (parsed.length === 3) reserved = parsed;
     }
 
-    const config = {
+    const config: WireGuardProxyNode = {
       name,
       type: 'wireguard',
       server,
@@ -356,7 +448,7 @@ export function parseWireguard(link: string): ParsedProxy | null {
       }),
       ...(params.dns && { dns: params.dns.split(',').map(s => s.trim()).filter(Boolean) }),
       ...(params['dialer-proxy'] && { 'dialer-proxy': params['dialer-proxy'] }),
-    } as ProxyNode;
+    };
 
     return { name, config };
   } catch {
@@ -396,21 +488,21 @@ export function parseAnytls(link: string): ParsedProxy | null {
     const idleTimeout = parseInt(params['idle-session-timeout'] || '', 10);
     const minIdle = parseInt(params['min-idle-session'] || '', 10);
 
-    const config = {
+    const config: AnyTLSProxyNode = {
       name,
       type: 'anytls',
       server,
       port: Number.isInteger(port) ? port : 443,
       password,
-      'skip-cert-verify': insecure ? /^(true|1)$/i.test(insecure) : false,
-      udp: params.udp ? /^(true|1)$/i.test(params.udp) : true,
+      'skip-cert-verify': insecure ? isTruthyParam(insecure) : false,
+      udp: params.udp ? isTruthyParam(params.udp) : true,
       ...(params.sni && { sni: params.sni }),
-      ...(params.alpn && { alpn: params.alpn.split(',').map(s => s.trim()).filter(Boolean) }),
+      ...(parseAlpn(params) && { alpn: parseAlpn(params) }),
       ...(fingerprint && { 'client-fingerprint': fingerprint }),
       ...(Number.isInteger(idleCheck) && { 'idle-session-check-interval': idleCheck }),
       ...(Number.isInteger(idleTimeout) && { 'idle-session-timeout': idleTimeout }),
       ...(Number.isInteger(minIdle) && { 'min-idle-session': minIdle }),
-    } as ProxyNode;
+    };
 
     return { name, config };
   } catch {
@@ -435,7 +527,7 @@ export function parseHysteria2(link: string): ParsedProxy | null {
 
     // Extract query params
     const queryIndex = rest.indexOf('?');
-    let params: Record<string, string> = {};
+    let params: LinkParams = {};
     if (queryIndex !== -1) {
       params = parseUrlParams(rest.slice(queryIndex + 1));
       rest = rest.slice(0, queryIndex);
@@ -458,18 +550,27 @@ export function parseHysteria2(link: string): ParsedProxy | null {
     const port = parseInt(portStr, 10);
     if (!server || isNaN(port)) return null;
 
-    return {
+    const config: Hysteria2ProxyNode = {
       name,
-      config: {
-        name,
-        type: 'hysteria2',
-        server,
-        port,
-        password,
-        'skip-cert-verify': params.insecure === '1',
-        sni: params.sni || '',
-      } as ProxyNode,
+      type: 'hysteria2',
+      server,
+      port,
+      password,
+      'skip-cert-verify': isTruthyParam(params.insecure),
+      sni: params.sni || '',
+      ...(params.obfs && { obfs: params.obfs }),
+      ...(params['obfs-password'] && { 'obfs-password': params['obfs-password'] }),
+      ...((params.mport || params.ports) && { ports: params.mport || params.ports }),
+      ...(parseAlpn(params) && { alpn: parseAlpn(params) }),
     };
+
+    // Optional bandwidth hints (some exporters include upmbps/downmbps)
+    const up = parseInt(params.upmbps || params.up || '', 10);
+    const down = parseInt(params.downmbps || params.down || '', 10);
+    if (Number.isInteger(up) && up > 0) config.up = up;
+    if (Number.isInteger(down) && down > 0) config.down = down;
+
+    return { name, config };
   } catch {
     return null;
   }
@@ -481,25 +582,30 @@ export function parseHysteria(link: string): ParsedProxy | null {
 
   try {
     const url = new URL(link);
-    const params = parseUrlParams(url.search.slice(1));
+    const params: LinkParams = parseUrlParams(url.search.slice(1));
     const name = url.hash ? decodeURIComponent(url.hash.slice(1)) : 'Hysteria';
 
-    return {
+    const up = parseInt(params.upmbps || '10', 10);
+    const down = parseInt(params.downmbps || '50', 10);
+
+    const config: HysteriaProxyNode = {
       name,
-      config: {
-        name,
-        type: 'hysteria',
-        server: url.hostname,
-        port: parseInt(url.port, 10),
-        auth_str: params.auth || '',
-        protocol: params.protocol || 'udp',
-        'skip-cert-verify': params.insecure === '1',
-        sni: params.peer || '',
-        up: parseInt(params.upmbps || '10', 10),
-        down: parseInt(params.downmbps || '50', 10),
-        alpn: params.alpn ? [params.alpn] : ['h3'],
-      } as ProxyNode,
+      type: 'hysteria',
+      server: url.hostname,
+      port: parseInt(url.port, 10),
+      auth_str: params.auth || '',
+      protocol: params.protocol || 'udp',
+      'skip-cert-verify': isTruthyParam(params.insecure),
+      sni: params.peer || params.sni || '',
+      up: Number.isInteger(up) ? up : 10,
+      down: Number.isInteger(down) ? down : 50,
+      alpn: params.alpn ? [params.alpn] : ['h3'],
+      ...(params.obfs && { obfs: params.obfs }),
+      ...((params.mport || params.ports) && { ports: params.mport || params.ports }),
+      ...(isTruthyParam(params.fastopen) && { 'fast-open': true }),
     };
+
+    return { name, config };
   } catch {
     return null;
   }
@@ -511,49 +617,61 @@ export function parseVless(link: string): ParsedProxy | null {
 
   try {
     const url = new URL(link);
-    const params = parseUrlParams(url.search.slice(1));
+    const params: LinkParams = parseUrlParams(url.search.slice(1));
     const name = url.hash ? decodeURIComponent(url.hash.slice(1)) : 'VLESS';
 
-    const config: ProxyNode = {
+    const config: VLESSProxyNode = {
       name,
       type: 'vless',
       server: url.hostname,
       port: parseInt(url.port, 10),
       uuid: decodeURIComponent(url.username),
-      network: params.type || 'tcp',
+      network: normalizeNetwork(params.type),
       flow: params.flow || '',
       'skip-cert-verify': params.allowInsecure === '1',
-    } as ProxyNode;
+    };
 
     // Handle TLS
     if (params.security === 'tls' || params.security === 'reality') {
-      (config as any).tls = true;
-      (config as any).servername = params.sni || '';
+      config.tls = true;
+      config.servername = params.sni || '';
     }
 
     // Handle Reality
     if (params.security === 'reality') {
-      (config as any)['reality-opts'] = {
-        'public-key': params.pbk || '',
-        'short-id': params.sid || '',
+      config['reality-opts'] = {
+        ...(params.pbk && { 'public-key': params.pbk }),
+        ...(params.sid && { 'short-id': params.sid }),
+        ...(params.spx && { 'spider-x': params.spx }),
       };
-      (config as any)['client-fingerprint'] = params.fp || 'chrome';
+      config['client-fingerprint'] = params.fp || 'chrome';
+    } else {
+      // uTLS fingerprint also applies to plain TLS links
+      const fingerprint = parseFingerprint(params);
+      if (fingerprint) config['client-fingerprint'] = fingerprint;
     }
 
-    // WebSocket options
-    if (params.type === 'ws') {
-      (config as any)['ws-opts'] = {
-        path: params.path || '/',
-        headers: params.host ? { Host: params.host } : undefined,
-      };
+    // Transport options
+    if (config.network === 'ws') {
+      const wsOpts = buildWsOpts(params);
+      if (wsOpts) config['ws-opts'] = wsOpts;
+    } else if (config.network === 'grpc') {
+      const grpcOpts = buildGrpcOpts(params);
+      if (grpcOpts) config['grpc-opts'] = grpcOpts;
+    } else if (config.network === 'h2') {
+      const h2Opts = buildH2Opts(params);
+      if (h2Opts) config['h2-opts'] = h2Opts;
+    } else if (config.network === 'http') {
+      const httpOpts = buildHttpOpts(params);
+      if (httpOpts) config['http-opts'] = httpOpts;
     }
 
-    // gRPC options
-    if (params.type === 'grpc') {
-      (config as any)['grpc-opts'] = {
-        'grpc-service-name': params.serviceName || params.service || '',
-      };
-    }
+    // Extra UDP handling flags
+    if (isTruthyParam(params['packet-addr'])) config['packet-addr'] = true;
+
+    // ALPN (comma separated)
+    const alpn = parseAlpn(params);
+    if (alpn) config.alpn = alpn;
 
     return {
       name,
@@ -575,20 +693,22 @@ export function parseHttp(link: string): ParsedProxy | null {
 
   try {
     const url = new URL(link);
+    const params: LinkParams = parseUrlParams(url.search.slice(1));
     const name = url.hash ? decodeURIComponent(url.hash.slice(1)) : 'HTTP';
 
-    return {
+    const config: HTTPProxyNode = {
       name,
-      config: {
-        name,
-        type: 'http',
-        server: url.hostname,
-        port: parseInt(url.port || (url.protocol === 'https:' ? '443' : '80'), 10),
-        username: decodeURIComponent(url.username),
-        password: decodeURIComponent(url.password),
-        tls: url.protocol === 'https:',
-      } as ProxyNode,
+      type: 'http',
+      server: url.hostname,
+      port: parseInt(url.port || (url.protocol === 'https:' ? '443' : '80'), 10),
+      username: decodeURIComponent(url.username),
+      password: decodeURIComponent(url.password),
+      tls: url.protocol === 'https:',
+      ...(params.sni && { sni: params.sni }),
+      ...(isTruthyParam(params.allowInsecure || params['skip-cert-verify']) && { 'skip-cert-verify': true }),
     };
+
+    return { name, config };
   } catch {
     return null;
   }
@@ -600,19 +720,22 @@ export function parseSocks5(link: string): ParsedProxy | null {
 
   try {
     const url = new URL(link);
+    const params: LinkParams = parseUrlParams(url.search.slice(1));
     const name = url.hash ? decodeURIComponent(url.hash.slice(1)) : 'SOCKS5';
 
-    return {
+    const config: SOCKS5ProxyNode = {
       name,
-      config: {
-        name,
-        type: 'socks5',
-        server: url.hostname,
-        port: parseInt(url.port || '1080', 10),
-        username: url.username ? decodeURIComponent(url.username) : undefined,
-        password: url.password ? decodeURIComponent(url.password) : undefined,
-      } as ProxyNode,
+      type: 'socks5',
+      server: url.hostname,
+      port: parseInt(url.port || '1080', 10),
+      username: url.username ? decodeURIComponent(url.username) : undefined,
+      password: url.password ? decodeURIComponent(url.password) : undefined,
+      ...(isTruthyParam(params.tls) && { tls: true }),
+      ...(params.udp && { udp: isTruthyParam(params.udp) }),
+      ...(isTruthyParam(params.allowInsecure || params['skip-cert-verify']) && { 'skip-cert-verify': true }),
     };
+
+    return { name, config };
   } catch {
     return null;
   }
@@ -635,20 +758,27 @@ export function parseTelegramLink(link: string): ParsedProxy | null {
     if (!server || !port) return null;
 
     const isSocks = link.includes('/socks');
-    const type = isSocks ? 'socks5' : 'http';
     const name = isSocks ? 'SOCKS5' : 'HTTP';
 
-    return {
-      name,
-      config: {
-        name,
-        type: type as any,
-        server,
-        port: parseInt(port, 10),
-        username: user || undefined,
-        password: pass || undefined,
-      } as ProxyNode,
-    };
+    const config: HTTPProxyNode | SOCKS5ProxyNode = isSocks
+      ? {
+          name,
+          type: 'socks5',
+          server,
+          port: parseInt(port, 10),
+          username: user || undefined,
+          password: pass || undefined,
+        }
+      : {
+          name,
+          type: 'http',
+          server,
+          port: parseInt(port, 10),
+          username: user || undefined,
+          password: pass || undefined,
+        };
+
+    return { name, config };
   } catch {
     return null;
   }

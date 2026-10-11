@@ -1,5 +1,6 @@
 import { ProxyNode } from '../types';
 import { normalizeProxyNodeHostnames } from '../utils';
+import { safeValidateProxyNode } from '../types/validators';
 
 // js-set-map-lookups: Use Set for O(1) lookups instead of Array.includes()
 const NON_PROXY_OUTBOUND_TYPES = new Set(['selector', 'urltest', 'direct', 'block', 'dns']);
@@ -65,17 +66,65 @@ export function parseSingBoxToProxies(input: string): {
       }
 
       const proxy = singBoxOutboundToProxyNode(outbound, proxyType);
-      if (proxy) {
-        // Convert non-ASCII (IDN) hostnames to Punycode
-        normalizeProxyNodeHostnames(proxy);
-        proxies.push(proxy);
-      }
+      if (!proxy) continue;
+
+      // Convert non-ASCII (IDN) hostnames to Punycode
+      normalizeProxyNodeHostnames(proxy);
+
+      // Route through schema validation so malformed outbounds are dropped
+      const validated = safeValidateProxyNode(proxy);
+      if (validated) proxies.push(validated);
     }
 
     return { proxies, unsupported, filteredCounts: {} };
   } catch (error) {
     console.error('Failed to parse sing-box config:', error);
     return { proxies: [], unsupported: [], filteredCounts: {} };
+  }
+}
+
+/**
+ * Map a sing-box transport object onto a ProxyNode (network + Clash transport opts)
+ * @param node - ProxyNode under construction (mutated in place)
+ * @param transport - sing-box transport object
+ */
+function applySingBoxTransport(node: ProxyNode, transport: any): void {
+  if (!transport?.type) return;
+  const target = node as unknown as Record<string, unknown>;
+  switch (transport.type) {
+    case 'ws':
+      target.network = 'ws';
+      target['ws-opts'] = {
+        ...(transport.path && { path: transport.path }),
+        ...(transport.headers && { headers: transport.headers }),
+        ...(transport.max_early_data !== undefined && { 'max-early-data': transport.max_early_data }),
+        ...(transport.early_data_header_name && { 'early-data-header-name': transport.early_data_header_name }),
+      };
+      break;
+    case 'grpc':
+      target.network = 'grpc';
+      target['grpc-opts'] = {
+        ...(transport.service_name && { 'grpc-service-name': transport.service_name }),
+      };
+      break;
+    case 'http':
+      // sing-box `http` transport is HTTP/2 (h2)
+      target.network = 'h2';
+      target['h2-opts'] = {
+        ...(Array.isArray(transport.host) && { host: transport.host }),
+        ...(transport.path && { path: transport.path }),
+      };
+      break;
+    case 'httpupgrade':
+      target.network = 'ws';
+      target['ws-opts'] = {
+        ...(transport.path && { path: transport.path }),
+        ...(transport.host && { headers: { Host: transport.host } }),
+        'v2ray-http-upgrade': true,
+      };
+      break;
+    default:
+      break;
   }
 }
 
@@ -105,29 +154,43 @@ function singBoxOutboundToProxyNode(outbound: any, proxyType: string): ProxyNode
         password: outbound.password || '',
       } as ProxyNode;
 
-    case 'vmess':
-      return {
+    case 'vmess': {
+      const vmessNode: ProxyNode = {
         ...base,
         uuid: outbound.uuid || '',
         alterId: outbound.alter_id ?? 0,
         cipher: outbound.security || 'auto',
         network: 'tcp',
-        // Handle ws transport if present
-        ...(outbound.transport?.type === 'ws' ? { network: 'ws' } : {}),
-        // Handle TLS options
-        ...(outbound.tls ? {
-          tls: outbound.tls.enabled ?? false,
-          ...(outbound.tls.server_name ? { servername: outbound.tls.server_name } : {}),
-          ...(outbound.tls.insecure !== undefined ? { 'skip-cert-verify': outbound.tls.insecure } : {}),
-        } : {}),
       } as ProxyNode;
 
-    case 'vless':
+      applySingBoxTransport(vmessNode, outbound.transport);
+
+      // Handle TLS options
+      if (outbound.tls) {
+        (vmessNode as any).tls = outbound.tls.enabled ?? false;
+        if (outbound.tls.server_name) {
+          (vmessNode as any).servername = outbound.tls.server_name;
+        }
+        if (outbound.tls.insecure !== undefined) {
+          (vmessNode as any)['skip-cert-verify'] = outbound.tls.insecure;
+        }
+        if (Array.isArray(outbound.tls.alpn)) {
+          (vmessNode as any).alpn = outbound.tls.alpn;
+        }
+      }
+
+      return vmessNode;
+    }
+
+    case 'vless': {
       const vlessNode: ProxyNode = {
         ...base,
         uuid: outbound.uuid || '',
         network: 'tcp',
-      };
+      } as ProxyNode;
+
+      applySingBoxTransport(vlessNode, outbound.transport);
+
       // Only set flow if it has a value
       if (outbound.flow) {
         (vlessNode as any).flow = outbound.flow;
@@ -155,13 +218,21 @@ function singBoxOutboundToProxyNode(outbound: any, proxyType: string): ProxyNode
         }
       }
       return vlessNode;
+    }
 
-    case 'trojan':
+    case 'trojan': {
       const trojanNode: ProxyNode = {
         ...base,
         password: outbound.password || '',
         network: 'tcp',
-      };
+      } as ProxyNode;
+
+      applySingBoxTransport(trojanNode, outbound.transport);
+
+      if (Array.isArray(outbound.tls?.alpn)) {
+        (trojanNode as any).alpn = outbound.tls.alpn;
+      }
+
       // Handle TLS options for trojan
       if (outbound.tls?.enabled) {
         (trojanNode as any).tls = true;
@@ -183,23 +254,27 @@ function singBoxOutboundToProxyNode(outbound: any, proxyType: string): ProxyNode
         }
       }
       return trojanNode;
+    }
 
     case 'hysteria':
       return {
         ...base,
         auth_str: outbound.auth || outbound.auth_str || '',
         protocol: outbound.protocol || 'udp',
-        up: outbound.up_mbps?.toString() || '10',
-        down: outbound.down_mbps?.toString() || '50',
+        ...(typeof outbound.up_mbps === 'number' && { up: outbound.up_mbps }),
+        ...(typeof outbound.down_mbps === 'number' && { down: outbound.down_mbps }),
         sni: outbound.server_name || outbound.sni || '',
         'skip-cert-verify': outbound.tls?.insecure || false,
       } as ProxyNode;
 
-    case 'hysteria2':
+    case 'hysteria2': {
       const h2Node: ProxyNode = {
         ...base,
         password: outbound.password || '',
-      };
+        ...(outbound.obfs && { obfs: outbound.obfs }),
+        ...(outbound.obfs_password && { 'obfs-password': outbound.obfs_password }),
+        ...(outbound.ports && { ports: outbound.ports }),
+      } as ProxyNode;
       // Handle TLS options for hysteria2
       if (outbound.tls) {
         if (outbound.tls.insecure !== undefined) {
@@ -215,7 +290,11 @@ function singBoxOutboundToProxyNode(outbound: any, proxyType: string): ProxyNode
       if (!(h2Node as any).sni && outbound.server_name) {
         (h2Node as any).sni = outbound.server_name;
       }
+      if (Array.isArray(outbound.tls?.alpn)) {
+        (h2Node as any).alpn = outbound.tls.alpn;
+      }
       return h2Node;
+    }
 
     case 'http':
       const users = outbound.users || [];
