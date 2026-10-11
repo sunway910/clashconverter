@@ -90,7 +90,24 @@ describe('[Integration] Clash Meta Format Conversion', () => {
       // Basic YAML validation - should contain expected sections
       expect(output).toContain('proxies:');
       expect(output).toContain('proxy-groups:');
+      expect(output).toContain('rule-providers:');
       expect(output).toContain('rules:');
+    });
+
+    it('should emit mihomo-flavored config with region groups and RULE-SET rules', () => {
+      const parser = FormatFactory.createParser('txt');
+      const parseResult = parser.parse(testInput);
+
+      const generator = FormatFactory.createGenerator('clash-meta');
+      const output = generator.generate(parseResult.proxies);
+
+      // mihomo-only features are present
+      expect(output).toContain('include-all: true');
+      expect(output).toContain('proxy-server-nameserver:');
+      // Region group + matching rule target (emoji names must stay in sync)
+      expect(output).toContain('🇭🇰 香港');
+      expect(output).toContain('RULE-SET,youtube,📺 谷歌服务');
+      expect(output).toContain('MATCH,🐟 漏网之鱼');
     });
 
     it('should include all parsed proxies in output', () => {

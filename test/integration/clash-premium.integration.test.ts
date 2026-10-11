@@ -118,6 +118,24 @@ describe('[Integration] Clash Premium Format Conversion', () => {
       expect(output).toContain('rules:');
     });
 
+    it('should omit mihomo-only fields and region groups for premium kernel', () => {
+      const parser = FormatFactory.createParser('txt');
+      const parseResult = parser.parse(testInput);
+
+      const generator = FormatFactory.createGenerator('clash-premium');
+      const output = generator.generate(parseResult.proxies);
+
+      // Rule providers work on premium
+      expect(output).toContain('rule-providers:');
+      // mihomo-only fields/groups must not appear
+      expect(output).not.toContain('include-all');
+      expect(output).not.toContain('unified-delay');
+      expect(output).not.toContain('proxy-server-nameserver');
+      expect(output).not.toContain('🇭🇰 香港');
+      // Premium core has no REJECT-DROP policy
+      expect(output).not.toContain('REJECT-DROP');
+    });
+
     it('should not contain unsupported protocols in output', () => {
       const parser = FormatFactory.createParser('txt');
       const parseResult = parser.parse(testInput);

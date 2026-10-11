@@ -7,6 +7,7 @@
 import type { ProxyNode } from '../types';
 import type { FormatType } from '../core/interfaces';
 import { ClashYamlGenerator } from './clash-yaml-generator';
+import { generateSimpleYaml } from '../clash/generator/yaml';
 
 /**
  * Generator for Clash Premium YAML format
@@ -14,6 +15,16 @@ import { ClashYamlGenerator } from './clash-yaml-generator';
  */
 export class ClashPremiumGenerator extends ClashYamlGenerator {
   readonly format: FormatType = 'clash-premium';
+
+  /**
+   * Generate the body section (main YAML content)
+   * Uses the premium kernel flavor: no mihomo-only fields/groups
+   * @param proxies - Filtered proxy nodes
+   * @returns Complete YAML configuration
+   */
+  protected generateBody(proxies: ProxyNode[]): string {
+    return generateSimpleYaml(proxies, 'premium');
+  }
 
   /**
    * Protocols not supported by Clash Premium
