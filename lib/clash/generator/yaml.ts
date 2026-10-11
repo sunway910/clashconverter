@@ -14,6 +14,7 @@ import {
   PROXY_GROUPS_CONFIG,
 } from '../config/base';
 import { ProtocolAdapterRegistry } from '../../adapters/protocol-adapter';
+import { cleanOutput } from '../../adapters/shared';
 
 /**
  * Generate header banner with metadata
@@ -94,8 +95,8 @@ export function generateSimpleYaml(proxies: ProxyNode[]): string {
     // Get adapter for this proxy type
     const adapter = ProtocolAdapterRegistry.get(proxy.type);
     if (adapter) {
-      // Use adapter to convert to Clash JSON format
-      const clashJson = adapter.toClashJson(proxy);
+      // Use adapter to convert to Clash JSON format, then drop empty values
+      const clashJson = cleanOutput(adapter.toClashJson(proxy));
       // Use JSON.stringify for single-line inline format
       parts.push('  - ' + JSON.stringify(clashJson));
     }

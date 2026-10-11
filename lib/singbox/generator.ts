@@ -7,6 +7,7 @@
 
 import type { ProxyNode } from '../types';
 import { ProtocolAdapterRegistry } from '../adapters/protocol-adapter';
+import { cleanOutput } from '../adapters/shared';
 import { UnsupportedProtocolError } from '../errors';
 
 // Protocols supported by sing-box (all protocols are now supported)
@@ -22,7 +23,7 @@ export const SING_BOX_SUPPORTED_PROTOCOLS = new Set([
 function convertToSingBoxOutbound(proxy: ProxyNode): any {
   const adapter = ProtocolAdapterRegistry.get(proxy.type);
   if (adapter) {
-    return adapter.toSingBoxJson(proxy);
+    return cleanOutput(adapter.toSingBoxJson(proxy));
   }
   throw UnsupportedProtocolError.forFormat(proxy.type, 'sing-box');
 }

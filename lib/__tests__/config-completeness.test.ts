@@ -7,6 +7,7 @@ import { parse } from 'yaml';
 import { parseSS, parseSSR, parseVmess, parseSocks5, parseHysteria2 } from '../parsers/protocol-parsers';
 import { parseSingBoxToProxies } from '../singbox/parser';
 import { ProtocolAdapterRegistry } from '../adapters/protocol-adapter';
+import { cleanOutput } from '../adapters/shared';
 import { validateProxyNode, safeValidateProxyNode } from '../types/validators';
 import { base64Encode } from '../utils';
 import type { VMessProxyNode } from '../types';
@@ -183,6 +184,29 @@ describe('common Clash fields passthrough', () => {
     expect(obj.tfo).toBe(true);
     expect(obj['ip-version']).toBe('ipv6');
     expect(obj['interface-name']).toBe('en0');
+  });
+});
+
+describe('cleanOutput', () => {
+  it('drops empty values recursively while keeping 0 and false', () => {
+    const obj = cleanOutput({
+      name: 'n',
+      port: 0,
+      tls: false,
+      sni: '',
+      headers: {},
+      'ws-opts': { path: undefined, headers: { Host: 'a.com' } },
+      alpn: [],
+      list: ['x', '', { y: null }],
+    });
+
+    expect(obj).toEqual({
+      name: 'n',
+      port: 0,
+      tls: false,
+      'ws-opts': { headers: { Host: 'a.com' } },
+      list: ['x'],
+    });
   });
 });
 

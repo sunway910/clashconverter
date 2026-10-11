@@ -152,3 +152,40 @@ export function buildSingBoxMultiplex(node: ProxyNode): Record<string, any> | un
     ...(smux['only-tcp'] !== undefined && { only_tcp: smux['only-tcp'] }),
   };
 }
+
+/**
+ * True for values that should not appear in generated output:
+ * undefined / null / '' / empty objects / empty arrays.
+ * 0 and false are meaningful and preserved.
+ */
+function isEmptyOutputValue(value: unknown): boolean {
+  if (value === undefined || value === null || value === '') return true;
+  if (Array.isArray(value) && value.length === 0) return true;
+  if (value !== null && typeof value === 'object' && Object.keys(value).length === 0) return true;
+  return false;
+}
+
+/**
+ * Recursively strip empty values from generated proxy output
+ * (undefined / null / '' / empty objects / empty arrays), preserving
+ * 0 and false. Borrowed from siiway/urlclash-converter's clean().
+ */
+export function cleanOutput<T>(value: T): T {
+  if (Array.isArray(value)) {
+    const cleaned = value.map((item) => cleanOutput(item));
+    return cleaned.filter((item) => !isEmptyOutputValue(item)) as unknown as T;
+  }
+  if (value !== null && typeof value === 'object') {
+    const obj = value as Record<string, unknown>;
+    for (const key of Object.keys(obj)) {
+      const cleaned = cleanOutput(obj[key]);
+      if (isEmptyOutputValue(cleaned)) {
+        delete obj[key];
+      } else {
+        obj[key] = cleaned;
+      }
+    }
+    return value;
+  }
+  return value;
+}
