@@ -20,6 +20,7 @@ import { SingBoxJsonGenerator } from '../generators/singbox-json-generator';
 import { LoonGenerator } from '../loon/loon-generator';
 import { QuanxGenerator } from '../quantumultx/quantumultx-generator';
 import { SurfboardGenerator } from '../surfboard/surfboard-generator';
+import { SurgeGenerator } from '../surge/surge-generator';
 
 // Import protocol adapters
 import { SSAdapter } from '../adapters/ss-adapter';
@@ -74,6 +75,7 @@ export function initializeFormatRegistry(): void {
   FormatFactory.registerGenerator(new LoonGenerator());
   FormatFactory.registerGenerator(new QuanxGenerator());
   FormatFactory.registerGenerator(new SurfboardGenerator());
+  FormatFactory.registerGenerator(new SurgeGenerator());
 }
 
 /**

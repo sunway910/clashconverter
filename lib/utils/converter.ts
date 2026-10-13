@@ -64,6 +64,8 @@ export function getOutputPlaceholder(format: FormatType, t: (key: string) => str
       return '# Your QuantumultX configuration will appear here';
     case 'surfboard':
       return '# Your Surfboard configuration will appear here';
+    case 'surge':
+      return '# Your Surge configuration will appear here';
     default:
       return t('outputPlaceholder.clash');
   }
@@ -99,6 +101,11 @@ export function getDownloadInfo(format: FormatType): { filename: string; mimeTyp
     case 'surfboard':
       return {
         filename: `surfboard-${timestamp}.conf`,
+        mimeType: 'text/plain',
+      };
+    case 'surge':
+      return {
+        filename: `surge-${timestamp}.conf`,
         mimeType: 'text/plain',
       };
     case 'clash-meta':

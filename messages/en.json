@@ -617,7 +617,8 @@
     "sing-box": "Sing-Box",
     "loon": "Loon",
     "quantumultx": "QuantumultX",
-    "surfboard": "Surfboard"
+    "surfboard": "Surfboard",
+    "surge": "Surge 5"
   },
   "inputPlaceholder": {
     "subscribe-url": "Paste your subscription link here\n\nSupported subscription types:\n\nType 1: Direct YAML download\nhttps://example.com/link/...?clash=3\n\nType 2: Base64 encoded proxy links\nhttps://example.com/api/v1/client/subscribe?token=xxx\n\n💡 We will automatically fetch and convert the subscription content",
@@ -631,7 +632,8 @@
     "sing-box": "# Your sing-box config will appear here",
     "loon": "# Your Loon configuration will appear here",
     "quantumultx": "# Your QuantumultX configuration will appear here",
-    "surfboard": "# Your Surfboard configuration will appear here"
+    "surfboard": "# Your Surfboard configuration will appear here",
+    "surge": "# Your Surge configuration will appear here"
   },
   "itemsFound": "{count} item(s) found",
   "clear": "Clear",
@@ -660,7 +662,8 @@
     "sing-box": "Sing-Box",
     "loon": "Loon",
     "quantumultx": "QuantumultX",
-    "surfboard": "Surfboard"
+    "surfboard": "Surfboard",
+    "surge": "Surge 5"
   },
   "kernelDescriptions": {
     "txt": {
@@ -731,6 +734,16 @@
         "Does NOT support SSR, VLESS, Hysteria (v1)",
         "iOS exclusive with Surge-compatible format",
         "Simple configuration style with rule-based routing"
+      ]
+    },
+    "surge": {
+      "title": "Surge 5",
+      "description": "A professional proxy client for Apple platforms. Supports SS, VMess, Trojan, HTTP protocols; SSR runs via external ssr-local. Smart policy groups require Surge 5.8+.",
+      "features": [
+        "Supports SS, VMess, Trojan, HTTP protocols",
+        "SSR runs via external ssr-local; SOCKS5, VLESS, Hysteria, Hysteria2 are filtered out",
+        "Smart policy groups for regions (requires Surge 5.8+)",
+        "Remote rule-sets (SKK / blackmatrix7) with rule-based routing"
       ]
     }
   },

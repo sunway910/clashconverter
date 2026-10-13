@@ -25,6 +25,7 @@ const ALL_FORMAT_TYPES: readonly FormatType[] = [
   'loon',
   'quantumultx',
   'surfboard',
+  'surge',
   'subscribe-url',
 ] as const;
 
@@ -39,6 +40,7 @@ const CONFIGURABLE_FORMATS: readonly FormatType[] = [
   'loon',
   'quantumultx',
   'surfboard',
+  'surge',
 ] as const;
 
 /**
@@ -52,6 +54,7 @@ const FORMAT_ENV_VARS: Readonly<Partial<Record<FormatType, string>>> = {
   'loon': 'NEXT_PUBLIC_ENABLE_LOON_TRANSFER',
   'quantumultx': 'NEXT_PUBLIC_ENABLE_QUANTUMULTX_TRANSFER',
   'surfboard': 'NEXT_PUBLIC_ENABLE_SURFBOARD_TRANSFER',
+  'surge': 'NEXT_PUBLIC_ENABLE_SURGE_TRANSFER',
 } as const;
 
 /**
@@ -112,6 +115,8 @@ export function isFormatEnabled(format: FormatType): boolean {
       return parseBooleanEnv(process.env.NEXT_PUBLIC_ENABLE_QUANTUMULTX_TRANSFER);
     case 'NEXT_PUBLIC_ENABLE_SURFBOARD_TRANSFER':
       return parseBooleanEnv(process.env.NEXT_PUBLIC_ENABLE_SURFBOARD_TRANSFER);
+    case 'NEXT_PUBLIC_ENABLE_SURGE_TRANSFER':
+      return parseBooleanEnv(process.env.NEXT_PUBLIC_ENABLE_SURGE_TRANSFER);
     default:
       return true;
   }

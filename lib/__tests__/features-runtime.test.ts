@@ -61,8 +61,9 @@ describe('Feature Flags - Runtime Behavior', () => {
       expect(formats).toContain('txt');
       expect(formats).toContain('clash-meta');
       expect(formats).toContain('clash-premium');
+      expect(formats).toContain('surge');
       expect(formats).toContain('subscribe-url');
-      expect(formats.length).toBe(4);
+      expect(formats.length).toBe(5);
     });
 
     it('should return correct enabled formats map when some formats are disabled', () => {

@@ -133,6 +133,7 @@ describe('Feature Flags', () => {
       delete process.env.NEXT_PUBLIC_ENABLE_CLASH_PREMIUM_TRANSFER;
       delete process.env.NEXT_PUBLIC_ENABLE_QUANTUMULTX_TRANSFER;
       delete process.env.NEXT_PUBLIC_ENABLE_SURFBOARD_TRANSFER;
+      delete process.env.NEXT_PUBLIC_ENABLE_SURGE_TRANSFER;
 
       const formats = features.getEnabledFormats();
 
@@ -143,8 +144,9 @@ describe('Feature Flags', () => {
       expect(formats).toContain('loon');
       expect(formats).toContain('quantumultx');
       expect(formats).toContain('surfboard');
+      expect(formats).toContain('surge');
       expect(formats).toContain('subscribe-url');
-      expect(formats.length).toBe(8);
+      expect(formats.length).toBe(9);
     });
 
     it('should exclude "sing-box" when disabled', () => {
@@ -160,7 +162,7 @@ describe('Feature Flags', () => {
       expect(formats).not.toContain('sing-box');
       expect(formats).toContain('txt');
       expect(formats).toContain('loon');
-      expect(formats.length).toBe(7);
+      expect(formats.length).toBe(8);
     });
 
     it('should exclude "loon" when disabled', () => {
@@ -175,7 +177,7 @@ describe('Feature Flags', () => {
 
       expect(formats).toContain('sing-box');
       expect(formats).not.toContain('loon');
-      expect(formats.length).toBe(7);
+      expect(formats.length).toBe(8);
     });
 
     it('should exclude multiple formats when multiple are disabled', () => {
@@ -194,7 +196,7 @@ describe('Feature Flags', () => {
       expect(formats).toContain('txt');
       expect(formats).toContain('clash-premium');
       expect(formats).toContain('subscribe-url');
-      expect(formats.length).toBe(5);
+      expect(formats.length).toBe(6);
     });
 
     it('should always include "txt" and "subscribe-url" even if env var is "false"', () => {
@@ -269,6 +271,7 @@ describe('Feature Flags', () => {
         'loon',
         'quantumultx',
         'surfboard',
+        'surge',
         'subscribe-url',
       ]);
     });
@@ -281,6 +284,7 @@ describe('Feature Flags', () => {
         'loon',
         'quantumultx',
         'surfboard',
+        'surge',
       ]);
     });
 
@@ -291,6 +295,7 @@ describe('Feature Flags', () => {
       expect(features.FORMAT_ENV_VARS['loon']).toBe('NEXT_PUBLIC_ENABLE_LOON_TRANSFER');
       expect(features.FORMAT_ENV_VARS['quantumultx']).toBe('NEXT_PUBLIC_ENABLE_QUANTUMULTX_TRANSFER');
       expect(features.FORMAT_ENV_VARS['surfboard']).toBe('NEXT_PUBLIC_ENABLE_SURFBOARD_TRANSFER');
+      expect(features.FORMAT_ENV_VARS['surge']).toBe('NEXT_PUBLIC_ENABLE_SURGE_TRANSFER');
     });
   });
 });
@@ -325,12 +330,13 @@ describe('Converter Utils - Format Options', () => {
       delete process.env.NEXT_PUBLIC_ENABLE_CLASH_PREMIUM_TRANSFER;
       delete process.env.NEXT_PUBLIC_ENABLE_QUANTUMULTX_TRANSFER;
       delete process.env.NEXT_PUBLIC_ENABLE_SURFBOARD_TRANSFER;
+      delete process.env.NEXT_PUBLIC_ENABLE_SURGE_TRANSFER;
 
       // Mock translation function
       const mockT = vi.fn((key: string) => key);
       const options = getInputFormatOptions(mockT);
 
-      expect(options.length).toBe(8);
+      expect(options.length).toBe(9);
       expect(options.map(o => o.value)).toEqual([
         'txt',
         'clash-meta',
@@ -339,6 +345,7 @@ describe('Converter Utils - Format Options', () => {
         'loon',
         'quantumultx',
         'surfboard',
+        'surge',
         'subscribe-url',
       ]);
     });
@@ -354,11 +361,12 @@ describe('Converter Utils - Format Options', () => {
       const mockT = vi.fn((key: string) => key);
       const options = getInputFormatOptions(mockT);
 
-      expect(options.length).toBe(4);
+      expect(options.length).toBe(5);
       expect(options.map(o => o.value)).toEqual([
         'txt',
         'clash-meta',
         'clash-premium',
+        'surge',
         'subscribe-url',
       ]);
     });
@@ -372,12 +380,13 @@ describe('Converter Utils - Format Options', () => {
       delete process.env.NEXT_PUBLIC_ENABLE_CLASH_PREMIUM_TRANSFER;
       delete process.env.NEXT_PUBLIC_ENABLE_QUANTUMULTX_TRANSFER;
       delete process.env.NEXT_PUBLIC_ENABLE_SURFBOARD_TRANSFER;
+      delete process.env.NEXT_PUBLIC_ENABLE_SURGE_TRANSFER;
 
       const mockT = vi.fn((key: string) => key);
       const options = getOutputFormatOptions(mockT);
 
-      // Should be 7 (all except subscribe-url)
-      expect(options.length).toBe(7);
+      // Should be 8 (all except subscribe-url)
+      expect(options.length).toBe(8);
       expect(options.map(o => o.value)).toEqual([
         'txt',
         'clash-meta',
@@ -386,6 +395,7 @@ describe('Converter Utils - Format Options', () => {
         'loon',
         'quantumultx',
         'surfboard',
+        'surge',
       ]);
     });
 
@@ -400,12 +410,13 @@ describe('Converter Utils - Format Options', () => {
       const mockT = vi.fn((key: string) => key);
       const options = getOutputFormatOptions(mockT);
 
-      // Should be 3 (txt, clash-meta, clash-premium)
-      expect(options.length).toBe(3);
+      // Should be 4 (txt, clash-meta, clash-premium, surge)
+      expect(options.length).toBe(4);
       expect(options.map(o => o.value)).toEqual([
         'txt',
         'clash-meta',
         'clash-premium',
+        'surge',
       ]);
     });
   });
