@@ -8,7 +8,7 @@ import { seoConfig } from '@/lib/seo';
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = seoConfig.siteUrl;
   const currentDate = new Date();
-  const lastModified = new Date('2025-02-01');
+  const lastModified = new Date('2026-10-15');
 
   // Define all pages with their SEO metadata
   const pages = [

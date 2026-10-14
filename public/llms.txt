@@ -1,6 +1,6 @@
 # ClashConverter
 
-> Free online proxy configuration converter at https://clashconverter.com. Converts proxy share links (SS, SSR, VMess, VLESS, Trojan, Hysteria, Hysteria2, HTTP, SOCKS5, WireGuard, AnyTLS) into Clash Meta (Mihomo), Clash Premium, Sing-Box, Loon, QuantumultX, and Surfboard configuration formats — and back.
+> Free online proxy configuration converter at https://clashconverter.com. Converts proxy share links (SS, SSR, VMess, VLESS, Trojan, Hysteria, Hysteria2, TUIC v5, HTTP, SOCKS5, WireGuard, AnyTLS) into Clash Meta (Mihomo), Clash Premium, Sing-Box, Surge 5, Surfboard, Loon, and QuantumultX configuration formats — and back.
 
 ClashConverter is a free, open-source, client-side web tool. All parsing, validation, and conversion run entirely inside the user's browser: proxy links, server addresses, credentials, and generated configurations are never uploaded to, stored on, or logged by any server. No account or registration is required. The source code is public at https://github.com/sunway910/clashconverter.
 
@@ -18,7 +18,7 @@ Markdown documents describing the site's features, structure, and data. These do
 
 - [Index](https://clashconverter.com/index.md): what ClashConverter is, core features, quick start, and privacy model.
 - [Formats](https://clashconverter.com/formats.md): supported input and output formats with the per-kernel protocol compatibility matrix.
-- [Protocols](https://clashconverter.com/protocols.md): the 11 supported proxy protocols and their share-link URI syntax.
+- [Protocols](https://clashconverter.com/protocols.md): the 12 supported proxy protocols and their share-link URI syntax.
 - [FAQ](https://clashconverter.com/faq.md): frequently asked questions about the converter.
 - [Privacy](https://clashconverter.com/privacy.md): privacy policy (client-side processing, cookies, analytics, advertising).
 - [About](https://clashconverter.com/about.md): open-source project background and maintenance.

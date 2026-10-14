@@ -9,14 +9,14 @@ https://clashconverter.com/llms.txt
 
 # ClashConverter — Index
 
-ClashConverter (https://clashconverter.com) is a free online proxy configuration converter. It converts proxy share links and configuration files between formats: proxy links (SS, SSR, VMess, VLESS, Trojan, Hysteria, Hysteria2, HTTP, SOCKS5, WireGuard, AnyTLS) ⇄ Clash Meta (Mihomo) YAML, Clash Premium YAML, Sing-Box JSON, Loon, QuantumultX, and Surfboard configurations.
+ClashConverter (https://clashconverter.com) is a free online proxy configuration converter. It converts proxy share links and configuration files between formats: proxy links (SS, SSR, VMess, VLESS, Trojan, Hysteria, Hysteria2, TUIC v5, HTTP, SOCKS5, WireGuard, AnyTLS) ⇄ Clash Meta (Mihomo) YAML, Clash Premium YAML, Sing-Box JSON, Surge 5, Surfboard, Loon, and QuantumultX configurations.
 
 ## Core features
 
-- **Convert proxy links to config files**: paste one share link per line (`ss://`, `ssr://`, `vmess://`, `vless://`, `trojan://`, `hysteria://`, `hysteria2://`, `wireguard://`/`wg://`, `anytls://`, `http://`, `socks5://`), choose an output format, and get a ready-to-use configuration.
+- **Convert proxy links to config files**: paste one share link per line (`ss://`, `ssr://`, `vmess://`, `vless://`, `trojan://`, `hysteria://`, `hysteria2://`, `tuic://`, `wireguard://`/`wg://`, `anytls://`, `http://`, `socks5://`), choose an output format, and get a ready-to-use configuration.
 - **Convert config files back to links**: paste a Clash YAML or Sing-Box JSON configuration (or switch direction) and extract all proxy nodes as shareable links.
 - **Subscription URL input**: fetch and convert a proxy subscription directly from its URL.
-- **11 proxy protocols** with per-kernel protocol filtering and toast warnings when nodes must be dropped for a target client.
+- **12 proxy protocols** with per-kernel protocol filtering and toast warnings when nodes must be dropped for a target client.
 - **Duplicate node names** are automatically suffixed (`name_1`, `name_2`, …) to keep configurations valid.
 - **One-click download or copy** of the generated configuration.
 
@@ -24,7 +24,7 @@ ClashConverter (https://clashconverter.com) is a free online proxy configuration
 
 1. Open https://clashconverter.com/
 2. Paste proxy links (one per line) into the input box — or paste a Clash YAML / Sing-Box JSON config and use "Swap Direction" to convert back to links.
-3. Select the target format: Clash Meta (Mihomo), Clash Premium, Sing-Box, Loon, QuantumultX, or Surfboard.
+3. Select the target format: Clash Meta (Mihomo), Clash Premium, Sing-Box, Surge 5, Surfboard, Loon, or QuantumultX.
 4. Click convert, then download or copy the generated configuration.
 
 ## Privacy model
@@ -59,7 +59,7 @@ ClashConverter converts between proxy share links / configuration files and targ
 
 | Input | Description |
 |---|---|
-| Proxy links | One share link per line: `ss://`, `ssr://`, `vmess://`, `vless://`, `trojan://`, `hysteria://`, `hysteria2://`, `wireguard://`/`wg://`, `anytls://`, `http://`, `socks5://` |
+| Proxy links | One share link per line: `ss://`, `ssr://`, `vmess://`, `vless://`, `trojan://`, `hysteria://`, `hysteria2://`, `tuic://`, `wireguard://`/`wg://`, `anytls://`, `http://`, `socks5://` |
 | Clash YAML | Complete Clash configuration files (`proxies:` entries), parsed and validated per protocol |
 | Sing-Box JSON | `outbounds` entries from Sing-Box JSON configurations |
 | Subscription URL | Fetch a remote proxy subscription and convert its content |
@@ -80,25 +80,32 @@ ClashConverter converts between proxy share links / configuration files and targ
 
 Which protocols survive conversion into each target format (unsupported nodes are filtered out with a warning):
 
-| Protocol | Links | Clash Meta | Clash Premium | Sing-Box | Loon | QuantumultX | Surfboard |
-|---|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-| Shadowsocks (SS) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| ShadowsocksR (SSR) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
-| VMess | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| VLESS | ✓ | ✓ | ✗ | ✓ | ✗ | ✗ | ✗ |
-| Trojan (incl. Trojan-Go) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Hysteria | ✓ | ✓ | ✗ | ✓ | ✗ | ✗ | ✗ |
-| Hysteria2 | ✓ | ✓ | ✗ | ✓ | ✗ | ✗ | ✓ |
-| HTTP | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ | ✓ |
-| SOCKS5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ | ✓ |
-| WireGuard | ✓ | ✓ | ✓ | ✓ | ✗ | ✗ | ✗ |
-| AnyTLS | ✓ | ✓ | ✗ | ✓ | ✗ | ✗ | ✗ |
+| Protocol | Links | Clash Meta | Clash Premium | Sing-Box | Surge 5 | Surfboard | Loon | QuantumultX |
+|---|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| Shadowsocks (SS) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| ShadowsocksR (SSR) | ✓ | ✓ | ✓ | ✗ | ✓¹ | ✗ | ✓ | ✓ |
+| VMess | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| VLESS | ✓ | ✓ | ✗ | ✓ | ✗ | ✗ | ✗ | ✗ |
+| Trojan (incl. Trojan-Go) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Hysteria | ✓ | ✓ | ✗ | ✓ | ✗ | ✗ | ✗ | ✗ |
+| Hysteria2 | ✓ | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
+| TUIC v5 | ✓ | ✓ | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
+| HTTP | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
+| SOCKS5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
+| WireGuard | ✓ | ✓ | ✓ | ✓ | ✗² | ✗ | ✗ | ✗ |
+| AnyTLS | ✓ | ✓ | ✗ | ✓ | ✗ | ✗ | ✗ | ✗ |
+
+¹ SSR is wrapped as an external `ssr-local` entry (requires the ssr-local binary on the device).
+² Surge handles WireGuard through a separate `[WireGuard]` section, which this converter does not generate.
 
 Legend: ✓ supported · ✗ filtered out (with a toast notification naming the dropped nodes)
 
 ## Behavior details
 
-- **Clash Meta vs Clash Premium**: Clash Meta (Mihomo) is the actively maintained kernel and supports all modern protocols (VLESS, Hysteria, Hysteria2, AnyTLS). Clash Premium is the legacy kernel; those protocols are filtered out when it is selected.
+- **Clash Meta vs Clash Premium**: Clash Meta (Mihomo) is the actively maintained kernel and supports all modern protocols (VLESS, Hysteria, Hysteria2, TUIC v5, AnyTLS). Clash Premium is the legacy kernel; those protocols are filtered out when it is selected.
+- **Sing-Box**: the Sing-Box kernel has no SSR support — SSR nodes are filtered out with a notice instead of being converted.
+- **Surge 5**: Hysteria2 requires Surge 5.6+, TUIC v5 and smart policy groups require Surge 5.8+; SSR runs through an external ssr-local entry.
+- **Loon**: Hysteria2 and TUIC v5 require Loon 3.1+.
 - **Invalid nodes** are dropped during parsing; only valid ones reach the output.
 - **Duplicate names** get numeric suffixes (`name_1`, `name_2`, …).
 - Feature flags (`NEXT_PUBLIC_ENABLE_*` env vars) can hide individual output formats from the UI; the compatibility matrix above describes the engine, not UI visibility.
@@ -116,7 +123,7 @@ Legend: ✓ supported · ✗ filtered out (with a toast notification naming the 
 
 # ClashConverter — Protocols
 
-ClashConverter supports 11 proxy protocols for parsing and generation. Trojan links additionally support Trojan-Go extensions (WebSocket / gRPC / h2 transports and `encryption=ss;method;password` relays).
+ClashConverter supports 12 proxy protocols for parsing and generation. Trojan links additionally support Trojan-Go extensions (WebSocket / gRPC / h2 transports and `encryption=ss;method;password` relays).
 
 ## Supported protocols and share-link syntax
 
@@ -133,6 +140,7 @@ ClashConverter supports 11 proxy protocols for parsing and generation. Trojan li
 | SOCKS5 | `socks5://` / `socks://` | `socks5://user:pass@server:port#name` |
 | WireGuard | `wireguard://` / `wg://` | `wireguard://private-key@server:port?publickey=…&address=…&mtu=…#name` (peer public key required) |
 | AnyTLS | `anytls://` | `anytls://password@server:port?sni=…&alpn=…#name` |
+| TUIC v5 | `tuic://` | `tuic://uuid:password@server:port?sni=…&alpn=h3&congestion_control=bbr&udp_relay_mode=native&allow_insecure=1#name` (uuid + password dual credentials; legacy v4 token links are not supported) |
 
 ## Parsing behavior
 
@@ -159,7 +167,7 @@ Frequently asked questions about ClashConverter (https://clashconverter.com).
 
 ## What is Clash Converter?
 
-Clash Converter is a free online tool that converts proxy share links (SS, SSR, VMess, Trojan, Hysteria, Hysteria2, VLESS, HTTP, SOCKS5, WireGuard, AnyTLS) into Clash Meta (Mihomo), Clash Premium, Sing-Box, Loon, QuantumultX, or Surfboard configuration formats — and converts configurations back into shareable links.
+Clash Converter is a free online tool that converts proxy share links (SS, SSR, VMess, VLESS, Trojan, Hysteria, Hysteria2, TUIC v5, HTTP, SOCKS5, WireGuard, AnyTLS) into Clash Meta (Mihomo), Clash Premium, Sing-Box, Surge 5, Surfboard, Loon, or QuantumultX configuration formats — and converts configurations back into shareable links.
 
 ## Is Clash Converter safe to use?
 
@@ -167,7 +175,7 @@ Yes. All conversion happens client-side in your browser. Proxy links, server add
 
 ## Which proxy protocols are supported?
 
-11 protocols: Shadowsocks (SS), ShadowsocksR (SSR), VMess, VLESS, Trojan (including Trojan-Go transports), Hysteria, Hysteria2, HTTP, SOCKS5, WireGuard, and AnyTLS. See [protocols.md](protocols.md) for URI syntax and [formats.md](formats.md) for per-client support.
+12 protocols: Shadowsocks (SS), ShadowsocksR (SSR), VMess, VLESS, Trojan (including Trojan-Go transports), Hysteria, Hysteria2, TUIC v5, HTTP, SOCKS5, WireGuard, and AnyTLS. See [protocols.md](protocols.md) for URI syntax and [formats.md](formats.md) for per-client support.
 
 ## What is the difference between Clash Meta and Clash Premium?
 
@@ -183,11 +191,11 @@ Yes. Use "Swap Direction" to switch the converter direction, then paste a Clash 
 
 ## Does it work with Clash Verge and other clients?
 
-Yes. Generated Clash Meta YAML works with Mihomo-based clients (Clash Verge Rev, Clash Nyanpasu, mihomo party, etc.), Sing-Box JSON with Sing-Box clients, and the Loon / QuantumultX / Surfboard outputs with their respective apps.
+Yes. Generated Clash Meta YAML works with Mihomo-based clients (Clash Verge Rev, Clash Nyanpasu, mihomo party, etc.), Sing-Box JSON with Sing-Box clients, Surge 5 conf with Surge for iOS/macOS, and the Surfboard / Loon / QuantumultX outputs with their respective apps.
 
 ## Why should I use this converter?
 
-Comprehensive protocol support (11 protocols), fully in-browser processing for privacy, no registration or usage limits, automatic handling of edge cases (IDN/Punycode hostnames, duplicate names, invalid nodes), and active open-source maintenance.
+Comprehensive protocol support (12 protocols), fully in-browser processing for privacy, no registration or usage limits, automatic handling of edge cases (IDN/Punycode hostnames, duplicate names, invalid nodes), and active open-source maintenance.
 
 ## Related documents
 

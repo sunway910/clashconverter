@@ -1,6 +1,6 @@
 # ClashConverter — Protocols
 
-ClashConverter supports 11 proxy protocols for parsing and generation. Trojan links additionally support Trojan-Go extensions (WebSocket / gRPC / h2 transports and `encryption=ss;method;password` relays).
+ClashConverter supports 12 proxy protocols for parsing and generation. Trojan links additionally support Trojan-Go extensions (WebSocket / gRPC / h2 transports and `encryption=ss;method;password` relays).
 
 ## Supported protocols and share-link syntax
 
@@ -17,6 +17,7 @@ ClashConverter supports 11 proxy protocols for parsing and generation. Trojan li
 | SOCKS5 | `socks5://` / `socks://` | `socks5://user:pass@server:port#name` |
 | WireGuard | `wireguard://` / `wg://` | `wireguard://private-key@server:port?publickey=…&address=…&mtu=…#name` (peer public key required) |
 | AnyTLS | `anytls://` | `anytls://password@server:port?sni=…&alpn=…#name` |
+| TUIC v5 | `tuic://` | `tuic://uuid:password@server:port?sni=…&alpn=h3&congestion_control=bbr&udp_relay_mode=native&allow_insecure=1#name` (uuid + password dual credentials; legacy v4 token links are not supported) |
 
 ## Parsing behavior
 

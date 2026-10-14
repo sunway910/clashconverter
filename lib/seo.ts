@@ -230,6 +230,8 @@ export function generateSoftwareApplicationSchema(locale: string) {
     description: metadata.description,
     applicationCategory: 'UtilityApplication',
     operatingSystem: 'Web Browser',
+    // Freshness signal for AI engines: bump when protocol/format support changes
+    dateModified: '2026-10-15',
     offers: {
       '@type': 'Offer',
       price: '0',

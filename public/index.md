@@ -1,13 +1,13 @@
 # ClashConverter — Index
 
-ClashConverter (https://clashconverter.com) is a free online proxy configuration converter. It converts proxy share links and configuration files between formats: proxy links (SS, SSR, VMess, VLESS, Trojan, Hysteria, Hysteria2, HTTP, SOCKS5, WireGuard, AnyTLS) ⇄ Clash Meta (Mihomo) YAML, Clash Premium YAML, Sing-Box JSON, Loon, QuantumultX, and Surfboard configurations.
+ClashConverter (https://clashconverter.com) is a free online proxy configuration converter. It converts proxy share links and configuration files between formats: proxy links (SS, SSR, VMess, VLESS, Trojan, Hysteria, Hysteria2, TUIC v5, HTTP, SOCKS5, WireGuard, AnyTLS) ⇄ Clash Meta (Mihomo) YAML, Clash Premium YAML, Sing-Box JSON, Surge 5, Surfboard, Loon, and QuantumultX configurations.
 
 ## Core features
 
-- **Convert proxy links to config files**: paste one share link per line (`ss://`, `ssr://`, `vmess://`, `vless://`, `trojan://`, `hysteria://`, `hysteria2://`, `wireguard://`/`wg://`, `anytls://`, `http://`, `socks5://`), choose an output format, and get a ready-to-use configuration.
+- **Convert proxy links to config files**: paste one share link per line (`ss://`, `ssr://`, `vmess://`, `vless://`, `trojan://`, `hysteria://`, `hysteria2://`, `tuic://`, `wireguard://`/`wg://`, `anytls://`, `http://`, `socks5://`), choose an output format, and get a ready-to-use configuration.
 - **Convert config files back to links**: paste a Clash YAML or Sing-Box JSON configuration (or switch direction) and extract all proxy nodes as shareable links.
 - **Subscription URL input**: fetch and convert a proxy subscription directly from its URL.
-- **11 proxy protocols** with per-kernel protocol filtering and toast warnings when nodes must be dropped for a target client.
+- **12 proxy protocols** with per-kernel protocol filtering and toast warnings when nodes must be dropped for a target client.
 - **Duplicate node names** are automatically suffixed (`name_1`, `name_2`, …) to keep configurations valid.
 - **One-click download or copy** of the generated configuration.
 
@@ -15,7 +15,7 @@ ClashConverter (https://clashconverter.com) is a free online proxy configuration
 
 1. Open https://clashconverter.com/
 2. Paste proxy links (one per line) into the input box — or paste a Clash YAML / Sing-Box JSON config and use "Swap Direction" to convert back to links.
-3. Select the target format: Clash Meta (Mihomo), Clash Premium, Sing-Box, Loon, QuantumultX, or Surfboard.
+3. Select the target format: Clash Meta (Mihomo), Clash Premium, Sing-Box, Surge 5, Surfboard, Loon, or QuantumultX.
 4. Click convert, then download or copy the generated configuration.
 
 ## Privacy model

@@ -14,14 +14,22 @@ export default function robots(): MetadataRoute.Robots {
         allow: '/',
         disallow: ['/api/', '/_next/', '/static/'],
       },
-      {
-        userAgent: 'Googlebot',
-        allow: '/',
-      },
-      {
-        userAgent: 'Bingbot',
-        allow: '/',
-      },
+      // Search + answer-engine crawlers (explicitly allowed: they feed the AI
+      // search surfaces that may cite the tool)
+      { userAgent: 'Googlebot', allow: '/' },
+      { userAgent: 'Bingbot', allow: '/' },
+      { userAgent: 'OAI-SearchBot', allow: '/' },
+      { userAgent: 'PerplexityBot', allow: '/' },
+      { userAgent: 'Claude-SearchBot', allow: '/' },
+      // User-triggered retrieval (a person's assistant fetching the page)
+      { userAgent: 'ChatGPT-User', allow: '/' },
+      { userAgent: 'Perplexity-User', allow: '/' },
+      { userAgent: 'Claude-User', allow: '/' },
+      // Model-training crawlers are also allowed by intent — as a free
+      // open-source tool, being represented in model knowledge helps
+      { userAgent: 'GPTBot', allow: '/' },
+      { userAgent: 'ClaudeBot', allow: '/' },
+      { userAgent: 'Google-Extended', allow: '/' },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,
     host: baseUrl,

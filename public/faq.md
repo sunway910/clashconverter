@@ -4,7 +4,7 @@ Frequently asked questions about ClashConverter (https://clashconverter.com).
 
 ## What is Clash Converter?
 
-Clash Converter is a free online tool that converts proxy share links (SS, SSR, VMess, Trojan, Hysteria, Hysteria2, VLESS, HTTP, SOCKS5, WireGuard, AnyTLS) into Clash Meta (Mihomo), Clash Premium, Sing-Box, Loon, QuantumultX, or Surfboard configuration formats — and converts configurations back into shareable links.
+Clash Converter is a free online tool that converts proxy share links (SS, SSR, VMess, VLESS, Trojan, Hysteria, Hysteria2, TUIC v5, HTTP, SOCKS5, WireGuard, AnyTLS) into Clash Meta (Mihomo), Clash Premium, Sing-Box, Surge 5, Surfboard, Loon, or QuantumultX configuration formats — and converts configurations back into shareable links.
 
 ## Is Clash Converter safe to use?
 
@@ -12,7 +12,7 @@ Yes. All conversion happens client-side in your browser. Proxy links, server add
 
 ## Which proxy protocols are supported?
 
-11 protocols: Shadowsocks (SS), ShadowsocksR (SSR), VMess, VLESS, Trojan (including Trojan-Go transports), Hysteria, Hysteria2, HTTP, SOCKS5, WireGuard, and AnyTLS. See [protocols.md](protocols.md) for URI syntax and [formats.md](formats.md) for per-client support.
+12 protocols: Shadowsocks (SS), ShadowsocksR (SSR), VMess, VLESS, Trojan (including Trojan-Go transports), Hysteria, Hysteria2, TUIC v5, HTTP, SOCKS5, WireGuard, and AnyTLS. See [protocols.md](protocols.md) for URI syntax and [formats.md](formats.md) for per-client support.
 
 ## What is the difference between Clash Meta and Clash Premium?
 
@@ -28,11 +28,11 @@ Yes. Use "Swap Direction" to switch the converter direction, then paste a Clash 
 
 ## Does it work with Clash Verge and other clients?
 
-Yes. Generated Clash Meta YAML works with Mihomo-based clients (Clash Verge Rev, Clash Nyanpasu, mihomo party, etc.), Sing-Box JSON with Sing-Box clients, and the Loon / QuantumultX / Surfboard outputs with their respective apps.
+Yes. Generated Clash Meta YAML works with Mihomo-based clients (Clash Verge Rev, Clash Nyanpasu, mihomo party, etc.), Sing-Box JSON with Sing-Box clients, Surge 5 conf with Surge for iOS/macOS, and the Surfboard / Loon / QuantumultX outputs with their respective apps.
 
 ## Why should I use this converter?
 
-Comprehensive protocol support (11 protocols), fully in-browser processing for privacy, no registration or usage limits, automatic handling of edge cases (IDN/Punycode hostnames, duplicate names, invalid nodes), and active open-source maintenance.
+Comprehensive protocol support (12 protocols), fully in-browser processing for privacy, no registration or usage limits, automatic handling of edge cases (IDN/Punycode hostnames, duplicate names, invalid nodes), and active open-source maintenance.
 
 ## Related documents
 
