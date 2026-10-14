@@ -201,14 +201,12 @@ function regionGroup(name: string, filter: string): ProxyGroupConfig {
 
 export const PROXY_GROUPS_CONFIG: ProxyGroupConfig[] = [
   {
-    // ===== 总出口 =====
     name: '🟢 Proxy',
     type: 'select',
     premiumUseAllProxies: true,
     proxies: ['♻️ 自动选择', '🇭🇰 香港', '🇺🇸 美国', '🇯🇵 日本', '🇸🇬 新加坡', '🇰🇷 韩国', '🇨🇳 台湾', '🚀 直接连接'],
   },
   {
-    // ===== 自动选择 =====
     name: '♻️ 自动选择',
     type: 'url-test',
     includeAll: true,
@@ -218,14 +216,12 @@ export const PROXY_GROUPS_CONFIG: ProxyGroupConfig[] = [
     premiumUseAllProxies: true,
     proxies: [],
   },
-  // ===== 地区分组 =====
   regionGroup('🇭🇰 香港', 'HongKong|HK|香港|🇭🇰'),
   regionGroup('🇺🇸 美国', 'US|America|美|🇺🇸'),
   regionGroup('🇯🇵 日本', 'JP|Japan|日本|🇯🇵'),
   regionGroup('🇸🇬 新加坡', 'Singapore|SG|新加坡|🇸🇬'),
   regionGroup('🇰🇷 韩国', 'Korea|KR|韩国|🇰🇷'),
   regionGroup('🇨🇳 台湾', 'TW|Taiwan|台湾|🇨🇳|🇹🇼'),
-  // ===== 业务分组 =====
   {
     name: '⛔️ 广告拦截',
     type: 'select',

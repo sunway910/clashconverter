@@ -67,14 +67,12 @@ function regionGroup(name: string, filter: string): SurgeProxyGroupConfig {
 
 export const SURGE_PROXY_GROUPS: SurgeProxyGroupConfig[] = [
   {
-    // ===== 总出口 =====
     name: '🟢 Proxy',
     type: 'select',
     proxies: ['♻️ 自动选择', '🇭🇰 香港', '🇺🇸 美国', '🇯🇵 日本', '🇸🇬 新加坡', '🇰🇷 韩国', '🇨🇳 台湾', '🚀 直接连接'],
     commentBefore: ['# ===== 总出口 ====='],
   },
   {
-    // ===== 自动选择 =====
     name: '♻️ 自动选择',
     type: 'smart',
     useAllProxies: true,
