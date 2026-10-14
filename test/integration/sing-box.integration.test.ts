@@ -53,7 +53,7 @@ describe('[Integration] Sing-Box Format Conversion', () => {
       const supportedProtocols = generator.getSupportedProtocols();
 
       // Sing-Box supports ALL protocols including SSR and SOCKS5
-      expect(supportedProtocols.has('ssr')).toBe(true);
+      expect(supportedProtocols.has('ssr')).toBe(false);
       expect(supportedProtocols.has('socks5')).toBe(true);
 
       // All other protocols should be supported
@@ -65,14 +65,14 @@ describe('[Integration] Sing-Box Format Conversion', () => {
       expect(supportedProtocols.has('hysteria2')).toBe(true);
       expect(supportedProtocols.has('http')).toBe(true);
 
-      // No proxies should be filtered out
+      // SSR is the only filtered protocol
       const filtered = generator.filterProxies(parseResult.proxies);
-      expect(filtered.length).toEqual(parseResult.proxies.length);
+      expect(filtered.length).toEqual(parseResult.proxies.length - 1);
     });
   });
 
   describe('Protocol filtering', () => {
-    it('should support all protocols without filtering', () => {
+    it('should filter only SSR', () => {
       const parser = FormatFactory.createParser('txt');
       const parseResult = parser.parse(testInput);
 
@@ -80,8 +80,9 @@ describe('[Integration] Sing-Box Format Conversion', () => {
       const generator = FormatFactory.createGenerator('sing-box');
       const filtered = generator.filterProxies(parseResult.proxies);
 
-      // All protocols should be supported now
-      expect(filtered.length).toEqual(parseResult.proxies.length);
+      // Only the single SSR link is filtered
+      expect(filtered.length).toEqual(parseResult.proxies.length - 1);
+      expect(filtered.every(p => p.type !== 'ssr')).toBe(true);
     });
   });
 

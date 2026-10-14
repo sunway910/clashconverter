@@ -5,6 +5,7 @@
 import type { ProxyNode, SSRProxyNode } from '../types';
 import type { IProtocolAdapter } from './protocol-adapter';
 import { applyCommonClashFields } from './shared';
+import { UnsupportedProtocolError } from '../errors';
 
 /**
  * Base64 encode with URL-safe variant (no padding)
@@ -44,17 +45,11 @@ export class SSRAdapter implements IProtocolAdapter {
   }
 
   toSingBoxJson(_node: ProxyNode): Record<string, any> {
-    const ssrNode = _node as unknown as SSRProxyNode;
-
-    // Sing-Box doesn't support SSR, create a basic shadowsocks fallback
-    return {
-      tag: ssrNode.name,
-      type: 'shadowsocks',
-      server: ssrNode.server,
-      server_port: ssrNode.port,
-      method: ssrNode.cipher || 'aes-128-gcm',
-      password: ssrNode.password,
-    };
+    // Sing-Box has no SSR support: SSR nodes are filtered by the sing-box
+    // generator (SING_BOX_SUPPORTED_PROTOCOLS). Fabricating a shadowsocks node
+    // here would silently produce a non-working outbound (SSR ciphers/params
+    // are not valid SS), so fail loudly instead.
+    throw UnsupportedProtocolError.forKernel('ssr', 'sing-box');
   }
 
   toLink(node: ProxyNode): string {

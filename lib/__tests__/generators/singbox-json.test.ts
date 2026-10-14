@@ -22,7 +22,7 @@ describe('SingBoxJsonGenerator (lib)', () => {
   });
 
   describe('filterProxies method', () => {
-    it('should support all 9 protocols including SSR and SOCKS5', () => {
+    it('should support all protocols except SSR', () => {
       const mockProxies = [
         { name: 'test1', type: 'ss', server: '1.1.1.1', port: 1 },
         { name: 'test2', type: 'ssr', server: '2.2.2.2', port: 2 },
@@ -36,9 +36,9 @@ describe('SingBoxJsonGenerator (lib)', () => {
 
       const filtered = generator.filterProxies(mockProxies);
 
-      // Should NOT filter out any protocols now
-      expect(filtered.length).toEqual(mockProxies.length);
-      expect(filtered.some((p: any) => p.type === 'ssr')).toBe(true);
+      // SSR is filtered out (Sing-Box has no SSR support), everything else passes
+      expect(filtered.length).toEqual(mockProxies.length - 1);
+      expect(filtered.some((p: any) => p.type === 'ssr')).toBe(false);
       expect(filtered.some((p: any) => p.type === 'socks5')).toBe(true);
     });
 
@@ -67,8 +67,8 @@ describe('SingBoxJsonGenerator (lib)', () => {
       expect(supported.has('hysteria2')).toBe(true);
       expect(supported.has('http')).toBe(true);
 
-      // Should NOW include SSR and SOCKS5
-      expect(supported.has('ssr')).toBe(true);
+      // Should include SOCKS5; SSR is NOT supported by Sing-Box
+      expect(supported.has('ssr')).toBe(false);
       expect(supported.has('socks5')).toBe(true);
     });
   });

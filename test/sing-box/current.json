@@ -102,7 +102,6 @@
         "自动选择",
         "v2rayse_test_1",
         "v2rayse_test_2",
-        "defaultName_1",
         "v2rayse_test_3",
         "defaultName_2",
         "defaultName_3",
@@ -120,7 +119,6 @@
       "outbounds": [
         "v2rayse_test_1",
         "v2rayse_test_2",
-        "defaultName_1",
         "v2rayse_test_3",
         "defaultName_2",
         "defaultName_3",
@@ -150,20 +148,9 @@
       "server": "154.23.190.162",
       "server_port": 443,
       "uuid": "b9984674-f771-4e67-a198-c7e60720ba2c",
-      "packet_encoding": "xudp",
-      "security": "auto",
       "alter_id": 0,
-      "transport": {
-        "type": "ws"
-      }
-    },
-    {
-      "tag": "defaultName_1",
-      "type": "shadowsocks",
-      "server": "20.239.49.44",
-      "server_port": 59814,
-      "method": "dummy",
-      "password": "3df57276-03ef-45cf-bdd4-4edb6dfaa0ef"
+      "security": "auto",
+      "packet_encoding": "xudp"
     },
     {
       "tag": "v2rayse_test_3",
@@ -173,7 +160,11 @@
       "password": "bc7593fe-0604-4fbe-a70bYWVzLTI1Ni1nY206Q1VuZFNabllzUEtjdTaclWNFc1RmRBNk5NQU5KSnga3fa58ac5a3ef0-b4ab-11eb-b65e-1239d0255272",
       "tls": {
         "enabled": true,
-        "insecure": true
+        "insecure": true,
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        }
       }
     },
     {
@@ -204,7 +195,11 @@
       "auth": "pekopeko",
       "up_mbps": 50,
       "down_mbps": 250,
-      "server_name": "wechat.com"
+      "server_name": "wechat.com",
+      "tls": {
+        "enabled": true,
+        "insecure": true
+      }
     },
     {
       "tag": "sgp-optimize-Hysteria2",
@@ -214,7 +209,12 @@
       "password": "45cf663d-cd77-4674-b1c0-7c2f29ac5d2f",
       "tls": {
         "enabled": true,
-        "server_name": "bing.com"
+        "server_name": "bing.com",
+        "insecure": true,
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        }
       }
     },
     {
@@ -225,6 +225,7 @@
       "uuid": "abc-def-ghi-fge-zsx",
       "tls": {
         "enabled": true,
+        "insecure": false,
         "utls": {
           "enabled": true,
           "fingerprint": "chrome"
@@ -241,6 +242,7 @@
       "tls": {
         "enabled": true,
         "server_name": "www.amazon.com",
+        "insecure": false,
         "reality": {
           "enabled": true,
           "public_key": "P0psdi3mjAxl3I-Ymu_55Ai389VGzf1gLGVWstnlIxI",
