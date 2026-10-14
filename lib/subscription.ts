@@ -7,10 +7,12 @@
 
 import { parseMultipleProxies } from './parsers';
 import { parseYamlToProxies } from './clash/parser/yaml';
+import { parseSingBoxToProxies } from './singbox/parser';
+import { stringify } from 'yaml';
 import { ProxyNode } from './types';
 import { ParseError, GenerateError, ErrorCode } from './errors';
 
-export type SubscriptionContentType = 'yaml' | 'base64' | 'unknown';
+export type SubscriptionContentType = 'yaml' | 'base64' | 'singbox' | 'unknown';
 
 export interface SubscriptionResult {
   success: boolean;
@@ -24,8 +26,30 @@ export interface SubscriptionResult {
 // js-hoist-regexp: Hoist RegExp outside function for reuse
 const SUBSCRIPTION_LINK_PATTERN = /^https?:\/\/.+/i;
 
-// js-hoist-regexp: Pattern to detect base64 content (most proxy links use base64)
-const BASE64_PATTERN = /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
+/**
+ * Normalize base64 content for decoding: convert URL-safe variants (-, _)
+ * back to standard (+, /) and restore stripped padding — both are common in
+ * subscription responses. Returns null when the content is not base64-shaped.
+ */
+function normalizeBase64(content: string): string | null {
+  const clean = content.replace(/\s/g, '');
+  if (!clean || clean.length < 20 || clean.length % 4 !== 0) return null;
+
+  const standard = clean.replace(/-/g, '+').replace(/_/g, '/');
+  if (!/^[A-Za-z0-9+/]+={0,2}$/.test(standard)) return null;
+
+  return standard;
+}
+
+/** Decode normalized base64, returning null on failure */
+function decodeBase64(normalized: string): string | null {
+  try {
+    const decoded = atob(normalized);
+    return decoded.includes('://') ? decoded : null;
+  } catch {
+    return null;
+  }
+}
 
 /**
  * Check if a URL looks like a subscription link
@@ -130,21 +154,24 @@ export function detectContentType(content: string): SubscriptionContentType {
     return 'yaml';
   }
 
-  // Check if it's base64 encoded
-  // Try to decode and see if it looks like proxy links
-  try {
-    // Remove whitespace for base64 check
-    const cleanContent = trimmedContent.replace(/\s/g, '');
-
-    if (BASE64_PATTERN.test(cleanContent) && cleanContent.length > 20) {
-      // Try to decode and check if result contains proxy links
-      const decoded = atob(cleanContent);
-      if (decoded.includes('://') && /(ss|ssr|vmess|vless|trojan|hysteria|http|socks):\/\//i.test(decoded)) {
-        return 'base64';
+  // Sing-Box JSON config: starts with { or [ and parses to an object with outbounds
+  if (trimmedContent.startsWith('{') || trimmedContent.startsWith('[')) {
+    try {
+      const parsed = JSON.parse(trimmedContent);
+      if (parsed && Array.isArray(parsed.outbounds)) {
+        return 'singbox';
       }
+    } catch {
+      // Not JSON — fall through
     }
-  } catch {
-    // Not valid base64
+  }
+
+  // Check if it's base64 encoded (URL-safe variants included)
+  // Decode and see if the result looks like proxy links
+  const normalized = normalizeBase64(trimmedContent);
+  const decoded = normalized ? decodeBase64(normalized) : null;
+  if (decoded && /(ss|ssr|vmess|vless|trojan|hysteria|http|socks):\/\//i.test(decoded)) {
+    return 'base64';
   }
 
   // Check if it contains multiple proxy links directly
@@ -183,19 +210,9 @@ export function parseSubscriptionContent(content: string, contentType: Subscript
       }
 
       case 'base64': {
-        // Try to decode base64 first
-        let decodedContent = content;
-
-        // Check if it's base64 encoded
-        const cleanContent = content.trim().replace(/\s/g, '');
-        if (BASE64_PATTERN.test(cleanContent)) {
-          try {
-            decodedContent = atob(cleanContent);
-          } catch {
-            // If base64 decode fails, use original content
-            decodedContent = content;
-          }
-        }
+        // Decode base64 (URL-safe variants included); fall back to raw content
+        const normalized = normalizeBase64(content);
+        const decodedContent = (normalized && decodeBase64(normalized)) || content;
 
         // Parse as proxy links
         const parseResult = parseMultipleProxies(decodedContent);
@@ -205,6 +222,20 @@ export function parseSubscriptionContent(content: string, contentType: Subscript
           throw new ParseError(
             ErrorCode.PARSE_FAILED,
             'No valid proxy links found in content'
+          );
+        }
+        break;
+      }
+
+      case 'singbox': {
+        // Parse as Sing-Box JSON config
+        const result = parseSingBoxToProxies(content);
+        proxies = result.proxies;
+
+        if (proxies.length === 0) {
+          throw new ParseError(
+            ErrorCode.PARSE_FAILED,
+            'No valid outbounds found in Sing-Box config'
           );
         }
         break;
@@ -275,24 +306,11 @@ export async function processSubscriptionLink(url: string): Promise<Subscription
 }
 
 /**
- * Convert proxies back to YAML format for display
+ * Convert proxies back to YAML format for display.
+ * Uses the yaml library so passwords/names with special characters
+ * (colons, quotes, #, CJK) are quoted correctly — the previous
+ * hand-built string output could produce invalid YAML.
  */
-export function proxiesToYaml(proxies: ProxyNode[], outputFormat: 'clash-meta' | 'clash-premium' = 'clash-meta'): string {
-  let yaml = 'proxies:\n';
-
-  for (const proxy of proxies) {
-    yaml += `  - name: ${proxy.name}\n`;
-    yaml += `    type: ${proxy.type}\n`;
-    yaml += `    server: ${proxy.server}\n`;
-    yaml += `    port: ${proxy.port}\n`;
-
-    // Add protocol-specific fields
-    for (const [key, value] of Object.entries(proxy)) {
-      if (key !== 'name' && key !== 'type' && key !== 'server' && key !== 'port') {
-        yaml += `    ${key}: ${value}\n`;
-      }
-    }
-  }
-
-  return yaml;
+export function proxiesToYaml(proxies: ProxyNode[]): string {
+  return stringify({ proxies });
 }

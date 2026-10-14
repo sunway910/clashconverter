@@ -59,12 +59,13 @@ export function SubscriptionDialog({
 
       // Determine the input format based on content type
       let inputFormat = 'txt';
-      if (subscriptionResult.contentType === 'yaml') {
+      if (subscriptionResult.contentType === 'yaml' || subscriptionResult.contentType === 'singbox') {
+        // Content is re-serialized as Clash YAML below
         inputFormat = 'clash-meta';
       }
 
       // Convert to YAML for display
-      const yamlContent = proxiesToYaml(subscriptionResult.proxies!, subscriptionResult.suggestedOutputFormat || 'clash-meta');
+      const yamlContent = proxiesToYaml(subscriptionResult.proxies!);
 
       // Call the onConvert callback with the parsed content
       onConvert(yamlContent, inputFormat, subscriptionResult.suggestedOutputFormat);
@@ -106,7 +107,7 @@ export function SubscriptionDialog({
                 {t('subscription.proxiesFound', { count: result?.proxies?.length || 0 })}
               </p>
               <p className="text-xs text-muted-foreground">
-                {t('subscription.contentType')}: {result?.contentType === 'yaml' ? 'Clash YAML' : 'Proxy Links'}
+                {t('subscription.contentType')}: {result?.contentType === 'yaml' ? 'Clash YAML' : result?.contentType === 'singbox' ? 'Sing-Box JSON' : 'Proxy Links'}
               </p>
             </div>
           </div>

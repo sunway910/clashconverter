@@ -7,7 +7,7 @@
 
 import type { ProxyNode } from '../types';
 import type { IFormatParser, FormatType } from '../core/interfaces';
-import { fetchSubscriptionContent, detectContentType, parseSubscriptionContent } from '../subscription';
+import { fetchSubscriptionContent, detectContentType, parseSubscriptionContent, SubscriptionContentType } from '../subscription';
 
 /**
  * Result of parsing subscription URL
@@ -20,8 +20,8 @@ export interface SubscribeUrlParseResult {
   unsupported: string[];
   /** Counts of filtered proxies by protocol type */
   filteredCounts: Record<string, number>;
-  /** The detected content type (yaml or base64) */
-  contentType: 'yaml' | 'base64' | 'unknown';
+  /** The detected content type (yaml, base64, singbox or unknown) */
+  contentType: SubscriptionContentType;
   /** The original subscription content */
   content: string;
   /** Suggested input format for the detected content */
@@ -103,7 +103,8 @@ export class SubscribeUrlParser implements IFormatParser {
       }
 
       // Determine the detected input format
-      const detectedInputFormat: 'txt' | 'clash-meta' = contentType === 'yaml' ? 'clash-meta' : 'txt';
+      const detectedInputFormat: 'txt' | 'clash-meta' =
+        contentType === 'yaml' || contentType === 'singbox' ? 'clash-meta' : 'txt';
 
       return {
         proxies: result.proxies,

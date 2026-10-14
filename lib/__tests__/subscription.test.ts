@@ -5,7 +5,7 @@
 
 import { describe, it, expect, beforeEach } from 'vitest';
 import { parseYamlToProxies } from '../clash/parser/yaml';
-import { detectContentType, parseSubscriptionContent } from '../subscription';
+import { detectContentType, parseSubscriptionContent, proxiesToYaml } from '../subscription';
 import type { ProxyNode } from '../types';
 
 describe('Subscription URL Parsing', () => {
@@ -510,5 +510,58 @@ proxies:
         expect(types).toContain('http');
         expect(types).toContain('socks5');
       });
+  });
+
+  describe('Subscription Robustness', () => {
+    const links = 'ss://YWVzLTEyOC1nY206cGFzc3dvcmQ@1.2.3.4:8388#node1\ntrojan://pw@5.6.7.8:443#node2';
+
+    it('should detect URL-safe base64 subscriptions (unpadded, - and _)', () => {
+      // base64url = unpadded, URL-safe alphabet - common in airport responses
+      const encoded = Buffer.from(links, 'utf-8').toString('base64url');
+      expect(encoded).not.toMatch(/[+/=]/); // sanity: it really is URL-safe
+      expect(detectContentType(encoded)).toBe('base64');
+    });
+
+    it('should parse URL-safe base64 subscriptions', () => {
+      const encoded = Buffer.from(links, 'utf-8').toString('base64url');
+      const result = parseSubscriptionContent(encoded, 'base64');
+      expect(result.success).toBe(true);
+      expect(result.proxies).toHaveLength(2);
+      expect(result.proxies!.map(p => p.name)).toEqual(['node1', 'node2']);
+    });
+
+    it('should detect and parse Sing-Box JSON subscriptions', () => {
+      const content = JSON.stringify({
+        outbounds: [
+          { type: 'shadowsocks', tag: 'sb-ss', server: '1.2.3.4', server_port: 8388, method: 'aes-256-gcm', password: 'pw' },
+          { type: 'selector', tag: 'proxy', outbounds: ['sb-ss'] },
+        ],
+      });
+
+      expect(detectContentType(content)).toBe('singbox');
+
+      const result = parseSubscriptionContent(content, 'singbox');
+      expect(result.success).toBe(true);
+      expect(result.proxies).toHaveLength(1);
+      expect(result.proxies![0].type).toBe('ss');
+      expect(result.proxies![0].name).toBe('sb-ss');
+    });
+
+    it('should keep special characters intact through proxiesToYaml roundtrip', () => {
+      const node = {
+        name: 'Weird: #Name',
+        type: 'ss',
+        server: '1.2.3.4',
+        port: 443,
+        cipher: 'aes-256-gcm',
+        password: 'pa:ss #word "quoted"',
+      } as any;
+
+      const yaml = proxiesToYaml([node]);
+      const reparsed = parseYamlToProxies(yaml);
+      expect(reparsed).toHaveLength(1);
+      expect(reparsed[0].name).toBe('Weird: #Name');
+      expect((reparsed[0] as any).password).toBe('pa:ss #word "quoted"');
+    });
   });
 });
