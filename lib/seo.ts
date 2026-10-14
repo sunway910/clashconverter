@@ -59,7 +59,7 @@ export const seoConfig: SEOConfig = {
   siteUrl: 'https://clashconverter.com',
   defaultTitle: 'Clash Converter - Convert Proxy Links to Clash YAML',
   titleTemplate: '%s | ClashConverter',
-  description: 'Free online converter tool. Convert SS, SSR, VMess, Trojan, Hysteria, VLESS, HTTP & SOCKS5 proxy links to Clash YAML, Sing-Box JSON, or Loon .conf format. Support for Clash Meta (Mihomo), Clash Premium, Sing-Box, and Loon. Fast, secure, client-side conversion.',
+  description: 'Free online proxy config converter. Convert SS, SSR, VMess, VLESS, Trojan, Hysteria, Hysteria2, HTTP, SOCKS5, WireGuard, AnyTLS & TUIC v5 links to Clash Meta (Mihomo), Clash Premium, Sing-Box, Surge 5, Surfboard, Loon & QuantumultX configs. Fast, secure, client-side conversion.',
   keywords: [
     // Core keywords
     'clash converter',
@@ -99,6 +99,15 @@ export const seoConfig: SEOConfig = {
     'http proxy to clash',
     'wireguard to clash',
     'anytls to clash',
+    'tuic to clash',
+    'tuic to sing-box',
+    'tuic v5 converter',
+    'surge config converter',
+    'surge 5 converter',
+    'quantumultx converter',
+    'quantumultx conf converter',
+    'surfboard converter',
+    'surfboard config converter',
     // Long-tail keywords - User intent
     'how to convert proxy links to clash',
     'convert vmess to clash yaml online',
@@ -197,7 +206,7 @@ export function getLocalizedMetadata(locale: string) {
     },
     zh: {
       title: 'Clash转换器 - 代理链接转Clash/Sing-Box配置',
-      description: '免费在线转换工具。支持将SS、SSR、VMess、Trojan、Hysteria、VLESS、HTTP和SOCKS5代理链接转换为Clash YAML或Sing-Box JSON格式。支持Clash Meta (Mihomo)、Clash Premium和Sing-Box。快速、安全、纯前端转换。',
+      description: '免费在线代理配置转换工具。支持将SS、SSR、VMess、VLESS、Trojan、Hysteria、Hysteria2、HTTP、SOCKS5、WireGuard、AnyTLS与TUIC v5链接转换为Clash Meta (Mihomo)、Clash Premium、Sing-Box、Surge 5、Surfboard、Loon与QuantumultX配置。快速、安全、纯前端转换。',
       canonical: canonicalUrl,
       locale: 'zh_CN',
       alternateLocale: 'en_US'
@@ -227,20 +236,16 @@ export function generateSoftwareApplicationSchema(locale: string) {
       priceCurrency: 'USD'
     },
     featureList: [
-      'Convert SS links to Clash YAML',
-      'Convert SSR links to Clash YAML',
-      'Convert VMess links to Clash YAML',
-      'Convert Trojan links to Clash YAML',
-      'Convert VLESS links to Clash YAML',
-      'Convert Hysteria links to Clash YAML',
-      'Convert Hysteria2 links to Clash YAML',
-      'Convert HTTP proxy to Clash YAML',
-      'Convert SOCKS5 proxy to Clash YAML',
+      'Convert SS, SSR, VMess, VLESS, Trojan, Hysteria, Hysteria2, HTTP, SOCKS5, WireGuard, AnyTLS and TUIC v5 links',
+      'Convert proxy links to Clash Meta (Mihomo) YAML',
+      'Convert proxy links to Clash Premium YAML',
       'Convert proxy links to Sing-Box JSON',
-      'Convert Clash YAML to proxy links',
-      'Support for Clash Meta (Mihomo)',
-      'Support for Clash Premium',
-      'Support for Sing-Box',
+      'Convert proxy links to Surge 5 conf',
+      'Convert proxy links to Surfboard conf',
+      'Convert proxy links to Loon conf',
+      'Convert proxy links to QuantumultX conf',
+      'Convert Clash YAML back to shareable proxy links',
+      'Convert subscription URLs (Clash YAML, base64 links, Sing-Box JSON)',
       'Client-side processing (no server upload)',
       'Privacy-focused conversion'
     ],
