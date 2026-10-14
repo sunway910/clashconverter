@@ -18,17 +18,17 @@
     "terms": "Terms of Service",
     "connectTitle": "Connect",
     "agentsTitle": "Agents",
-    "tagline": "Free client-side converter for proxy links and Clash, Sing-Box, Loon configs. Your data never leaves your browser."
+    "tagline": "Free client-side converter for proxy links and Clash, Sing-Box, Surge, Loon configs. Your data never leaves your browser."
   },
   "privacyPage": {
     "title": "Privacy Policy",
-    "updated": "Last updated: October 9, 2026",
+    "updated": "Last updated: October 15, 2026",
     "intro": "This Privacy Policy explains how ClashConverter (\"we\", \"us\", or the \"Site\", available at https://clashconverter.com) handles information when you visit the Site or use our conversion tools. The short version: the proxy links and configuration files you convert never leave your browser. We deliberately collect as little data as possible — but like most websites, we use cookies and third-party services for analytics and advertising, and we believe you deserve a clear, honest explanation of what that involves.",
     "sections": [
       {
         "heading": "1. Who We Are",
         "paragraphs": [
-          "ClashConverter is a free, open-source, client-side web tool for converting between proxy share links (SS, SSR, VMess, VLESS, Trojan, Hysteria, Hysteria2, HTTP, SOCKS5) and proxy client configuration formats such as Clash Meta (Mihomo), Clash Premium, Sing-Box, Loon, QuantumultX, and Surfboard. The project source code is publicly available on GitHub, and any question about this policy can be sent to us through the channels listed in the \"Contact Us\" section below."
+          "ClashConverter is a free, open-source, client-side web tool for converting between proxy share links (SS, SSR, VMess, VLESS, Trojan, Hysteria, Hysteria2, HTTP, SOCKS5, WireGuard, AnyTLS, TUIC v5) and proxy client configuration formats such as Clash Meta (Mihomo), Clash Premium, Sing-Box, Surge 5, Surfboard, Loon, and QuantumultX. The project source code is publicly available on GitHub, and any question about this policy can be sent to us through the channels listed in the \"Contact Us\" section below."
         ]
       },
       {
@@ -123,7 +123,7 @@
   },
   "termsPage": {
     "title": "Terms of Service",
-    "updated": "Last updated: October 9, 2026",
+    "updated": "Last updated: October 15, 2026",
     "intro": "These Terms of Service (\"Terms\") govern your use of ClashConverter at https://clashconverter.com (the \"Site\"). By using the Site, you agree to these Terms. If you do not agree, please do not use the Site.",
     "sections": [
       {
@@ -147,7 +147,7 @@
       {
         "heading": "4. Intellectual Property",
         "paragraphs": [
-          "The Site's source code is open source and published under its license in the public GitHub repository. \"Clash\", \"Clash Meta\", \"Mihomo\", \"Sing-Box\", \"Loon\", \"QuantumultX\", \"Surfboard\", \"Shadowrocket\", and other product names mentioned on the Site are trademarks or project names of their respective owners. References are for identification and interoperability purposes only and do not imply endorsement or affiliation."
+          "The Site's source code is open source and published under its license in the public GitHub repository. \"Clash\", \"Clash Meta\", \"Mihomo\", \"Sing-Box\", \"Loon\", \"QuantumultX\", \"Surge\", \"Surfboard\", \"Shadowrocket\", and other product names mentioned on the Site are trademarks or project names of their respective owners. References are for identification and interoperability purposes only and do not imply endorsement or affiliation."
         ]
       },
       {
@@ -326,7 +326,7 @@
       },
       "loon": {
         "name": "Loon",
-        "description": "Powerful iOS proxy client with advanced features. Supports SS, SSR, VMess, and Trojan protocols with rich rule customization.",
+        "description": "Powerful iOS proxy client with advanced features. Supports SS, SSR, VMess, Trojan, Hysteria2, and TUIC v5 protocols (Loon 3.1+) with rich rule customization.",
         "url": "https://apps.apple.com/us/app/loon/id1373567447"
       },
       "sing-box": {
@@ -391,11 +391,11 @@
     }
   },
   "homeContent": {
-    "lastUpdated": "Last updated: October 9, 2026",
+    "lastUpdated": "Last updated: October 15, 2026",
     "intro": {
       "title": "What Is Clash Converter?",
       "paragraphs": [
-        "Clash Converter is a free online tool that converts proxy share links into ready-to-use configuration files for popular proxy clients — and converts those configuration files back into shareable links. It supports nine protocols (Shadowsocks, ShadowsocksR, VMess, VLESS, Trojan, Hysteria, Hysteria2, HTTP, and SOCKS5) and six output targets: Clash Meta (Mihomo), Clash Premium, Sing-Box, Loon, QuantumultX, and Surfboard.",
+        "Clash Converter is a free online tool that converts proxy share links into ready-to-use configuration files for popular proxy clients — and converts those configuration files back into shareable links. It supports twelve protocols (Shadowsocks, ShadowsocksR, VMess, VLESS, Trojan, Hysteria, Hysteria2, TUIC v5, HTTP, SOCKS5, WireGuard, and AnyTLS) and seven output targets: Clash Meta (Mihomo), Clash Premium, Sing-Box, Surge 5, Surfboard, Loon, and QuantumultX.",
         "The tool exists because proxy configurations are fragmented. A node that arrives as a vmess:// link cannot be pasted into most clients directly, a Clash YAML profile is useless in a Sing-Box app, and rewriting either by hand means editing base64 blobs, JSON, or YAML with zero margin for error. Clash Converter automates that translation: paste your input, pick a target format, and get a downloadable configuration in seconds.",
         "Unlike many online converters, this tool does the work entirely in your browser. Your links, server addresses, and credentials are never uploaded to any server — more on that in the privacy section below."
       ]
@@ -431,7 +431,7 @@
         {
           "title": "Clash Meta (Mihomo) — recommended",
           "paragraphs": [
-            "The actively maintained Clash kernel, and the safest default for most users. Clash Meta supports all nine protocols this tool can convert, including the modern VLESS, Hysteria, and Hysteria2 protocols the original kernel never gained. It powers current desktop clients such as Clash Verge Rev and Clash Party, and receives regular updates."
+            "The actively maintained Clash kernel, and the safest default for most users. Clash Meta supports all twelve protocols this tool can convert, including the modern VLESS, Hysteria, Hysteria2, TUIC v5, and AnyTLS protocols the original kernel never gained. It powers current desktop clients such as Clash Verge Rev and Clash Party, and receives regular updates."
           ]
         },
         {
@@ -443,13 +443,19 @@
         {
           "title": "Sing-Box",
           "paragraphs": [
-            "A universal proxy platform with first-class support for modern protocols (SS, VMess, VLESS, Trojan, Hysteria, Hysteria2, and HTTP) and native apps on Android, iOS, Windows, macOS, and Linux. Output is JSON. SSR and SOCKS5 entries are not part of the Sing-Box format and are filtered with a notification."
+            "A universal proxy platform with first-class support for modern protocols (SS, VMess, VLESS, Trojan, Hysteria, Hysteria2, HTTP, SOCKS5, WireGuard, AnyTLS, and TUIC v5) and native apps on Android, iOS, Windows, macOS, and Linux. Output is JSON. SSR is not supported by the Sing-Box kernel and is filtered with a notification."
+          ]
+        },
+        {
+          "title": "Surge 5",
+          "paragraphs": [
+            "A professional proxy client for Apple platforms. Supports SS, VMess, Trojan, HTTP, SOCKS5, Hysteria2, and TUIC v5 (smart policy groups and TUIC require Surge 5.8+); SSR runs via an external ssr-local entry, while VLESS, Hysteria (v1), WireGuard, and AnyTLS are filtered out. Output is Surge-compatible INI with remote rule sets."
           ]
         },
         {
           "title": "Loon",
           "paragraphs": [
-            "A powerful iOS client with an INI-style configuration, rich scripting, and rule customization. Loon profiles support SS, SSR, VMess, and Trojan nodes; the generated file includes ready-made proxy groups and rule sets so the profile works immediately after import."
+            "A powerful iOS client with an INI-style configuration, rich scripting, and rule customization. Loon profiles support SS, SSR, VMess, Trojan, Hysteria2, and TUIC v5 nodes (Loon 3.1+); the generated file includes ready-made proxy groups and rule sets so the profile works immediately after import."
           ]
         },
         {
@@ -480,7 +486,7 @@
         },
         {
           "title": "Pick the target format",
-          "desc": "Use the format selector to choose Clash Meta, Clash Premium, Sing-Box, Loon, QuantumultX, or Surfboard. The kernel feature panel explains what each format supports before you commit."
+          "desc": "Use the format selector to choose Clash Meta, Clash Premium, Sing-Box, Surge 5, Surfboard, Loon, or QuantumultX. The kernel feature panel explains what each format supports before you commit."
         },
         {
           "title": "Download or copy",
@@ -700,7 +706,7 @@
       "title": "Sing-Box",
       "description": "A universal proxy platform with support for multiple protocols and platforms.",
       "features": [
-        "Supports SS, VMess, VLESS, Trojan, Hysteria, Hysteria2, HTTP",
+        "Supports SS, VMess, VLESS, Trojan, Hysteria, Hysteria2, HTTP, SOCKS5, WireGuard, AnyTLS, TUIC v5",
         "Does NOT support ShadowsocksR (SSR)",
         "Used by Android, iOS, Windows, macOS, Linux clients",
         "JSON format configuration"
@@ -708,10 +714,10 @@
     },
     "loon": {
       "title": "Loon",
-      "description": "A powerful iOS proxy client with advanced features and rule customization. Supports SS, SSR, VMess, and Trojan protocols.",
+      "description": "A powerful iOS proxy client with advanced features and rule customization. Supports SS, SSR, VMess, Trojan, Hysteria2, and TUIC v5 protocols (Hysteria2/TUIC require Loon 3.1+).",
       "features": [
-        "Supports SS, SSR, VMess, Trojan protocols",
-        "Does NOT support VLESS, Hysteria, Hysteria2, HTTP, HTTPS, SOCKS5",
+        "Supports SS, SSR, VMess, Trojan, Hysteria2, TUIC v5 protocols",
+        "Does NOT support VLESS, Hysteria (v1), HTTP, SOCKS5",
         "iOS exclusive with rich scripting support",
         "INI-style configuration format with ACL4SSR rulesets"
       ]
@@ -728,11 +734,11 @@
     },
     "surfboard": {
       "title": "Surfboard",
-      "description": "A professional iOS proxy client based on Surge format. Supports SS, VMess, Trojan, HTTP, SOCKS5, and Hysteria2 protocols.",
+      "description": "A professional Android proxy client based on Surge format. Supports SS, VMess, Trojan, HTTP, SOCKS5, and Hysteria2 protocols.",
       "features": [
         "Supports SS, VMess, Trojan, HTTP, SOCKS5, Hysteria2 protocols",
         "Does NOT support SSR, VLESS, Hysteria (v1)",
-        "iOS exclusive with Surge-compatible format",
+        "Android exclusive with Surge-compatible format",
         "Simple configuration style with rule-based routing"
       ]
     },
@@ -793,14 +799,14 @@
       "title": "How to Use Our Converter",
       "steps": [
         { "title": "Paste Your Proxy Links", "desc": "Enter your proxy links in the input box. Each link should be on a separate line. Supported formats include ss://, ssr://, vmess://, vless://, trojan://, hysteria://, hysteria2://, wireguard://, anytls://, tuic://, http://, and socks5://" },
-        { "title": "Select Your Output Format", "desc": "Choose between Clash Meta (Mihomo) for full protocol support, Clash Premium for legacy compatibility, Sing-Box, Loon, QuantumultX, or Surfboard format. Each format has different protocol support." },
+        { "title": "Select Your Output Format", "desc": "Choose between Clash Meta (Mihomo) for full protocol support, Clash Premium for legacy compatibility, Sing-Box, Surge 5, Loon, QuantumultX, or Surfboard format. Each format has different protocol support." },
         { "title": "Convert & Download", "desc": "Click the convert button and your configuration will be generated instantly. You can then download the config file or copy it to your clipboard." }
       ]
     },
     "faq": {
       "title": "Frequently Asked Questions",
       "items": [
-        { "q": "What is Clash Converter?", "a": "Clash Converter is a free online tool that converts various proxy protocols (SS, SSR, VMess, VLESS, Trojan, Hysteria, Hysteria2, WireGuard, AnyTLS, TUIC v5, HTTP, SOCKS5) into Clash Meta (Mihomo), Clash Premium, Sing-Box, Surge 5, Surfboard, Loon, or QuantumultX configuration format. It supports Clash Meta (Mihomo), Clash Premium, Sing-Box, Loon, QuantumultX, and Surfboard." },
+        { "q": "What is Clash Converter?", "a": "Clash Converter is a free online tool that converts various proxy protocols (SS, SSR, VMess, VLESS, Trojan, Hysteria, Hysteria2, WireGuard, AnyTLS, TUIC v5, HTTP, SOCKS5) into Clash Meta (Mihomo), Clash Premium, Sing-Box, Surge 5, Surfboard, Loon, or QuantumultX configuration format. It supports Clash Meta (Mihomo), Clash Premium, Sing-Box, Surge 5, Surfboard, Loon, and QuantumultX." },
         { "q": "Is Clash Converter safe to use?", "a": "Yes, Clash Converter is completely safe and privacy-focused. All conversion happens client-side in your browser. Your proxy configurations are never uploaded to any server, ensuring complete privacy and security." },
         { "q": "Which proxy protocols are supported?", "a": "Clash Converter supports 12 proxy protocols: Shadowsocks (SS), ShadowsocksR (SSR), VMess, VLESS, Trojan, Hysteria, Hysteria2, HTTP, SOCKS5, WireGuard, AnyTLS, and TUIC v5. It can convert both to and from Clash YAML format." },
         { "q": "What is the difference between Clash Meta and Clash Premium?", "a": "Clash Meta (Mihomo) is the actively maintained version that supports all modern protocols including VLESS, Hysteria, and Hysteria2. Clash Premium is the original kernel that is no longer maintained and does not support these newer protocols." },
@@ -812,7 +818,7 @@
         { "q": "Which protocols are supported for sing-box output?", "a": "sing-box output supports 11 of the 12 protocols: SS, VMess, VLESS, Trojan, Hysteria, Hysteria2, HTTP, SOCKS5, WireGuard, AnyTLS, and TUIC v5. SSR is not supported by the sing-box kernel - SSR nodes are filtered out with a clear notice instead of being silently converted." },
         { "q": "What is Loon and which protocols does it support?", "a": "Loon is a powerful iOS proxy client with advanced features and rule customization. It supports SS, SSR, VMess, Trojan, Hysteria2, and TUIC v5 protocols (Loon 3.1+). Does NOT support VLESS, Hysteria (v1), HTTP, or SOCKS5." },
         { "q": "What is QuantumultX and which protocols does it support?", "a": "QuantumultX is a popular iOS proxy client with powerful rule-based filtering and rewrite features. It supports SS, SSR, VMess, Trojan, HTTP, and SOCKS5 protocols. Does NOT support VLESS, Hysteria, or Hysteria2." },
-        { "q": "What is Surfboard and which protocols does it support?", "a": "Surfboard is a professional iOS proxy client based on Surge format. It supports SS, VMess, Trojan, HTTP, SOCKS5, and Hysteria2 protocols. Does NOT support SSR, VLESS, or Hysteria (v1)." },
+        { "q": "What is Surfboard and which protocols does it support?", "a": "Surfboard is a professional Android proxy client based on Surge format. It supports SS, VMess, Trojan, HTTP, SOCKS5, and Hysteria2 protocols. Does NOT support SSR, VLESS, or Hysteria (v1)." },
         { "q": "What is Surge and which protocols does it support?", "a": "Surge is a professional proxy client for Apple platforms. Our Surge 5 output supports SS, VMess, Trojan, HTTP, SOCKS5, Hysteria2, and TUIC v5 (Surge 5.8+); SSR is wrapped as an external ssr-local entry. VLESS, Hysteria (v1), WireGuard, and AnyTLS are filtered out." },
         { "q": "Why can't I detect latency in Hy2 nodes in ShadowRocket?", "a": "Please modify the configuration in the app: Settings – Test Method – CONNNECT" }
       ]

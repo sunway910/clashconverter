@@ -18,17 +18,17 @@
     "terms": "服务条款",
     "connectTitle": "保持联系",
     "agentsTitle": "Agents 文档",
-    "tagline": "免费、纯前端的代理链接与 Clash / Sing-Box / Loon 配置转换工具，数据永不上传。"
+    "tagline": "免费、纯前端的代理链接与 Clash / Sing-Box / Surge / Loon 配置转换工具，数据永不上传。"
   },
   "privacyPage": {
     "title": "隐私政策",
-    "updated": "最后更新：2026 年 10 月 9 日",
+    "updated": "最后更新：2026 年 10 月 15 日",
     "intro": "本隐私政策说明 ClashConverter（「我们」，即 https://clashconverter.com，下称「本网站」）在你访问本站或使用转换工具时如何处理信息。简单来说：你转换的代理链接和配置文件永远不会离开你的浏览器。我们有意识地只收集尽可能少的数据——但和绝大多数网站一样，本站使用了 Cookie 以及用于统计与广告的第三方服务，我们希望就此向你作出清晰、坦诚的说明。",
     "sections": [
       {
         "heading": "1. 我们是谁",
         "paragraphs": [
-          "ClashConverter 是一个免费、开源的纯前端网络工具，用于在代理分享链接（SS、SSR、VMess、VLESS、Trojan、Hysteria、Hysteria2、HTTP、SOCKS5）与各类客户端配置格式（Clash Meta (Mihomo)、Clash Premium、Sing-Box、Loon、QuantumultX、Surfboard）之间相互转换。项目源代码在 GitHub 上公开，如对本政策有任何疑问，可通过下方「联系我们」一节列出的渠道与我们取得联系。"
+          "ClashConverter 是一个免费、开源的纯前端网络工具，用于在代理分享链接（SS、SSR、VMess、VLESS、Trojan、Hysteria、Hysteria2、HTTP、SOCKS5、WireGuard、AnyTLS、TUIC v5）与各类客户端配置格式（Clash Meta (Mihomo)、Clash Premium、Sing-Box、Surge 5、Surfboard、Loon、QuantumultX）之间相互转换。项目源代码在 GitHub 上公开，如对本政策有任何疑问，可通过下方「联系我们」一节列出的渠道与我们取得联系。"
         ]
       },
       {
@@ -123,7 +123,7 @@
   },
   "termsPage": {
     "title": "服务条款",
-    "updated": "最后更新：2026 年 10 月 9 日",
+    "updated": "最后更新：2026 年 10 月 15 日",
     "intro": "本服务条款（下称「条款」）适用于你对 ClashConverter（https://clashconverter.com，下称「本网站」）的使用。使用本网站即表示你同意本条款；如不同意，请勿使用本网站。",
     "sections": [
       {
@@ -147,7 +147,7 @@
       {
         "heading": "4. 知识产权",
         "paragraphs": [
-          "本网站的源代码以开源方式发布在公开的 GitHub 仓库中，遵循其附带许可证。「Clash」「Clash Meta」「Mihomo」「Sing-Box」「Loon」「QuantumultX」「Surfboard」「Shadowrocket」以及本站提及的其他产品名称，均为其各自所有者的商标或项目名称。相关引用仅用于标识与互操作性说明，不构成任何背书或隶属关系的声明。"
+          "本网站的源代码以开源方式发布在公开的 GitHub 仓库中，遵循其附带许可证。「Clash」「Clash Meta」「Mihomo」「Sing-Box」「Loon」「QuantumultX」「Surge」「Surfboard」「Shadowrocket」以及本站提及的其他产品名称，均为其各自所有者的商标或项目名称。相关引用仅用于标识与互操作性说明，不构成任何背书或隶属关系的声明。"
         ]
       },
       {
@@ -326,7 +326,7 @@
       },
       "loon": {
         "name": "Loon",
-        "description": "功能强大的 iOS 代理客户端，支持高级功能和规则自定义。支持 SS、SSR、VMess、Trojan 协议。",
+        "description": "功能强大的 iOS 代理客户端，支持高级功能和规则自定义。支持 SS、SSR、VMess、Trojan、Hysteria2、TUIC v5 协议（Hysteria2/TUIC 需要 Loon 3.1+）。",
         "url": "https://apps.apple.com/us/app/loon/id1373567447"
       },
       "sing-box": {
@@ -391,11 +391,11 @@
     }
   },
   "homeContent": {
-    "lastUpdated": "最后更新：2026 年 10 月 9 日",
+    "lastUpdated": "最后更新：2026 年 10 月 15 日",
     "intro": {
       "title": "Clash 转换器是什么？",
       "paragraphs": [
-        "Clash Converter 是一个免费的在线工具，可以把代理分享链接转换为各大代理客户端可直接使用的配置文件，也能把配置文件反向转换回可分享的链接。它支持九种协议（Shadowsocks、ShadowsocksR、VMess、VLESS、Trojan、Hysteria、Hysteria2、HTTP、SOCKS5），以及六种输出目标：Clash Meta (Mihomo)、Clash Premium、Sing-Box、Loon、QuantumultX 和 Surfboard。",
+        "Clash Converter 是一个免费的在线工具，可以把代理分享链接转换为各大代理客户端可直接使用的配置文件，也能把配置文件反向转换回可分享的链接。它支持十二种协议（Shadowsocks、ShadowsocksR、VMess、VLESS、Trojan、Hysteria、Hysteria2、TUIC v5、HTTP、SOCKS5、WireGuard、AnyTLS），以及七种输出目标：Clash Meta (Mihomo)、Clash Premium、Sing-Box、Surge 5、Surfboard、Loon 和 QuantumultX。",
         "这个工具的存在，是因为代理配置生态高度碎片化：一条 vmess:// 链接无法直接粘贴进大多数客户端，一份 Clash YAML 配置在 Sing-Box 应用里毫无用处，而手动改写意味着直接编辑 base64、JSON 或 YAML，任何一个小错都会导致配置失效。Clash Converter 把这个翻译过程自动化：粘贴输入、选择目标格式，几秒钟内就能得到可下载的配置。",
         "与很多在线转换器不同，本工具的全部工作都在你的浏览器内完成。你的链接、服务器地址和凭据永远不会上传到任何服务器——详见下方的隐私章节。"
       ]
@@ -431,7 +431,7 @@
         {
           "title": "Clash Meta (Mihomo) —— 推荐",
           "paragraphs": [
-            "持续维护中的 Clash 内核，也是大多数用户最稳妥的默认选择。Clash Meta 支持本工具可转换的全部九种协议，包括原版内核从未支持过的 VLESS、Hysteria、Hysteria2 等现代协议。Clash Verge Rev、Clash Party 等主流桌面客户端都基于它，且更新频繁。"
+            "持续维护中的 Clash 内核，也是大多数用户最稳妥的默认选择。Clash Meta 支持本工具可转换的全部十二种协议，包括原版内核从未支持过的 VLESS、Hysteria、Hysteria2、TUIC v5、AnyTLS 等现代协议。Clash Verge Rev、Clash Party 等主流桌面客户端都基于它，且更新频繁。"
           ]
         },
         {
@@ -443,13 +443,19 @@
         {
           "title": "Sing-Box",
           "paragraphs": [
-            "一个通用代理平台，对现代协议（SS、VMess、VLESS、Trojan、Hysteria、Hysteria2、HTTP）提供一流支持，并有 Android、iOS、Windows、macOS、Linux 原生客户端。输出为 JSON 格式。SSR 与 SOCKS5 条目不属于 Sing-Box 格式，会被过滤并给出提示。"
+            "一个通用代理平台，对现代协议（SS、VMess、VLESS、Trojan、Hysteria、Hysteria2、HTTP、SOCKS5、WireGuard、AnyTLS、TUIC v5）提供一流支持，并有 Android、iOS、Windows、macOS、Linux 原生客户端。输出为 JSON 格式。SSR 不属于 Sing-Box 内核的支持范围，会被过滤并给出提示。"
+          ]
+        },
+        {
+          "title": "Surge 5",
+          "paragraphs": [
+            "Apple 平台的专业代理客户端，支持 SS、VMess、Trojan、HTTP、SOCKS5、Hysteria2 与 TUIC v5（smart 策略分组与 TUIC 需要 Surge 5.8+）；SSR 通过外部 ssr-local 条目运行，VLESS、Hysteria (v1)、WireGuard 与 AnyTLS 会被过滤。输出为 Surge 兼容的 INI 配置，内置远程规则集。"
           ]
         },
         {
           "title": "Loon",
           "paragraphs": [
-            "功能强大的 iOS 客户端，采用 INI 风格配置，支持丰富的脚本与规则自定义。Loon 配置支持 SS、SSR、VMess、Trojan 节点；生成的文件内置现成的代理分组和规则集，导入即可使用。"
+            "功能强大的 iOS 客户端，采用 INI 风格配置，支持丰富的脚本与规则自定义。Loon 配置支持 SS、SSR、VMess、Trojan、Hysteria2、TUIC v5 节点（Loon 3.1+）；生成的文件内置现成的代理分组和规则集，导入即可使用。"
           ]
         },
         {
@@ -480,7 +486,7 @@
         },
         {
           "title": "选择目标格式",
-          "desc": "在格式选择器中选择 Clash Meta、Clash Premium、Sing-Box、Loon、QuantumultX 或 Surfboard。转换前，内核特性面板会说明每种格式支持哪些能力。"
+          "desc": "在格式选择器中选择 Clash Meta、Clash Premium、Sing-Box、Surge 5、Surfboard、Loon 或 QuantumultX。转换前，内核特性面板会说明每种格式支持哪些能力。"
         },
         {
           "title": "下载或复制",
@@ -700,7 +706,7 @@
       "title": "Sing-Box",
       "description": "通用代理平台，支持多种协议和平台。",
       "features": [
-        "支持 SS、VMess、VLESS、Trojan、Hysteria、Hysteria2、HTTP",
+        "支持 SS、VMess、VLESS、Trojan、Hysteria、Hysteria2、HTTP、SOCKS5、WireGuard、AnyTLS、TUIC v5",
         "不支持 ShadowsocksR (SSR)",
         "支持 Android、iOS、Windows、macOS、Linux 客户端",
         "JSON 格式配置"
@@ -708,10 +714,10 @@
     },
     "loon": {
       "title": "Loon",
-      "description": "功能强大的 iOS 代理客户端，支持高级功能和规则自定义。支持 SS、SSR、VMess、Trojan 协议。",
+      "description": "功能强大的 iOS 代理客户端，支持高级功能和规则自定义。支持 SS、SSR、VMess、Trojan、Hysteria2、TUIC v5 协议（Hysteria2/TUIC 需要 Loon 3.1+）。",
       "features": [
-        "支持 SS、SSR、VMess、Trojan 协议",
-        "不支持 VLESS、Hysteria、Hysteria2、HTTP、HTTPS、SOCKS5",
+        "支持 SS、SSR、VMess、Trojan、Hysteria2、TUIC v5 协议",
+        "不支持 VLESS、Hysteria (v1)、HTTP、SOCKS5",
         "iOS 专属，支持丰富的脚本功能",
         "INI 风格配置格式，内置 ACL4SSR 规则集"
       ]
@@ -728,11 +734,11 @@
     },
     "surfboard": {
       "title": "Surfboard",
-      "description": "专业的 iOS 代理客户端，基于 Surge 格式。支持 SS、VMess、Trojan、HTTP、SOCKS5、Hysteria2 协议。",
+      "description": "专业的 Android 代理客户端，基于 Surge 格式。支持 SS、VMess、Trojan、HTTP、SOCKS5、Hysteria2 协议。",
       "features": [
         "支持 SS、VMess、Trojan、HTTP、SOCKS5、Hysteria2 协议",
         "不支持 SSR、VLESS、Hysteria (v1)",
-        "iOS 专属，Surge 兼容格式",
+        "Android 专属，Surge 兼容格式",
         "简洁的配置风格，支持基于规则的路由"
       ]
     },
@@ -793,16 +799,16 @@
       "title": "如何使用我们的转换器",
       "steps": [
         { "title": "粘贴您的代理链接", "desc": "在输入框中输入您的代理链接。每个链接应单独一行。支持的格式包括 ss://、ssr://、vmess://、vless://、trojan://、hysteria://、hysteria2://、wireguard://、anytls://、tuic://、http:// 和 socks5://" },
-        { "title": "选择输出格式", "desc": "在 Clash Meta (Mihomo) 完整协议支持、Clash Premium 遗留兼容性、Sing-Box、Loon、QuantumultX 或 Surfboard 格式之间选择。每种格式有不同的协议支持。" },
+        { "title": "选择输出格式", "desc": "在 Clash Meta (Mihomo) 完整协议支持、Clash Premium 遗留兼容性、Sing-Box、Surge 5、Loon、QuantumultX 或 Surfboard 格式之间选择。每种格式有不同的协议支持。" },
         { "title": "转换和下载", "desc": "点击转换按钮，您的配置将立即生成。然后您可以下载配置文件或将其复制到剪贴板。" }
       ]
     },
     "faq": {
       "title": "常见问题",
       "items": [
-        { "q": "什么是 Clash 转换器？", "a": "Clash 转换器是一个免费的在线工具，可以将各种代理协议（SS、SSR、VMess、VLESS、Trojan、Hysteria、Hysteria2、WireGuard、AnyTLS、TUIC v5、HTTP、SOCKS5）转换为 Clash Meta (Mihomo)、Clash Premium、Sing-Box、Surge 5、Surfboard、Loon、QuantumultX 配置格式。支持 Clash Meta (Mihomo)、Clash Premium、Sing-Box、Loon、QuantumultX、Surfboard 内核。" },
+        { "q": "什么是 Clash 转换器？", "a": "Clash 转换器是一个免费的在线工具，可以将各种代理协议（SS、SSR、VMess、VLESS、Trojan、Hysteria、Hysteria2、WireGuard、AnyTLS、TUIC v5、HTTP、SOCKS5）转换为 Clash Meta (Mihomo)、Clash Premium、Sing-Box、Surge 5、Surfboard、Loon、QuantumultX 配置格式。支持 Clash Meta (Mihomo)、Clash Premium、Sing-Box、Surge 5、Surfboard、Loon、QuantumultX 内核。" },
         { "q": "Clash 转换器安全吗？", "a": "是的，Clash 转换器完全安全且注重隐私。所有转换都在您的浏览器客户端进行。您的代理配置永远不会上传到任何服务器，确保完全的隐私和安全。" },
-        { "q": "支持哪些代理协议？", "a": "Clash 转换器支持 11 种代理协议：Shadowsocks (SS)、ShadowsocksR (SSR)、VMess、VLESS、Trojan、Hysteria、Hysteria2、HTTP、SOCKS5、WireGuard 和 AnyTLS。可以双向转换到和从 Clash YAML 格式。" },
+        { "q": "支持哪些代理协议？", "a": "Clash 转换器支持 12 种代理协议：Shadowsocks (SS)、ShadowsocksR (SSR)、VMess、VLESS、Trojan、Hysteria、Hysteria2、TUIC v5、HTTP、SOCKS5、WireGuard 和 AnyTLS。可以双向转换到和从 Clash YAML 格式。" },
         { "q": "Clash Meta 和 Clash Premium 有什么区别？", "a": "Clash Meta (Mihomo) 是积极维护的版本，支持所有现代协议，包括 VLESS、Hysteria 和 Hysteria2。Clash Premium 是原始内核，不再维护，不支持这些新协议。" },
         { "q": "如何将代理链接转换为 Clash 格式？", "a": "只需将您的代理链接（每行一个）粘贴到输入框中。每个链接应采用 ss://base64#name、vmess://base64#name 等格式。点击「转换」按钮，Clash YAML 配置将立即生成。" },
         { "q": "我可以将 Clash YAML 转换回代理链接吗？", "a": "可以！点击「切换方向」按钮，从「代理转 YAML」模式切换到「YAML 转代理」模式。粘贴您的 Clash YAML 配置，工具将提取所有代理节点并转换回可分享的链接。" },
@@ -812,7 +818,7 @@
         { "q": "Sing-Box 输出支持哪些协议？", "a": "Sing-Box 输出支持 12 种协议中的 11 种：SS、VMess、VLESS、Trojan、Hysteria、Hysteria2、HTTP、SOCKS5、WireGuard、AnyTLS 和 TUIC v5。Sing-Box 内核不支持 SSR - SSR 节点会被过滤并通过通知明确提示，而不是被静默转换。" },
         { "q": "什么是 Loon，支持哪些协议？", "a": "Loon 是功能强大的 iOS 代理客户端，支持高级功能和规则自定义。支持 SS、SSR、VMess、Trojan、Hysteria2、TUIC v5 协议（Loon 3.1+）。不支持 VLESS、Hysteria (v1)、HTTP、SOCKS5。" },
         { "q": "什么是 QuantumultX，支持哪些协议？", "a": "QuantumultX 是流行的 iOS 代理客户端，支持强大的规则过滤和重写功能。支持 SS、SSR、VMess、Trojan、HTTP、SOCKS5 协议。不支持 VLESS、Hysteria、Hysteria2。" },
-        { "q": "什么是 Surfboard，支持哪些协议？", "a": "Surfboard 是专业的 iOS 代理客户端，基于 Surge 格式。支持 SS、VMess、Trojan、HTTP、SOCKS5、Hysteria2 协议。不支持 SSR、VLESS、Hysteria (v1)。" },
+        { "q": "什么是 Surfboard，支持哪些协议？", "a": "Surfboard 是专业的 Android 代理客户端，基于 Surge 格式。支持 SS、VMess、Trojan、HTTP、SOCKS5、Hysteria2 协议。不支持 SSR、VLESS、Hysteria (v1)。" },
         { "q": "什么是 Surge，支持哪些协议？", "a": "Surge 是 Apple 平台的专业代理客户端。我们的 Surge 5 输出支持 SS、VMess、Trojan、HTTP、SOCKS5、Hysteria2 和 TUIC v5（需要 Surge 5.8+）；SSR 会包装为外部 ssr-local 条目。VLESS、Hysteria (v1)、WireGuard 和 AnyTLS 会被过滤。" },
         { "q": "为什么无法在 ShadowRocket 中探测 Hy2 节点的延迟", "a": "请在 App 中修改配置: 设置 – 延迟测试方法 - CONNNECT" }
       ]
