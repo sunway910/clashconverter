@@ -407,7 +407,7 @@
         {
           "title": "代理分享链接",
           "paragraphs": [
-            "每行一条链接，使用大多数订阅和节点分享采用的标准 URI 格式：ss://、ssr://、vmess://、vless://、trojan://、hysteria://、hysteria2://、wireguard://、anytls://、http://、socks5://。链接中 # 符号后面的文字会成为生成配置里的节点名称，因此带名称的链接会生成出整洁有序的配置。加密（base64）载荷会自动解码，包括部分服务商使用的 URL-safe base64 变体。"
+            "每行一条链接，使用大多数订阅和节点分享采用的标准 URI 格式：ss://、ssr://、vmess://、vless://、trojan://、hysteria://、hysteria2://、wireguard://、anytls://、tuic://、http://、socks5://。链接中 # 符号后面的文字会成为生成配置里的节点名称，因此带名称的链接会生成出整洁有序的配置。加密（base64）载荷会自动解码，包括部分服务商使用的 URL-safe base64 变体。"
           ]
         },
         {
@@ -622,7 +622,7 @@
   },
   "inputPlaceholder": {
     "subscribe-url": "在此粘贴订阅链接\n\n支持的订阅类型：\n\n类型 1：直接下载 YAML 文件\nhttps://example.com/link/...?clash=3\n\n类型 2：Base64 编码的代理链接\nhttps://example.com/api/v1/client/subscribe?token=xxx\n\n💡 我们将自动获取并转换订阅内容",
-    "txt": "在此粘贴代理链接，每行一个\n\n支持的协议：\n\nhysteria://server:port?protocol=udp&auth=xxx&peer=xxx#Hysteria-节点\nhysteria2://password@server:port/?sni=xxx#Hysteria2-节点\nss://[base64]#SS-节点\nssr://[base64]#SSR-节点\nvmess://[base64]#Vmess-节点\nvless://uuid@server:port?encryption=none&security=tls&type=tcp#Vless-节点\ntrojan://password@server:port#Trojan-节点\nwireguard://私钥@server:port?publickey=xxx&address=10.0.0.2#WireGuard-节点\nanytls://password@server:port?sni=xxx#AnyTLS-节点\nsocks5://server:port#Socks5-节点\nhttp://user:pass@server:port#Http-节点\n\n💡 提示：链接末尾的 #名称 会成为输出文件中的代理名称",
+    "txt": "在此粘贴代理链接，每行一个\n\n支持的协议：\n\nhysteria://server:port?protocol=udp&auth=xxx&peer=xxx#Hysteria-节点\nhysteria2://password@server:port/?sni=xxx#Hysteria2-节点\nss://[base64]#SS-节点\nssr://[base64]#SSR-节点\nvmess://[base64]#Vmess-节点\nvless://uuid@server:port?encryption=none&security=tls&type=tcp#Vless-节点\ntrojan://password@server:port#Trojan-节点\nwireguard://私钥@server:port?publickey=xxx&address=10.0.0.2#WireGuard-节点\nanytls://password@server:port?sni=xxx#AnyTLS-节点\ntuic://uuid:password@server:port?sni=xxx&congestion_control=bbr#Tuic-节点\nsocks5://server:port#Socks5-节点\nhttp://user:pass@server:port#Http-节点\n\n💡 提示：链接末尾的 #名称 会成为输出文件中的代理名称",
     "clash": "proxies:\n  - name: SS-HongKong\n    type: ss\n    server: hk.example.com\n    port: 443\n  - name: VMESS-US\n    type: vmess\n    server: us.example.com\n    port: 443\n\nproxy-groups:\n  - name: 🚀 节点选择\n    type: select\n    proxies: ...",
     "sing-box": "'{'\n  \"outbounds\": [\n    '{'\n      \"type\": \"shadowsocks\",\n      \"tag\": \"SS-HongKong\",\n      \"server\": \"hk.example.com\",\n      \"server_port\": 443,\n      \"method\": \"aes-128-gcm\",\n      \"password\": \"password\"\n    '}',\n    ..."
   },
@@ -791,7 +791,7 @@
     "howToUse": {
       "title": "如何使用我们的转换器",
       "steps": [
-        { "title": "粘贴您的代理链接", "desc": "在输入框中输入您的代理链接。每个链接应单独一行。支持的格式包括 ss://、ssr://、vmess://、vless://、trojan://、hysteria://、hysteria2://、wireguard://、anytls://、http:// 和 socks5://" },
+        { "title": "粘贴您的代理链接", "desc": "在输入框中输入您的代理链接。每个链接应单独一行。支持的格式包括 ss://、ssr://、vmess://、vless://、trojan://、hysteria://、hysteria2://、wireguard://、anytls://、tuic://、http:// 和 socks5://" },
         { "title": "选择输出格式", "desc": "在 Clash Meta (Mihomo) 完整协议支持、Clash Premium 遗留兼容性、Sing-Box、Loon、QuantumultX 或 Surfboard 格式之间选择。每种格式有不同的协议支持。" },
         { "title": "转换和下载", "desc": "点击转换按钮，您的配置将立即生成。然后您可以下载配置文件或将其复制到剪贴板。" }
       ]

@@ -407,7 +407,7 @@
         {
           "title": "Proxy share links",
           "paragraphs": [
-            "One link per line, in the standard URI scheme used by most subscriptions and node sharers: ss://, ssr://, vmess://, vless://, trojan://, hysteria://, hysteria2://, wireguard://, anytls://, http://, and socks5://. The text after the # symbol in each link becomes the node's display name in the generated configuration, so named links produce a neatly organized config. Encrypted (base64) payloads are decoded automatically, including the URL-safe base64 variants that some providers use."
+            "One link per line, in the standard URI scheme used by most subscriptions and node sharers: ss://, ssr://, vmess://, vless://, trojan://, hysteria://, hysteria2://, wireguard://, anytls://, tuic://, http://, and socks5://. The text after the # symbol in each link becomes the node's display name in the generated configuration, so named links produce a neatly organized config. Encrypted (base64) payloads are decoded automatically, including the URL-safe base64 variants that some providers use."
           ]
         },
         {
@@ -622,7 +622,7 @@
   },
   "inputPlaceholder": {
     "subscribe-url": "Paste your subscription link here\n\nSupported subscription types:\n\nType 1: Direct YAML download\nhttps://example.com/link/...?clash=3\n\nType 2: Base64 encoded proxy links\nhttps://example.com/api/v1/client/subscribe?token=xxx\n\n💡 We will automatically fetch and convert the subscription content",
-    "txt": "Paste your proxy links here - one per line\n\nSupported protocols:\n\nhysteria://server:port?protocol=udp&auth=xxx&peer=xxx#Hysteria-Node\nhysteria2://password@server:port/?sni=xxx#Hysteria2-Node\nss://[base64]#SS-Node\nssr://[base64]#SSR-Node\nvmess://[base64]#Vmess-Node\nvless://uuid@server:port?encryption=none&security=tls&type=tcp#Vless-Node\ntrojan://password@server:port#Trojan-Node\nwireguard://privatekey@server:port?publickey=xxx&address=10.0.0.2#WireGuard-Node\nanytls://password@server:port?sni=xxx#AnyTLS-Node\nsocks5://server:port#Socks5-Node\nhttp://user:pass@server:port#Http-Node\n\n💡 Tip: The #name suffix becomes the proxy name in your output file",
+    "txt": "Paste your proxy links here - one per line\n\nSupported protocols:\n\nhysteria://server:port?protocol=udp&auth=xxx&peer=xxx#Hysteria-Node\nhysteria2://password@server:port/?sni=xxx#Hysteria2-Node\nss://[base64]#SS-Node\nssr://[base64]#SSR-Node\nvmess://[base64]#Vmess-Node\nvless://uuid@server:port?encryption=none&security=tls&type=tcp#Vless-Node\ntrojan://password@server:port#Trojan-Node\nwireguard://privatekey@server:port?publickey=xxx&address=10.0.0.2#WireGuard-Node\nanytls://password@server:port?sni=xxx#AnyTLS-Node\ntuic://uuid:password@server:port?sni=xxx&congestion_control=bbr#Tuic-Node\nsocks5://server:port#Socks5-Node\nhttp://user:pass@server:port#Http-Node\n\n💡 Tip: The #name suffix becomes the proxy name in your output file",
     "clash": "proxies:\n  - name: SS-HongKong\n    type: ss\n    server: hk.example.com\n    port: 443\n  - name: VMESS-US\n    type: vmess\n    server: us.example.com\n    port: 443\n\nproxy-groups:\n  - name: PROXY\n    type: select\n    proxies: ...",
     "sing-box": "'{'\n  \"outbounds\": [\n    '{'\n      \"type\": \"shadowsocks\",\n      \"tag\": \"SS-HongKong\",\n      \"server\": \"hk.example.com\",\n      \"server_port\": 443,\n      \"method\": \"aes-128-gcm\",\n      \"password\": \"password\"\n    '}',\n    ..."
   },
@@ -791,7 +791,7 @@
     "howToUse": {
       "title": "How to Use Our Converter",
       "steps": [
-        { "title": "Paste Your Proxy Links", "desc": "Enter your proxy links in the input box. Each link should be on a separate line. Supported formats include ss://, ssr://, vmess://, vless://, trojan://, hysteria://, hysteria2://, wireguard://, anytls://, http://, and socks5://" },
+        { "title": "Paste Your Proxy Links", "desc": "Enter your proxy links in the input box. Each link should be on a separate line. Supported formats include ss://, ssr://, vmess://, vless://, trojan://, hysteria://, hysteria2://, wireguard://, anytls://, tuic://, http://, and socks5://" },
         { "title": "Select Your Output Format", "desc": "Choose between Clash Meta (Mihomo) for full protocol support, Clash Premium for legacy compatibility, Sing-Box, Loon, QuantumultX, or Surfboard format. Each format has different protocol support." },
         { "title": "Convert & Download", "desc": "Click the convert button and your configuration will be generated instantly. You can then download the config file or copy it to your clipboard." }
       ]

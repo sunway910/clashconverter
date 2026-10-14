@@ -9,6 +9,7 @@ import type {
   SSProxyNode,
   SSRProxyNode,
   TrojanProxyNode,
+  TuicProxyNode,
   VLESSProxyNode,
   VMessProxyNode,
   WireGuardProxyNode,
@@ -508,6 +509,80 @@ export function parseAnytls(link: string): ParsedProxy | null {
       ...(Number.isInteger(idleCheck) && { 'idle-session-check-interval': idleCheck }),
       ...(Number.isInteger(idleTimeout) && { 'idle-session-timeout': idleTimeout }),
       ...(Number.isInteger(minIdle) && { 'min-idle-session': minIdle }),
+    };
+
+    return { name, config };
+  } catch {
+    return null;
+  }
+}
+
+// TUIC v5 parser: tuic://uuid:password@server:port?params#name
+// (legacy v4 token-only links are not supported)
+export function parseTuic(link: string): ParsedProxy | null {
+  if (!link.toLowerCase().startsWith('tuic://')) return null;
+
+  try {
+    let rest = link.slice('tuic://'.length);
+
+    // Extract hash (name)
+    const hashIndex = rest.indexOf('#');
+    const name = hashIndex !== -1 ? decodeURIComponent(rest.slice(hashIndex + 1)) : 'TUIC';
+    if (hashIndex !== -1) rest = rest.slice(0, hashIndex);
+
+    // Extract query params
+    const queryIndex = rest.indexOf('?');
+    const params = queryIndex !== -1 ? parseUrlParams(rest.slice(queryIndex + 1)) : {};
+    if (queryIndex !== -1) rest = rest.slice(0, queryIndex);
+
+    // Split uuid:password (userinfo) from endpoint
+    const atIndex = rest.lastIndexOf('@');
+    if (atIndex === -1) return null;
+
+    const userinfo = rest.slice(0, atIndex);
+    const colonIndex = userinfo.indexOf(':');
+    // v4 token-only links (no uuid:password) are not supported
+    if (colonIndex === -1) return null;
+
+    const uuid = decodeURIComponent(userinfo.slice(0, colonIndex));
+    const password = decodeURIComponent(userinfo.slice(colonIndex + 1));
+    if (!uuid || !password) return null;
+
+    const [server, port] = splitHostPort(rest.slice(atIndex + 1));
+    if (!server) return null;
+
+    // Normalize snake_case params to Clash naming (congestion_control -> congestion-controller)
+    const normalized: Record<string, string> = {};
+    for (const [key, value] of Object.entries(params)) {
+      normalized[key.replace(/_/g, '-')] = value;
+    }
+
+    const insecure = normalized['skip-cert-verify'] || normalized.allowInsecure || normalized['allow-insecure'];
+    const congestion = normalized['congestion-controller'] || normalized['congestion-control'];
+    const relayMode = normalized['udp-relay-mode'];
+    const heartbeat = parseInt(normalized['heartbeat-interval'] || '', 10);
+    const maxUdpSize = parseInt(normalized['max-udp-relay-packet-size'] || '', 10);
+    const maxStreams = parseInt(normalized['max-open-streams'] || '', 10);
+
+    const config: TuicProxyNode = {
+      name,
+      type: 'tuic',
+      server,
+      port: Number.isInteger(port) ? port : 443,
+      uuid,
+      password,
+      udp: params.udp ? isTruthyParam(params.udp) : true,
+      'skip-cert-verify': insecure ? isTruthyParam(insecure) : false,
+      ...(normalized.sni && { sni: normalized.sni }),
+      ...(parseAlpn(params) && { alpn: parseAlpn(params) }),
+      ...(normalized.ip && { ip: normalized.ip }),
+      ...(congestion && { 'congestion-controller': congestion }),
+      ...((relayMode === 'native' || relayMode === 'quic') && { 'udp-relay-mode': relayMode }),
+      ...(normalized['reduce-rtt'] && { 'reduce-rtt': isTruthyParam(normalized['reduce-rtt']) }),
+      ...(normalized['disable-sni'] && { 'disable-sni': isTruthyParam(normalized['disable-sni']) }),
+      ...(Number.isInteger(heartbeat) && { 'heartbeat-interval': heartbeat }),
+      ...(Number.isInteger(maxUdpSize) && { 'max-udp-relay-packet-size': maxUdpSize }),
+      ...(Number.isInteger(maxStreams) && { 'max-open-streams': maxStreams }),
     };
 
     return { name, config };

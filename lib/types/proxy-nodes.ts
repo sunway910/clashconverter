@@ -57,7 +57,8 @@ export type ProxyType =
   | 'http'
   | 'socks5'
   | 'wireguard'
-  | 'anytls';
+  | 'anytls'
+  | 'tuic';
 
 /**
  * Common dial/behavior fields shared by all proxy nodes (Clash Meta common fields)
@@ -238,6 +239,34 @@ export interface AnyTLSProxyNode extends BaseProxyNode {
 }
 
 /**
+ * TUIC v5 proxy node (Clash Meta mihomo / Sing-Box >=1.3)
+ * v5 auth = uuid + password; the legacy v4 token scheme is not supported.
+ */
+export interface TuicProxyNode extends BaseProxyNode {
+  type: 'tuic';
+  uuid: string;
+  password: string;
+  /** Server IP for IP-based SNI (skip DNS resolution) */
+  ip?: string;
+  sni?: string;
+  alpn?: string[];
+  'skip-cert-verify'?: boolean;
+  /** Congestion control algorithm: bbr / cubic / new_reno */
+  'congestion-controller'?: string;
+  /** UDP packet relay mode: native / quic */
+  'udp-relay-mode'?: 'native' | 'quic';
+  /** 0-RTT QUIC handshake */
+  'reduce-rtt'?: boolean;
+  'disable-sni'?: boolean;
+  /** UDP relay toggle */
+  udp?: boolean;
+  'heartbeat-interval'?: number;
+  'max-udp-relay-packet-size'?: number;
+  'max-open-streams'?: number;
+  'fast-open'?: boolean;
+}
+
+/**
  * Hysteria v1 proxy node
  */
 export interface HysteriaProxyNode extends BaseProxyNode {
@@ -335,7 +364,8 @@ export type ProxyNode =
   | HTTPProxyNode
   | SOCKS5ProxyNode
   | WireGuardProxyNode
-  | AnyTLSProxyNode;
+  | AnyTLSProxyNode
+  | TuicProxyNode;
 
 /**
  * Type guard for SS proxy node
@@ -414,6 +444,13 @@ export function isAnyTLSProxy(node: ProxyNode): node is AnyTLSProxyNode {
   return node.type === 'anytls';
 }
 
+/**
+ * Type guard for TUIC proxy node
+ */
+export function isTuicProxy(node: ProxyNode): node is TuicProxyNode {
+  return node.type === 'tuic';
+}
+
 // ============================================================================
 // Protocol Type Guards
 // ============================================================================
@@ -430,6 +467,7 @@ const VALID_PROXY_TYPES: readonly ProxyType[] = [
   'socks5',
   'wireguard',
   'anytls',
+  'tuic',
 ];
 
 /**

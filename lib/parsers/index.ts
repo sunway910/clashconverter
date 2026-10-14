@@ -1,12 +1,12 @@
 import { ParsedProxy, ProxyNode } from '../types';
 import { normalizeProxyNodeHostnames } from '../utils';
-import { parseSS, parseSSR, parseVmess, parseTrojan, parseHysteria, parseHysteria2, parseVless, parseHttp, parseSocks5, parseWireguard, parseAnytls, parseTelegramLink } from './protocol-parsers';
+import { parseSS, parseSSR, parseVmess, parseTrojan, parseHysteria, parseHysteria2, parseVless, parseHttp, parseSocks5, parseWireguard, parseAnytls, parseTuic, parseTelegramLink } from './protocol-parsers';
 
 // js-set-map-lookups: Use Set for O(1) protocol lookups instead of Array.includes()
-const KNOWN_PROTOCOLS = new Set(['ss', 'ssr', 'vmess', 'trojan', 'hysteria', 'hysteria2', 'vless', 'http', 'https', 'socks', 'socks5', 'wireguard', 'wg', 'anytls']);
+const KNOWN_PROTOCOLS = new Set(['ss', 'ssr', 'vmess', 'trojan', 'hysteria', 'hysteria2', 'vless', 'http', 'https', 'socks', 'socks5', 'wireguard', 'wg', 'anytls', 'tuic']);
 
 // js-set-map-lookups: Use Set for O(1) supported protocol lookups
-const SUPPORTED_PROTOCOLS = new Set(['ss', 'ssr', 'vmess', 'trojan', 'hysteria', 'hysteria2', 'vless', 'http', 'https', 'socks', 'socks5', 'wireguard', 'wg', 'anytls']);
+const SUPPORTED_PROTOCOLS = new Set(['ss', 'ssr', 'vmess', 'trojan', 'hysteria', 'hysteria2', 'vless', 'http', 'https', 'socks', 'socks5', 'wireguard', 'wg', 'anytls', 'tuic']);
 
 // js-hoist-regexp: Hoist RegExp outside function for reuse
 const TELEGRAM_LINK_REGEX = /^https:\/\/t\.me\/(socks|http)/;
@@ -50,6 +50,7 @@ export function parseProxyLink(link: string): ParsedProxy | null {
     parseVless,
     parseWireguard,
     parseAnytls,
+    parseTuic,
     parseHttp,
     parseSocks5,
   ];

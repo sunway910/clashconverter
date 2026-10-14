@@ -356,6 +356,32 @@ export const anytlsProxySchema = z.object({
 });
 
 /**
+ * TUIC v5 schema (uuid + password auth; legacy v4 token not supported)
+ */
+export const tuicProxySchema = z.object({
+  ...commonBaseShape,
+  name: nameSchema,
+  type: z.literal('tuic'),
+  server: serverSchema,
+  port: portSchema,
+  uuid: z.string().min(1),
+  password: z.string().min(1),
+  ip: nullableString(),
+  sni: nullableString(),
+  alpn: z.array(z.string()).optional(),
+  'skip-cert-verify': z.boolean().optional(),
+  'congestion-controller': nullableString(),
+  'udp-relay-mode': z.enum(['native', 'quic']).optional(),
+  'reduce-rtt': z.boolean().optional(),
+  'disable-sni': z.boolean().optional(),
+  udp: nullableBoolean(),
+  'heartbeat-interval': z.number().int().min(0).optional(),
+  'max-udp-relay-packet-size': z.number().int().min(0).optional(),
+  'max-open-streams': z.number().int().min(0).optional(),
+  'fast-open': z.boolean().optional(),
+});
+
+/**
  * Hysteria v1 schema
  */
 export const hysteriaProxySchema = z.object({
@@ -463,6 +489,7 @@ export const proxyNodeSchema = z.discriminatedUnion('type', [
   socks5ProxySchema,
   wireguardProxySchema,
   anytlsProxySchema,
+  tuicProxySchema,
 ]);
 
 // ============================================================================
@@ -577,6 +604,7 @@ const SCHEMA_BY_TYPE: Record<ProxyType, z.ZodObject<any>> = {
   socks5: socks5ProxySchema,
   wireguard: wireguardProxySchema,
   anytls: anytlsProxySchema,
+  tuic: tuicProxySchema,
 };
 
 /**

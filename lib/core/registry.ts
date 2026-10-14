@@ -33,6 +33,7 @@ import { HTTPAdapter } from '../adapters/http-adapter';
 import { SOCKS5Adapter } from '../adapters/socks5-adapter';
 import { WireGuardAdapter } from '../adapters/wireguard-adapter';
 import { AnyTLSAdapter } from '../adapters/anytls-adapter';
+import { TuicAdapter } from '../adapters/tuic-adapter';
 
 /**
  * Initialize protocol adapters
@@ -51,6 +52,7 @@ export function initializeProtocolAdapters(): void {
   ProtocolAdapterRegistry.register(new SOCKS5Adapter());
   ProtocolAdapterRegistry.register(new WireGuardAdapter());
   ProtocolAdapterRegistry.register(new AnyTLSAdapter());
+  ProtocolAdapterRegistry.register(new TuicAdapter());
 }
 
 /**

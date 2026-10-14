@@ -16,6 +16,7 @@ export type {
   SOCKS5ProxyNode,
   WireGuardProxyNode,
   AnyTLSProxyNode,
+  TuicProxyNode,
 } from './types/proxy-nodes';
 
 // Re-export shared option types
@@ -50,6 +51,7 @@ export {
   isSOCKS5Proxy,
   isWireGuardProxy,
   isAnyTLSProxy,
+  isTuicProxy,
   isValidProxyType,
 } from './types/proxy-nodes';
 
@@ -74,6 +76,7 @@ export {
   socks5ProxySchema,
   wireguardProxySchema,
   anytlsProxySchema,
+  tuicProxySchema,
 } from './types/validators';
 
 export interface ParsedProxy {

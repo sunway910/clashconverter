@@ -16,6 +16,7 @@ const SING_BOX_TYPE_MAP: Record<string, string> = {
   'http': 'http',
   'wireguard': 'wireguard',
   'anytls': 'anytls',
+  'tuic': 'tuic',
 };
 
 /**
@@ -341,6 +342,20 @@ function singBoxOutboundToProxyNode(outbound: any, proxyType: string): ProxyNode
         ...(outbound.tls?.server_name && { sni: outbound.tls.server_name }),
         ...(outbound.tls?.insecure !== undefined && { 'skip-cert-verify': outbound.tls.insecure }),
         ...(Array.isArray(outbound.tls?.alpn) && { alpn: outbound.tls.alpn }),
+      } as ProxyNode;
+
+    case 'tuic':
+      return {
+        ...base,
+        uuid: outbound.uuid || '',
+        password: outbound.password || '',
+        udp: true,
+        ...(outbound.tls?.server_name && { sni: outbound.tls.server_name }),
+        ...(outbound.tls?.insecure !== undefined && { 'skip-cert-verify': outbound.tls.insecure }),
+        ...(Array.isArray(outbound.tls?.alpn) && { alpn: outbound.tls.alpn }),
+        ...(outbound.congestion_control && { 'congestion-controller': outbound.congestion_control }),
+        ...(outbound.udp_relay_mode && { 'udp-relay-mode': outbound.udp_relay_mode }),
+        ...(outbound.zero_rtt_handshake !== undefined && { 'reduce-rtt': outbound.zero_rtt_handshake }),
       } as ProxyNode;
 
     default:
