@@ -738,10 +738,10 @@
     },
     "surge": {
       "title": "Surge 5",
-      "description": "Apple 平台专业代理客户端。支持 SS、VMess、Trojan、HTTP 协议；SSR 通过外部 ssr-local 运行。smart 策略分组需要 Surge 5.8+。",
+      "description": "Apple 平台专业代理客户端。支持 SS、VMess、Trojan、HTTP、SOCKS5、Hysteria2、TUIC v5 协议；SSR 通过外部 ssr-local 运行。smart 策略分组需要 Surge 5.8+。",
       "features": [
-        "支持 SS、VMess、Trojan、HTTP 协议",
-        "SSR 通过外部 ssr-local 运行；SOCKS5、VLESS、Hysteria、Hysteria2 会被过滤",
+        "支持 SS、VMess、Trojan、HTTP、SOCKS5、Hysteria2、TUIC v5 协议",
+        "SSR 通过外部 ssr-local 运行；VLESS、Hysteria (v1)、WireGuard、AnyTLS 会被过滤",
         "地区 smart 策略分组（需要 Surge 5.8+）",
         "远程规则集（SKK / blackmatrix7），基于规则的路由"
       ]

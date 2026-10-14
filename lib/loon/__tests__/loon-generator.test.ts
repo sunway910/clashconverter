@@ -403,14 +403,13 @@ describe('LoonGenerator', () => {
 
       const filtered = generator.filterProxies(proxies);
 
-      // Should only include SS, SSR, VMess, Trojan
-      expect(filtered.length).toBe(4);
-      expect(filtered.every(p => ['ss', 'ssr', 'vmess', 'trojan'].includes(p.type))).toBe(true);
+      // Should only include SS, SSR, VMess, Trojan, Hysteria2
+      expect(filtered.length).toBe(5);
+      expect(filtered.every(p => ['ss', 'ssr', 'vmess', 'trojan', 'hysteria2'].includes(p.type))).toBe(true);
       expect(filtered.find(p => p.type === 'http')).toBeUndefined();
       expect(filtered.find(p => p.type === 'socks5')).toBeUndefined();
       expect(filtered.find(p => p.type === 'vless')).toBeUndefined();
       expect(filtered.find(p => p.type === 'hysteria')).toBeUndefined();
-      expect(filtered.find(p => p.type === 'hysteria2')).toBeUndefined();
     });
 
     it('should return empty array when no supported protocols', () => {
@@ -447,18 +446,37 @@ describe('LoonGenerator', () => {
       expect(protocols.has('ssr')).toBe(true);
       expect(protocols.has('vmess')).toBe(true);
       expect(protocols.has('trojan')).toBe(true);
+      expect(protocols.has('hysteria2')).toBe(true);
+      expect(protocols.has('tuic')).toBe(true);
       expect(protocols.has('http')).toBe(false);
       expect(protocols.has('socks5')).toBe(false);
       expect(protocols.has('vless')).toBe(false);
       expect(protocols.has('hysteria')).toBe(false);
-      expect(protocols.has('hysteria2')).toBe(false);
     });
 
     it('should return Set with correct size', () => {
       const generator = new LoonGenerator();
       const protocols = generator.getSupportedProtocols();
 
-      expect(protocols.size).toBe(4);
+      expect(protocols.size).toBe(6);
+    });
+  });
+
+  describe('newly supported protocols', () => {
+    const generator = new LoonGenerator();
+
+    it('should format a Hysteria2 node', () => {
+      const output = generator.generate([
+        { name: 'hy2', type: 'hysteria2', server: '1.2.3.4', port: 443, password: 'pw', sni: 'b.com', 'skip-cert-verify': true },
+      ] as any);
+      expect(output).toContain('hy2 = hysteria2,1.2.3.4,443,password=pw,sni=b.com,skip-cert-verify=true,udp-relay=true');
+    });
+
+    it('should format a TUIC v5 node', () => {
+      const output = generator.generate([
+        { name: 'tc', type: 'tuic', server: '1.2.3.4', port: 443, uuid: 'u1', password: 'pw', alpn: ['h3'] },
+      ] as any);
+      expect(output).toContain('tc = tuic,1.2.3.4,443,uuid=u1,password=pw,alpn=h3,udp-relay=true');
     });
   });
 });

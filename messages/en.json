@@ -738,10 +738,10 @@
     },
     "surge": {
       "title": "Surge 5",
-      "description": "A professional proxy client for Apple platforms. Supports SS, VMess, Trojan, HTTP protocols; SSR runs via external ssr-local. Smart policy groups require Surge 5.8+.",
+      "description": "A professional proxy client for Apple platforms. Supports SS, VMess, Trojan, HTTP, SOCKS5, Hysteria2, and TUIC v5 protocols; SSR runs via external ssr-local. Smart policy groups require Surge 5.8+.",
       "features": [
-        "Supports SS, VMess, Trojan, HTTP protocols",
-        "SSR runs via external ssr-local; SOCKS5, VLESS, Hysteria, Hysteria2 are filtered out",
+        "Supports SS, VMess, Trojan, HTTP, SOCKS5, Hysteria2, TUIC v5 protocols",
+        "SSR runs via external ssr-local; VLESS, Hysteria (v1), WireGuard, AnyTLS are filtered out",
         "Smart policy groups for regions (requires Surge 5.8+)",
         "Remote rule-sets (SKK / blackmatrix7) with rule-based routing"
       ]

@@ -30,7 +30,7 @@ describe('SurgeGenerator', () => {
 
       const filtered = generator.filterProxies(mockProxies as any);
 
-      expect(filtered.map(p => p.name)).toEqual(['ss1', 'vm1', 'ssr1', 'tj1', 'http1']);
+      expect(filtered.map(p => p.name)).toEqual(['ss1', 'vm1', 'ssr1', 'tj1', 'http1', 'socks', 'hy2']);
     });
   });
 
@@ -42,7 +42,9 @@ describe('SurgeGenerator', () => {
       expect(supported.has('ssr')).toBe(true);
       expect(supported.has('trojan')).toBe(true);
       expect(supported.has('http')).toBe(true);
-      expect(supported.has('socks5')).toBe(false);
+      expect(supported.has('socks5')).toBe(true);
+      expect(supported.has('hysteria2')).toBe(true);
+      expect(supported.has('tuic')).toBe(true);
       expect(supported.has('vless')).toBe(false);
     });
   });
@@ -117,6 +119,34 @@ describe('SurgeGenerator', () => {
       ] as any);
 
       expect(output).toBe('# No proxies supported by Surge\n');
+    });
+  });
+
+  describe('newly supported protocols', () => {
+    it('should format a SOCKS5 node (and socks5-tls when tls is on)', () => {
+      const output = generator.generate([
+        { name: 's5', type: 'socks5', server: '1.2.3.4', port: 1080, username: 'u', password: 'p' },
+      ] as any);
+      expect(output).toContain('s5 = socks5,1.2.3.4,1080,username=u,password=p,udp-relay=true');
+
+      const tls = generator.generate([
+        { name: 's5tls', type: 'socks5', server: '1.2.3.4', port: 1080, username: 'u', password: 'p', tls: true, sni: 'a.com' },
+      ] as any);
+      expect(tls).toContain('s5tls = socks5-tls,1.2.3.4,1080,username=u,password=p,sni=a.com,udp-relay=true');
+    });
+
+    it('should format a Hysteria2 node', () => {
+      const output = generator.generate([
+        { name: 'hy2', type: 'hysteria2', server: '1.2.3.4', port: 443, password: 'pw', sni: 'b.com', 'skip-cert-verify': true, down: 200 },
+      ] as any);
+      expect(output).toContain('hy2 = hysteria2,1.2.3.4,443,password=pw,sni=b.com,skip-cert-verify=true,download-bandwidth=200');
+    });
+
+    it('should format a TUIC v5 node', () => {
+      const output = generator.generate([
+        { name: 'tc', type: 'tuic', server: '1.2.3.4', port: 443, uuid: 'u1', password: 'pw', sni: 'c.com', alpn: ['h3'], 'congestion-controller': 'bbr' },
+      ] as any);
+      expect(output).toContain('tc = tuic,1.2.3.4,443,uuid=u1,password=pw,sni=c.com,alpn=h3,congestion-controller=bbr');
     });
   });
 });

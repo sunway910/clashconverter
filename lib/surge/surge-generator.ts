@@ -2,8 +2,9 @@
  * Surge 5 format generator
  * Generates Surge 5 configuration from ProxyNode array
  *
- * Supported protocols: SS, VMess, SSR (via external ssr-local), Trojan, HTTP
- * Not supported: SOCKS5, VLESS, Hysteria, Hysteria2, WireGuard, AnyTLS
+ * Supported protocols: SS, VMess, SSR (via external ssr-local), Trojan, HTTP,
+ * SOCKS5, Hysteria2 (Surge 5.6+), TUIC v5 (Surge 5.8+)
+ * Not supported: VLESS, Hysteria (v1), WireGuard (needs [WireGuard] section), AnyTLS
  *
  * Reference: forecho/proxy-config-templates Surge demo
  */
@@ -26,7 +27,7 @@ import {
 export class SurgeGenerator extends BaseFormatGenerator {
   readonly format: FormatType = 'surge';
 
-  private static readonly SUPPORTED_PROTOCOLS = new Set(['ss', 'vmess', 'ssr', 'trojan', 'http']);
+  private static readonly SUPPORTED_PROTOCOLS = new Set(['ss', 'vmess', 'ssr', 'trojan', 'http', 'socks5', 'hysteria2', 'tuic']);
 
   /**
    * Generate output; Surge groups require at least one node, bail out early when empty
@@ -196,6 +197,49 @@ export class SurgeGenerator extends BaseFormatGenerator {
         if (node.username) params.push(`username=${node.username}`);
         if (node.password) params.push(`password=${node.password}`);
         if (node.tls) params.push('tls=true');
+        if (node['skip-cert-verify']) params.push('skip-cert-verify=true');
+        return this.joinProxyLine(node.name, params);
+      }
+
+      case 'socks5': {
+        const node = proxy as any;
+        // TLS variants use Surge's dedicated socks5-tls policy
+        const params = [node.tls ? 'socks5-tls' : 'socks5', node.server, String(node.port)];
+        if (node.username) params.push(`username=${node.username}`);
+        if (node.password) params.push(`password=${node.password}`);
+        if (node.tls && node.sni) params.push(`sni=${node.sni}`);
+        if (node.tls && node['skip-cert-verify']) params.push('skip-cert-verify=true');
+        params.push(`udp-relay=${node.udp === false ? 'false' : 'true'}`);
+        return this.joinProxyLine(node.name, params);
+      }
+
+      case 'hysteria2': {
+        const node = proxy as any;
+        const params = [
+          'hysteria2',
+          node.server,
+          String(node.port),
+          `password=${node.password}`,
+        ];
+        if (node.sni) params.push(`sni=${node.sni}`);
+        if (node['skip-cert-verify']) params.push('skip-cert-verify=true');
+        if (node.down) params.push(`download-bandwidth=${node.down}`);
+        return this.joinProxyLine(node.name, params);
+      }
+
+      case 'tuic': {
+        const node = proxy as any;
+        const params = [
+          'tuic',
+          node.server,
+          String(node.port),
+          `uuid=${node.uuid}`,
+          `password=${node.password}`,
+        ];
+        if (node.sni) params.push(`sni=${node.sni}`);
+        if (node.alpn?.length) params.push(`alpn=${node.alpn.join(',')}`);
+        if (node['congestion-controller']) params.push(`congestion-controller=${node['congestion-controller']}`);
+        if (node['udp-relay-mode']) params.push(`udp-relay-mode=${node['udp-relay-mode']}`);
         if (node['skip-cert-verify']) params.push('skip-cert-verify=true');
         return this.joinProxyLine(node.name, params);
       }

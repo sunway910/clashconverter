@@ -129,13 +129,13 @@ export class LoonGenerator extends BaseFormatGenerator {
 
   /**
    * Filter proxies to only supported protocols for Loon
-   * Loon supports: SS, SSR, VMess, Trojan
-   * Loon does NOT support: Hysteria, Hysteria2, VLESS, HTTP, HTTPS, SOCKS5
+   * Loon supports: SS, SSR, VMess, Trojan, Hysteria2, TUIC v5
+   * Loon does NOT support (here): Hysteria v1, VLESS, HTTP, SOCKS5, WireGuard, AnyTLS
    * @param proxies - All proxy nodes
    * @returns Filtered proxy nodes
    */
   public filterProxies(proxies: ProxyNode[]): ProxyNode[] {
-    const supportedProtocols = new Set(['ss', 'ssr', 'vmess', 'trojan']);
+    const supportedProtocols = new Set(['ss', 'ssr', 'vmess', 'trojan', 'hysteria2', 'tuic']);
     return proxies.filter((p) => supportedProtocols.has(p.type));
   }
 
@@ -144,7 +144,7 @@ export class LoonGenerator extends BaseFormatGenerator {
    * @returns Set of supported protocol types
    */
   getSupportedProtocols(): Set<string> {
-    return new Set(['ss', 'ssr', 'vmess', 'trojan']);
+    return new Set(['ss', 'ssr', 'vmess', 'trojan', 'hysteria2', 'tuic']);
   }
 
   /**
@@ -201,6 +201,29 @@ export class LoonGenerator extends BaseFormatGenerator {
         params.push(String(proxy.port));
         params.push(`"${(proxy as any).password}"`);
         params.push(`skip-cert-verify=${(proxy as any)['skip-cert-verify'] ? 'true' : 'false'}`);
+        break;
+
+      case 'hysteria2':
+        // hysteria2: name = hysteria2,server,port,password=...,sni=...,skip-cert-verify=...,udp-relay=true
+        params.push('hysteria2');
+        params.push(proxy.server);
+        params.push(String(proxy.port));
+        params.push(`password=${(proxy as any).password}`);
+        if ((proxy as any).sni) params.push(`sni=${(proxy as any).sni}`);
+        params.push(`skip-cert-verify=${(proxy as any)['skip-cert-verify'] ? 'true' : 'false'}`);
+        params.push('udp-relay=true');
+        break;
+
+      case 'tuic':
+        // tuic v5: name = tuic,server,port,uuid=...,password=...,sni=...,alpn=...,udp-relay=true
+        params.push('tuic');
+        params.push(proxy.server);
+        params.push(String(proxy.port));
+        params.push(`uuid=${(proxy as any).uuid}`);
+        params.push(`password=${(proxy as any).password}`);
+        if ((proxy as any).sni) params.push(`sni=${(proxy as any).sni}`);
+        if ((proxy as any).alpn?.length) params.push(`alpn=${(proxy as any).alpn.join(',')}`);
+        params.push('udp-relay=true');
         break;
 
       default:

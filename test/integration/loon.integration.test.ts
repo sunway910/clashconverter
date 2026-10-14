@@ -43,25 +43,26 @@ describe('[Integration] Loon Format Conversion', () => {
       expect(output).toMatch(/^[a-z-]+=/m);
     });
 
-    it('should filter out unsupported protocols (HTTP, SOCKS5, VLESS, Hysteria)', () => {
+    it('should filter out unsupported protocols (HTTP, SOCKS5, VLESS, Hysteria v1)', () => {
       const parser = FormatFactory.createParser('txt');
       const parseResult = parser.parse(testInput);
 
       const generator = FormatFactory.createGenerator('loon');
       const supportedProtocols = generator.getSupportedProtocols();
 
-      // Loon only supports these protocols
+      // Loon supports these protocols
       expect(supportedProtocols.has('ss')).toBe(true);
       expect(supportedProtocols.has('ssr')).toBe(true);
       expect(supportedProtocols.has('vmess')).toBe(true);
       expect(supportedProtocols.has('trojan')).toBe(true);
+      expect(supportedProtocols.has('hysteria2')).toBe(true);
+      expect(supportedProtocols.has('tuic')).toBe(true);
 
-      // Loon does NOT support these protocols
+      // Loon does NOT support these protocols (in this generator)
       expect(supportedProtocols.has('http')).toBe(false);
       expect(supportedProtocols.has('socks5')).toBe(false);
       expect(supportedProtocols.has('vless')).toBe(false);
       expect(supportedProtocols.has('hysteria')).toBe(false);
-      expect(supportedProtocols.has('hysteria2')).toBe(false);
 
       // Some proxies should be filtered out
       const filtered = generator.filterProxies(parseResult.proxies);
@@ -79,14 +80,14 @@ describe('[Integration] Loon Format Conversion', () => {
       const filtered = generator.filterProxies(parseResult.proxies);
 
       // Filtered list should only contain supported protocols
-      const unsupportedTypes = ['http', 'socks5', 'vless', 'hysteria', 'hysteria2'];
+      const unsupportedTypes = ['http', 'socks5', 'vless', 'hysteria'];
       const hasUnsupported = filtered.some(
         p => unsupportedTypes.includes(p.type)
       );
       expect(hasUnsupported).toBe(false);
 
       // Should only contain supported protocols
-      const supportedTypes = ['ss', 'ssr', 'vmess', 'trojan'];
+      const supportedTypes = ['ss', 'ssr', 'vmess', 'trojan', 'hysteria2', 'tuic'];
       const allSupported = filtered.every(
         p => supportedTypes.includes(p.type)
       );

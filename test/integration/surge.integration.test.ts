@@ -82,16 +82,17 @@ describe('[Integration] Surge Format Conversion', () => {
       expect(supportedProtocols.has('ssr')).toBe(true);
       expect(supportedProtocols.has('trojan')).toBe(true);
       expect(supportedProtocols.has('http')).toBe(true);
+      expect(supportedProtocols.has('socks5')).toBe(true);
+      expect(supportedProtocols.has('hysteria2')).toBe(true);
+      expect(supportedProtocols.has('tuic')).toBe(true);
 
-      expect(supportedProtocols.has('socks5')).toBe(false);
       expect(supportedProtocols.has('vless')).toBe(false);
       expect(supportedProtocols.has('hysteria')).toBe(false);
-      expect(supportedProtocols.has('hysteria2')).toBe(false);
 
-      // 6 of the 12 input links survive filtering
+      // 9 of the 12 input links survive filtering
       const filtered = generator.filterProxies(parseResult.proxies);
-      expect(filtered.length).toBe(6);
-      expect(filtered.every(p => ['ss', 'vmess', 'ssr', 'trojan', 'http'].includes(p.type))).toBe(true);
+      expect(filtered.length).toBe(9);
+      expect(filtered.every(p => ['ss', 'vmess', 'ssr', 'trojan', 'http', 'socks5', 'hysteria2'].includes(p.type))).toBe(true);
     });
 
     it('should keep unsupported protocols out of the [Proxy] section', () => {
@@ -104,7 +105,7 @@ describe('[Integration] Surge Format Conversion', () => {
       const proxySectionMatch = output.match(/\[Proxy\]\n([\s\S]*?)\n\n\[Proxy Group\]/);
       expect(proxySectionMatch).toBeTruthy();
       const proxySection = proxySectionMatch![1];
-      expect(proxySection).not.toMatch(/=\s*(vless|hysteria|hysteria2|socks5),/);
+      expect(proxySection).not.toMatch(/=\s*(vless|hysteria|wireguard|anytls),/);
     });
   });
 
