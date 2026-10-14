@@ -1,6 +1,6 @@
 /**
- * TDD Test: Verify Surfboard [Proxy Group] contains only 🚀 节点选择
- * All other groups should be removed to keep the configuration minimal
+ * Tests: Surfboard [Proxy Group] structure mirrors the Surge template,
+ * with generator-side region filtering (Surfboard has no policy-regex-filter)
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
@@ -10,57 +10,14 @@ import { SURFBOARD_PROXY_GROUPS } from '@/lib/surfboard/config/surfboard-config'
 // Import registry to auto-initialize
 import '@/lib/core/registry';
 
-describe('[TDD] Surfboard Minimal Proxy Groups', () => {
-  // These groups should NOT exist - they should be removed
-  const groupsToRemove = [
-    '🚀 手动切换',
-    '📲 电报消息',
-    '💬 Ai 平台',
-    '📹 油管视频',
-    '🎥 奈飞视频',
-    '📺 巴哈姆特',
-    '📺 哔哩哔哩',
-    '🌍 国外媒体',
-    '🌏 国内媒体',
-    '📢 谷歌 FCM',
-    'Ⓜ️ 微软服务',
-    '🍎 苹果服务',
-    '🎮 游戏平台',
-    '🎶 网易音乐',
-    '🎯 全球直连',
-    '🛑 广告拦截',
-    '🍃 应用净化',
-    '🐟 漏网之鱼',
-    '🇭🇰 香港节点',
-    '🇯🇵 日本节点',
-    '🇺🇲 美国节点',
-    '🇸🇬 狮城节点',
-    '🇨🇳 台湾节点',
-    '🇰🇷 韩国节点',
-    '🎥 奈飞节点',
-  ];
-
+describe('[Surfboard] Proxy Group structure (Surge-aligned)', () => {
   describe('SURFBOARD_PROXY_GROUPS configuration', () => {
-    it('should contain exactly ONE proxy group: 🚀 节点选择', () => {
-      expect(SURFBOARD_PROXY_GROUPS.length).toBe(1);
-      expect(SURFBOARD_PROXY_GROUPS[0].name).toBe('🚀 节点选择');
-    });
-
-    it('should NOT contain any unnecessary proxy groups', () => {
-      const groupNames = SURFBOARD_PROXY_GROUPS.map(g => g.name);
-
-      groupsToRemove.forEach(groupName => {
-        expect(groupNames).not.toContain(groupName);
-      });
-    });
-
-    it('should have 🚀 节点选择 configured correctly', () => {
+    it('should keep 🟢 Proxy as the main select group', () => {
       const mainGroup = SURFBOARD_PROXY_GROUPS[0];
-
-      expect(mainGroup.name).toBe('🚀 节点选择');
+      expect(mainGroup.name).toBe('🟢 Proxy');
       expect(mainGroup.type).toBe('select');
-      expect(mainGroup.useAllProxies).toBe(true);
-      expect(mainGroup.proxies).toEqual([]);
+      expect(mainGroup.proxies).toContain('♻️ 自动选择');
+      expect(mainGroup.proxies).toContain('🚀 直接连接');
     });
   });
 
@@ -69,7 +26,7 @@ describe('[TDD] Surfboard Minimal Proxy Groups', () => {
     let generatedOutput: string;
 
     beforeEach(() => {
-      // Sample input with multiple proxy types
+      // Sample input with region-named nodes
       testInput = [
         'ss://YWVzLTI1Ni1nY206ZzVNZUQ2RnQzQ1dsSklkQDE5OC41Ny4yNy4yMTg6NTAwNA==#HKNode1',
         'ss://YWVzLTI1Ni1nY206ZzVNZUQ2RnQzQ1dsSklkQDE5OC41Ny4yNy4yMTg6NTAwNQ==#JPNode1',
@@ -87,34 +44,30 @@ describe('[TDD] Surfboard Minimal Proxy Groups', () => {
       generatedOutput = generator.generate(parseResult.proxies);
     });
 
-    it('should contain only ONE [Proxy Group] entry', () => {
+    it('should contain exactly ONE [Proxy Group] section header', () => {
       const matches = generatedOutput.match(/\[Proxy Group\]/g);
-      // [Proxy Group] header should appear exactly once
       expect(matches ? matches.length : 0).toBe(1);
     });
 
-    it('should contain only 🚀 节点选择 in proxy groups', () => {
-      // Extract the [Proxy Group] section
-      const groupSectionMatch = generatedOutput.match(/\[Proxy Group\]([\s\S]*?)\[/);
-      expect(groupSectionMatch).toBeTruthy();
-
-      if (groupSectionMatch) {
-        const groupLines = groupSectionMatch[1].trim().split('\n');
-
-        // Should have exactly one line for the group definition
-        expect(groupLines.length).toBe(1);
-
-        // That line should be 🚀 节点选择
-        expect(groupLines[0]).toContain('🚀 节点选择');
-
-        // Should not contain any other group names
-        groupsToRemove.forEach(groupName => {
-          expect(groupLines[0]).not.toContain(groupName);
-        });
-      }
+    it('should contain the main select group and matching region groups', () => {
+      expect(generatedOutput).toContain('🟢 Proxy = select');
+      expect(generatedOutput).toContain('♻️ 自动选择 = url-test');
+      // Region groups expand matching nodes (input has HK/JP/US named nodes)
+      expect(generatedOutput).toContain('🇭🇰 香港 = url-test, "HKNode1", url=');
+      expect(generatedOutput).toContain('🇯🇵 日本 = url-test, "JPNode1", url=');
+      expect(generatedOutput).toContain('🇺🇸 美国 = url-test, "USNode1", url=');
     });
 
-    it('should contain all actual proxy names in 🚀 节点选择', () => {
+    it('should prune region groups with no matching nodes', () => {
+      // Input has no SG/KR/TW named nodes
+      expect(generatedOutput).not.toContain('🇸🇬 新加坡');
+      expect(generatedOutput).not.toContain('🇰🇷 韩国');
+      expect(generatedOutput).not.toContain('🇨🇳 台湾');
+      // References to pruned groups are removed from 🟢 Proxy
+      expect(generatedOutput).toContain('🟢 Proxy = select, "♻️ 自动选择", "🇭🇰 香港", "🇺🇸 美国", "🇯🇵 日本", "🚀 直接连接"');
+    });
+
+    it('should contain all proxy names in [Proxy] section and ♻️ 自动选择', () => {
       expect(generatedOutput).toContain('HKNode1');
       expect(generatedOutput).toContain('JPNode1');
       expect(generatedOutput).toContain('USNode1');
@@ -123,6 +76,9 @@ describe('[TDD] Surfboard Minimal Proxy Groups', () => {
       expect(generatedOutput).toContain('HTTPNode1');
       expect(generatedOutput).toContain('SOCKS5Node1');
       expect(generatedOutput).toContain('Hysteria2Node1');
+
+      // ♻️ 自动选择 (url-test over all nodes) includes every node
+      expect(generatedOutput).toContain('"HKNode1", "JPNode1", "USNode1", "TestProxy2", "TrojanNode1", "HTTPNode1", "SOCKS5Node1", "Hysteria2Node1"');
     });
 
     it('should have valid Surfboard structure', () => {
@@ -130,12 +86,6 @@ describe('[TDD] Surfboard Minimal Proxy Groups', () => {
       expect(generatedOutput).toContain('[Proxy]');
       expect(generatedOutput).toContain('[Proxy Group]');
       expect(generatedOutput).toContain('[Rule]');
-    });
-
-    it('should not contain any unnecessary groups in output', () => {
-      groupsToRemove.forEach(groupName => {
-        expect(generatedOutput).not.toContain(groupName);
-      });
     });
   });
 });

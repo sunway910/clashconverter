@@ -12,20 +12,31 @@ import { BaseFormatGenerator } from '../core/base-generator';
 import {
   SURFBOARD_GENERAL,
   SURFBOARD_PROXY_GROUPS,
-  SURFBOARD_REMOTE_RULES,
   SURFBOARD_RULES,
+  SURFBOARD_BUILTIN_POLICIES,
   type SurfboardProxyGroupConfig,
 } from './config/surfboard-config';
 
 /**
  * Generator for Surfboard configuration format
- * Surfboard is an iOS proxy client that uses Surge-like format
+ * Surfboard is an Android proxy client that uses Surge-like format
  *
  * Supported protocols: SS, VMess, Trojan, HTTP, SOCKS5, Hysteria2
  * Not supported: SSR, VLESS, Hysteria (v1)
  */
 export class SurfboardGenerator extends BaseFormatGenerator {
   readonly format: FormatType = 'surfboard';
+
+  /**
+   * Generate output; groups require at least one node, bail out early when empty
+   */
+  public generate(proxies: ProxyNode[]): string {
+    const filtered = this.filterProxies(proxies);
+    if (filtered.length === 0) {
+      return '# No proxies supported by Surfboard\n';
+    }
+    return super.generate(proxies);
+  }
 
   /**
    * Generate the header section ([General], [Proxy])
@@ -54,19 +65,28 @@ export class SurfboardGenerator extends BaseFormatGenerator {
   }
 
   /**
-   * Generate the body section ([Proxy Group], [Rule])
+   * Generate the body section ([Proxy Group])
+   * Region groups (filter) expand matching node names generator-side — Surfboard
+   * has no policy-regex-filter — and are omitted when no node matches.
    * @param proxies - Filtered proxy nodes
    * @returns Body sections
    */
   protected generateBody(proxies: ProxyNode[]): string {
-    const lines: string[] = [];
+    const lines: string[] = ['[Proxy Group]'];
     const proxyNames = proxies.map((p) => p.name);
 
-    // [Proxy Group] section
-    lines.push('[Proxy Group]');
+    // Region groups with no matching nodes are omitted
+    const omitted = new Set<string>();
     for (const group of SURFBOARD_PROXY_GROUPS) {
-      const groupLine = this.formatProxyGroup(group, proxyNames);
-      lines.push(groupLine);
+      const filter = group.filter;
+      if (filter && !proxyNames.some((name) => this.matchesFilter(name, filter))) {
+        omitted.add(group.name);
+      }
+    }
+
+    for (const group of SURFBOARD_PROXY_GROUPS) {
+      if (group.filter && omitted.has(group.name)) continue;
+      lines.push(...this.formatProxyGroup(group, proxyNames, omitted));
     }
     lines.push('');
 
@@ -268,8 +288,26 @@ export class SurfboardGenerator extends BaseFormatGenerator {
   }
 
   /**
-   * Format a proxy group as a Surfboard proxy group string
-   * Format: name = type,proxy1,proxy2,...
+   * Check a node name against a group filter regex
+   */
+  private matchesFilter(name: string, filter: string): boolean {
+    try {
+      return new RegExp(filter).test(name);
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Quote a policy name unless it is a built-in policy
+   */
+  private quotePolicy(name: string): string {
+    return SURFBOARD_BUILTIN_POLICIES.has(name) ? name : `"${name}"`;
+  }
+
+  /**
+   * Format a proxy group as Surge-compatible [Proxy Group] line(s)
+   * Format: name = type, "policy1", "policy2", ..., url=..., interval=..., tolerance=...
    *
    * Policy types:
    * - select = Select (manual selection)
@@ -279,30 +317,26 @@ export class SurfboardGenerator extends BaseFormatGenerator {
    *
    * @param group - The proxy group configuration
    * @param proxyNames - List of all proxy names
-   * @returns Surfboard formatted proxy group string
+   * @param omitted - Names of groups skipped in this generation (their references are pruned)
+   * @returns Surfboard formatted proxy group lines
    */
-  private formatProxyGroup(group: SurfboardProxyGroupConfig, proxyNames: string[]): string {
-    let result = `${group.name} = ${group.type}`;
-
-    // Add proxies
-    const allProxies = group.useAllProxies ? [...group.proxies, ...proxyNames] : group.proxies;
-    if (allProxies.length > 0) {
-      result += ',' + allProxies.join(',');
+  private formatProxyGroup(group: SurfboardProxyGroupConfig, proxyNames: string[], omitted: Set<string>): string[] {
+    const lines: string[] = [];
+    if (group.commentBefore) {
+      lines.push(...group.commentBefore);
     }
 
-    // Add url and interval for url-test type
-    if (group.type === 'url-test') {
-      if (group.url) {
-        result += `,url=${group.url}`;
-      }
-      if (group.interval) {
-        result += `,interval=${group.interval}`;
-      }
-      if (group.tolerance) {
-        result += `,tolerance=${group.tolerance}`;
-      }
-    }
+    let refs = group.proxies;
+    if (group.useAllProxies) refs = [...refs, ...proxyNames];
+    if (group.filter) refs = proxyNames.filter((name) => this.matchesFilter(name, group.filter!));
+    refs = refs.filter((ref) => !omitted.has(ref));
 
-    return result;
+    const parts: string[] = [group.type, ...refs.map((ref) => this.quotePolicy(ref))];
+    if (group.url) parts.push(`url=${group.url}`);
+    if (group.interval) parts.push(`interval=${group.interval}`);
+    if (group.tolerance) parts.push(`tolerance=${group.tolerance}`);
+
+    lines.push(`${group.name} = ${parts.join(', ')}`);
+    return lines;
   }
 }

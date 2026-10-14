@@ -156,9 +156,9 @@ describe('SurfboardGenerator', () => {
       const result = generator.generate(mockProxies);
 
       expect(result).toContain('[Proxy Group]');
-      expect(result).toContain('🚀 节点选择');
-      // Minimal groups: final rule routes to the single select group
-      expect(result).toContain('FINAL,🚀 节点选择');
+      expect(result).toContain('🟢 Proxy');
+      // Final rule routes to the catch-all group
+      expect(result).toContain('FINAL,"🐟 漏网之鱼"');
     });
   });
 
